@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<title>🍲 Based Cooking 🍳 | Retro Think</title>
+	<link rel="canonical" href="http://localhost:1313/">
+	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="icon" href="/favicon.ico">
+	<meta name="description" content="The fast-loading recipe site with cooking only and no ads.">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	<meta charset="utf-8">
+</head>
+<body>
+<main>
+<header><h1 id="tag_🍲 Based Cooking 🍳">
+🍲 Based Cooking 🍳
+</h1></header>
+<article>
+
+<h2 id="what-do-you-want-to-cook">What do you want to cook?</h2>
+<div class="search js-only">
+  <input type="text" id="search" placeholder="Search ALL Recipes...">
+  <button id="clear-search">
+    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Backspace</title><path d="M135.19 390.14a28.79 28.79 0 0021.68 9.86h246.26A29 29 0 00432 371.13V140.87A29 29 0 00403.13 112H156.87a28.84 28.84 0 00-21.67 9.84v0L46.33 256l88.86 134.11z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"></path><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M336.67 192.33L206.66 322.34M336.67 322.34L206.66 192.33M336.67 192.33L206.66 322.34M336.67 322.34L206.66 192.33"></path></svg>
+  </button>
+</div>
+<script>
+// @license magnet:?xt=urn:btih:5ac446d35272cc2e4e85e4325b146d0b7ca8f50c&dn=unlicense.txt Unlicense
+
+document.addEventListener("DOMContentLoaded", () => {
+  for (e of document.getElementsByClassName("js-only")) {
+    e.classList.remove("js-only");
+  }
+
+  const recipes = document.querySelectorAll("#artlist li");
+  const search = document.getElementById("search");
+  const oldheading = document.getElementById("newest-recipes");
+  const clearSearch = document.getElementById("clear-search");
+  const artlist = document.getElementById("artlist");
+
+  search.addEventListener("input", () => {
+    // grab search input value
+    const searchText = search.value.toLowerCase().trim().normalize('NFD').replace(/\p{Diacritic}/gu, "");
+    const searchTerms = searchText.split(" ");
+    const hasFilter = searchText.length > 0;
+
+    artlist.classList.toggle("list-searched", hasFilter);
+    oldheading.classList.toggle("hidden", hasFilter);
+
+    // for each recipe hide all but matched
+    recipes.forEach(recipe => {
+      const searchString = `${recipe.textContent} ${recipe.dataset.tags}`.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
+      const isMatch = searchTerms.every(term => searchString.includes(term));
+
+      recipe.hidden = !isMatch;
+      recipe.classList.toggle("matched-recipe", hasFilter && isMatch);
+    })
+  })
+
+  clearSearch.addEventListener("click", () => {
+    search.value = "";
+    recipes.forEach(recipe => {
+      recipe.hidden = false;
+      recipe.classList.remove("matched-recipe");
+    })
+
+    artlist.classList.remove("list-searched");
+    oldheading.classList.remove("hidden");
+  })
+})
+// @license-end
+</script>
+<h2 id="newest-recipes">Newest Recipes</h2>
+<ul id="artlist"><li data-tags="[server]" >
+    2023-04-24 | <a href="http://localhost:1313/home_server.it/">Home Server su un Thinkpad R61i</a>
+  </li><li data-tags="[software]" >
+    2023-04-18 | <a href="http://localhost:1313/useful_programs.it/">Programmi utili</a>
+  </li><li data-tags="[pdf]" >
+    2023-04-16 | <a href="http://localhost:1313/organize_pdfs_with_zotero.it/">Organizzare i PDF con Zotero</a>
+  </li><li data-tags="[arch]" >
+    2023-04-08 | <a href="http://localhost:1313/install_artix.it/">Installare Artix Linux (con runit, criptando la cartella root)</a>
+  </li><li data-tags="[sync]" >
+    2023-04-06 | <a href="http://localhost:1313/how_to_use_syncthing.it/">Come sincronizzare le cartelle con Syncthing</a>
+  </li><li data-tags="[sync]" >
+    2023-04-05 | <a href="http://localhost:1313/install_syncthing_synology_nas.it/">Installare Syncthing su un NAS Synology</a>
+  </li><li data-tags="[mobile]" >
+    2023-04-05 | <a href="http://localhost:1313/grapheneos.it/">GrapheneOS: riprendere il controllo del proprio telefono</a>
+  </li><li data-tags="" >
+    0001-01-01 | <a href="http://localhost:1313/_index-funzionante/">🍲 Based Cooking 🍳</a>
+  </li></ul>
+
+
+<h2 id="or-browse-by-category">Or Browse by Category&hellip;</h2>
+   <ul id="tagcloud">
+    <li><a href="http://localhost:1313/tags/arch" id="tag_arch">Arch</a></li>
+    <li><a href="http://localhost:1313/tags/mobile" id="tag_mobile">Mobile</a></li>
+    <li><a href="http://localhost:1313/tags/pdf" id="tag_pdf">Pdf</a></li>
+    <li><a href="http://localhost:1313/tags/server" id="tag_server">Server</a></li>
+    <li><a href="http://localhost:1313/tags/software" id="tag_software">Software</a></li>
+    <li><a href="http://localhost:1313/tags/sync" id="tag_sync">Sync</a></li>
+    </ul>
+
+<h2 id="about-this-site">About this site</h2>
+<p>Founded to provide a simple online cookbook without ads and obese web design.
+See the story of this site unfold in three videos:</p>
+<ul>
+<li><a href="https://odysee.com/@Luke:7/a-demonstration-of-modern-web-bloat:f">A Demonstration of Modern Web Bloat</a></li>
+<li><a href="https://odysee.com/@Luke:7/the-war-against-web-bloat-continues...:a">The War Against Web Bloat Continues&hellip;</a></li>
+<li><a href="https://odysee.com/@Luke:7/soydevs-destroyed-epic-style-by-based:6">SoyDevs DESTROYED Epic Style by Based Cooking!</a></li>
+</ul>
+<h2 id="its-easy-to-contribute">It&rsquo;s easy to contribute!</h2>
+<p>New recipes can be submitted <a href="https://github.com/lukesmithxyz/based.cooking">on Github</a>.
+We are funded by you only, not 20MB of ads or privacy-violating trackers per page.</p>
+
+
+
+<div id="nextprev"><a href="/grapheneos.it/"><div id="nextart">Next:<br>GrapheneOS: riprendere il controllo del proprio telefono</div></a>
+</div>
+
+</article>
+</main>
+
+<footer style="text-align: center; padding: 1em 0; background-color: #4141412f; border-top: 1px solid #D08770;">
+	<div style="margin-bottom: 0.5em;">
+		<a href="http://localhost:1313/" style="text-decoration: none; color: #D08770; font-weight: bold;">
+			http://localhost:1313/
+		</a>
+	</div>
+	<div style="display: flex; justify-content: center; gap: 15px; align-items: center;">
+		<a href="/index.xml" title="Subscribe via RSS for updates.">
+			<img src="/rss.svg" alt="RSS Feed" style="height: 24px;">
+		</a>
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
+			<img src="/youtube.png" alt="YouTube Channel" style="height: 24px;">
+		</a>
+	</div>
+	
+</footer>
+
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+  feather.replace()
+</script>
+</body>
+</html>

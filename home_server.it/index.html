@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Home Server Su Un Thinkpad R61i | Retro Think</title>
+	<link rel="canonical" href="https://retrothink.click/">
+	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="icon" href="/favicon.ico">
+	<meta name="description" content="Introduzione Ho un NAS Synology ma volevo provare a far un altro server con un Thinkpad in disuso, un R61i con 4GB di RAM e un SSD da 128GB. Ho ordinato un caddy per sostituire il lettore CD con un HDD da 2.5 da 1TB e ampliarne così lo spazio.
+Utilizzeremo Debian.
+Procedimento Per prima cosa installiamo SSH.
+sudo apt update sudo apt install openssh-server sudo systemctl enable ssh sudo systemctl start ssh Adesso verifichiamo che il servizio SSH sia attivo">
+	<meta name="keywords" content="server">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+</head>
+<body>
+<main>
+<header><h1 id="tag_Home Server su un Thinkpad R61i">
+Home Server su un Thinkpad R61i
+</h1></header>
+<article>
+
+<h2 id="introduzione">Introduzione</h2>
+<p>Ho un NAS Synology ma volevo provare a far un altro server con un Thinkpad in disuso, un R61i con 4GB di RAM e un SSD da 128GB. Ho ordinato un caddy per sostituire il lettore CD con un HDD da 2.5 da 1TB e ampliarne così lo spazio.</p>
+<p>Utilizzeremo Debian.</p>
+<h2 id="procedimento">Procedimento</h2>
+<p>Per prima cosa installiamo SSH.</p>
+<pre tabindex="0"><code>sudo apt update
+</code></pre><pre tabindex="0"><code>sudo apt install openssh-server
+</code></pre><pre tabindex="0"><code>sudo systemctl enable ssh
+</code></pre><pre tabindex="0"><code>sudo systemctl start ssh
+</code></pre><p>Adesso verifichiamo che il servizio SSH sia attivo</p>
+<pre tabindex="0"><code>sudo systemctl status ssh
+</code></pre><p>Da un altro computer scriveremo nel terminale</p>
+<pre tabindex="0"><code>ssh nomeutentedelserver@indirizzoipdelserver
+</code></pre><p>Siamo adesso dentro al nostro server.</p>
+<p>Installiamo adesso Samba per condividere i nostri file nella rete locale.</p>
+<pre tabindex="0"><code>sudo apt install samba 
+</code></pre><p>Controlliamo di averlo installato correttamente.</p>
+<pre tabindex="0"><code>samba --version
+</code></pre><p>Creiamo adesso una cartella condivisa:</p>
+<pre tabindex="0"><code>mkdir r61i-share
+</code></pre><pre tabindex="0"><code>sudo nano /etc/samba/smb.conf
+</code></pre><p>Andiamo in fondo al file e aggiungiamo queste righe:</p>
+<pre tabindex="0"><code>[r61i-share]
+    comment = R61i Samba Share
+    path = /home/username/r61i-share
+    read only = no
+    browsable = yes
+</code></pre><p>Dopodichè Ctrl+X, &ldquo;Y&rdquo; e Enter e riavviamo Samba:</p>
+<pre tabindex="0"><code>sudo service smbd restart
+</code></pre><p>Configuriamo il firewall:</p>
+<pre tabindex="0"><code>sudo ufw allow samba
+</code></pre><p>Creiamo una password per Samba:</p>
+<pre tabindex="0"><code>sudo smbpasswd -a username
+</code></pre><p>Accederemo alla nostra cartella da un altro computer usando il seguente percorso:</p>
+<pre tabindex="0"><code>\\indirizzoipdelserver\r61i-share
+</code></pre><p>Digitando username e la password per Samba che abbiamo creato poco fa.</p>
+<h2 id="plex">Plex</h2>
+<pre tabindex="0"><code>cd ~
+</code></pre><pre tabindex="0"><code>mkdir Plex
+</code></pre><pre tabindex="0"><code>cd Plex/
+</code></pre><pre tabindex="0"><code>mkdir Movies Shows
+</code></pre><p><a href="https://linuxize.com/post/how-to-install-plex-media-server-on-ubuntu-20-04/">https://linuxize.com/post/how-to-install-plex-media-server-on-ubuntu-20-04/</a></p>
+<pre tabindex="0"><code>sudo apt install plexmediaserver
+</code></pre><pre tabindex="0"><code>sudo systemctl status plexmediaserver
+</code></pre><p>Adesso da qualsiasi computer nella nostra rete locale digitiamo nel browser:</p>
+<p>http://indirizzoipdelserver:32400/manage</p>
+<h2 id="docker">Docker</h2>
+<p><a href="https://docs.docker.com/engine/install/ubuntu/">https://docs.docker.com/engine/install/ubuntu/</a></p>
+<p>Per assicurarci che docker sia installato correttamente:</p>
+<pre tabindex="0"><code>sudo docker run hello-world
+</code></pre><p><a href="https://docs.linuxserver.io/general/docker-compose">https://docs.linuxserver.io/general/docker-compose</a></p>
+<h2 id="installiamo-syncthing-in-docker">Installiamo syncthing in docker</h2>
+<p><a href="https://hub.docker.com/r/linuxserver/syncthing">https://hub.docker.com/r/linuxserver/syncthing</a></p>
+<hr>
+
+
+
+<div id="nextprev">
+<a href="/useful_programs.it/"><div id="prevart">Previous:<br>Programmi utili</div></a>
+</div>
+<div style="clear:both" class=taglist>Related<br><a id="tag_server" href="https://retrothink.click/tags/server">Server</a></div>
+</article>
+</main>
+
+<footer style="text-align: center; padding: 1em 0; background-color: #4141412f; border-top: 1px solid #D08770;">
+	<div style="margin-bottom: 0.5em;">
+		<a href="https://retrothink.click/" style="text-decoration: none; color: #D08770; font-weight: bold;">
+			https://retrothink.click/
+		</a>
+	</div>
+	<div style="display: flex; justify-content: center; gap: 15px; align-items: center;">
+		<a href="/index.xml" title="Subscribe via RSS for updates.">
+			<img src="/rss.svg" alt="RSS Feed" style="height: 24px;">
+		</a>
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
+			<img src="/youtube.png" alt="YouTube Channel" style="height: 24px;">
+		</a>
+	</div>
+	
+</footer>
+
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+  feather.replace()
+</script>
+</body>
+</html>

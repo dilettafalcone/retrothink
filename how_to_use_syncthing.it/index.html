@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Come Sincronizzare Le Cartelle Con Syncthing | Retro Think</title>
+	<link rel="canonical" href="https://retrothink.click/">
+	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="icon" href="/favicon.ico">
+	<meta name="description" content="1. Cos&rsquo;è Syncthing Syncthing è un meraviglioso software libero, open-source, peer-to-peer, col quale sincronizzare cartelle.
+2. Come installarlo su Linux Debian/Ubuntu/Linux Mint/Pop!_OS/MX Linux sudo apt update sudo apt install syncthing Altrimenti:
+Aggiungi le release PGP keys: sudo curl -o /usr/share/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg Il canale &lsquo;stable&rsquo; è aggiornato con le stable release builds solitamente ogni primo martedì del mese, il canale &lsquo;candidate&rsquo; è aggiornato con le release candidate builds ogni secondo martedì del mese, anticipando il canale &lsquo;stable&rsquo; di circa tre settimane.">
+	<meta name="keywords" content="sync">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+</head>
+<body>
+<main>
+<header><h1 id="tag_Come sincronizzare le cartelle con Syncthing">
+Come sincronizzare le cartelle con Syncthing
+</h1></header>
+<article>
+
+<h2 id="1-cosè-syncthing">1. Cos&rsquo;è Syncthing</h2>
+<p><a href="https://syncthing.net/">Syncthing</a> è un meraviglioso software libero, open-source, peer-to-peer, col quale sincronizzare cartelle.</p>
+<h2 id="2-come-installarlo-su-linux">2. Come installarlo su Linux</h2>
+<h3 id="debianubuntulinux-mintpop_osmx-linux">Debian/Ubuntu/Linux Mint/Pop!_OS/MX Linux</h3>
+<pre tabindex="0"><code>sudo apt update
+</code></pre><pre tabindex="0"><code>sudo apt install syncthing
+</code></pre><p>Altrimenti:</p>
+<h4 id="aggiungi-le-release-pgp-keys">Aggiungi le release PGP keys:</h4>
+<pre tabindex="0"><code>sudo curl -o /usr/share/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg
+</code></pre><p>Il canale &lsquo;stable&rsquo; è aggiornato con le stable release builds solitamente ogni primo martedì del mese, il canale &lsquo;candidate&rsquo; è aggiornato con le release candidate builds ogni secondo martedì del mese, anticipando il canale &lsquo;stable&rsquo; di circa tre settimane. Scegli tra &lsquo;stable&rsquo; e &lsquo;candidate&rsquo; e copia il relativo codice.</p>
+<h4 id="aggiungi-il-canale-stable-alle-tue-apt-sources">Aggiungi il canale &ldquo;stable&rdquo; alle tue APT sources:</h4>
+<pre tabindex="0"><code>echo &#34;deb [signed-by=/usr/share/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable&#34; | sudo tee /etc/apt/sources.list.d/syncthing.list
+</code></pre><h4 id="aggiungi-il-canale-candidate-alle-tue-apt-sources">Aggiungi il canale &ldquo;candidate&rdquo; alle tue APT sources:</h4>
+<pre tabindex="0"><code>echo &#34;deb [signed-by=/usr/share/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing candidate&#34; | sudo tee /etc/apt/sources.list.d/syncthing.list
+</code></pre><h4 id="aggiorna-il-sistema-e-installa-syncthing">Aggiorna il sistema e installa syncthing:</h4>
+<pre tabindex="0"><code>sudo apt update
+</code></pre><pre tabindex="0"><code>sudo apt install syncthing
+</code></pre><h3 id="arch-linux">Arch Linux</h3>
+<pre tabindex="0"><code>sudo pacman -Syu syncthing
+</code></pre><h3 id="fedora">Fedora</h3>
+<pre tabindex="0"><code>sudo dnf install syncthing
+</code></pre><h2 id="3-far-partire-il-servizio-syncthing-automaticamente-ad-ogni-avvio-del-sistema">3. Far partire il servizio Syncthing automaticamente ad ogni avvio del sistema</h2>
+<p>Al posto di <em>tuonomeutente</em> va messo ciò che ottieni digitando nel terminale</p>
+<pre tabindex="0"><code>whoami
+</code></pre><p>Procediamo:</p>
+<pre tabindex="0"><code>sudo systemctl enable syncthing@tuonomeutente.service
+</code></pre><pre tabindex="0"><code>sudo systemctl start syncthing@tuonomeutente.service
+</code></pre><h2 id="4-come-installarlo-su-android">4. Come installarlo su Android</h2>
+<p>L&rsquo;applicazione per Android app è disponibile su <strong>Google Play</strong> e <strong>F-Droid</strong>.</p>
+<h2 id="5-utilizzo">5. Utilizzo</h2>
+<h3 id="51-controlliamo-che-il-servizio-sia-attivo">5.1. Controlliamo che il servizio sia attivo</h3>
+<p>Controlla che il servizio sia attivo</p>
+<pre tabindex="0"><code>sudo systemctl status syncthing@tuonomeutente.service
+</code></pre><p>Dove troveremo &ldquo;Active: <span style="color:green">active (running)</span>&rdquo;</p>
+<p>Esci con &lsquo;Ctrl + C&rsquo;</p>
+<h3 id="51-configurazione">5.1. Configurazione</h3>
+<p>Copia e incolla questo indirizzo nel tuo browser</p>
+<pre tabindex="0"><code>http://localhost:8384/
+</code></pre><p>Ti verrà chiesto se desideri acconsentire o no ad un report aninimo di utilizzo a fini statistici, rispondi e continua.</p>
+<p>Syncthing ti avviserà che non sono stati impostati nome utente e password per accedere alla GUI, l&rsquo;interfaccia grafica del software.</p>
+<ol>
+<li>Clicca su &lsquo;Impostazioni&rsquo; (se non vedi più l&rsquo;avviso, clicca su &lsquo;Azioni&rsquo; e poi su &lsquo;Impostazioni&rsquo;)</li>
+<li>Scegli la voce &lsquo;Interfaccia Grafica Utente&rsquo;</li>
+<li>Inventa un nome utente ed una password e inseriscili nei campi &lsquo;Utente dell&rsquo;Interfaccia grafica&rsquo; e &lsquo;Password dell&rsquo;interfaccia grafica&rsquo;</li>
+<li>Salva</li>
+</ol>
+<p>Ripeti gli stessi passaggi in tutti i dispositivi.</p>
+<h3 id="52-connessione-dei-dispositivi">5.2 Connessione dei dispositivi</h3>
+<ol>
+<li>Clicca su &lsquo;Azioni&rsquo; e poi su &lsquo;Mostra ID&rsquo;, ti compariranno un codice identificativo e un QR Code</li>
+</ol>
+<blockquote>
+<p>Se vuoi associare un dispositivo Android, apri l&rsquo;applicazione, scegli la voce &lsquo;Devices&rsquo;, vai su &lsquo;+&rsquo; e poi sul simbolino del QR code.</p>
+</blockquote>
+<ol start="2">
+<li>Copia il codice</li>
+<li>Sul secondo dispositivo, vai su http://localhost:8384/ e clicca su &lsquo;Aggiungi Dispositivo Remoto&rsquo;</li>
+<li>Incolla l&rsquo;ID disposivo del primo dispositivo e salva.</li>
+<li>Se torni al primo dispositivo, troverai adesso un messaggio che ti segnala che il secondo dispositivo vuole connettersi, conferma cliccando su &lsquo;Aggiungi Dispositivo&rsquo;, si aprirà un&rsquo;altra finestra dove potrai scegliere il nome che preferisci per il secondo dispositivo, scegline uno e salva.</li>
+<li>Entrambi i dispositivi appariranno connessi l&rsquo;uno all&rsquo;altro.</li>
+</ol>
+<h3 id="53-sincronizzazione-cartelle">5.3 Sincronizzazione cartelle</h3>
+<ol>
+<li>Tra le cartelle ne troverai già una di default, eliminila premendo su Modifica e poi Rimuovi.</li>
+<li>Premi su &lsquo;Aggiungi Cartella&rsquo;</li>
+<li>Scegli un Etichetta descrittiva per la cartella (il nome con cui la cartella apparirà nell&rsquo;interfaccia)</li>
+<li>In &lsquo;Percorso Cartella&rsquo; inserisci il percorso della cartella che vuoi condividere nel tuo computer (Es. /home/dilfal/Documenti/)</li>
+<li>Alla voce &lsquo;Condivisione&rsquo; spunta i dispositivi con cui vuoi condividere la cartella</li>
+<li>Alla voce &lsquo;Controllo Versione File&rsquo; metti &ldquo;Controllo Versione Semplice&rdquo; oppure &ldquo;Controllo Versione cadenzato&rdquo;, non è obbligatorio ma è altamente raccomandato per poter ripristinare versioni precedenti dei file in caso vengano accidentalmente eliminati. Salva.</li>
+<li>Vai sull&rsquo;altro dispositivo, in alto troverai una notifica di questa condivisione, conferma.</li>
+<li>Scegli l&rsquo;Etichetta descrittiva per la cartella (in genere la stessa etichetta scelta in precedenza), scegli un &lsquo;Percorso Cartella&rsquo; a tuo piacimento (questa cartella si sincronizzerà con quella del primo dispositivo), alla voce &lsquo;Condivisione&rsquo; spunta i dispositivi con cui vuoi condividere la cartella, alla voce &lsquo;Controllo Versione File&rsquo; metti &ldquo;Controllo Versione Semplice&rdquo; oppure &ldquo;Controllo Versione cadenzato&rdquo;. Salva.</li>
+</ol>
+<h2 id="finito">Finito!</h2>
+<p>Fai un test: aggiungi un file in una delle due cartelle e lo vedrai comparire nella cartella dell&rsquo;altro dispositivo.</p>
+<p>Sito ufficiale: <a href="https://syncthing.net/">https://syncthing.net/</a></p>
+
+
+
+<div id="nextprev">
+<a href="/install_syncthing_synology_nas.it/"><div id="prevart">Previous:<br>Installare Syncthing su un NAS Synology</div></a>
+<a href="/install_artix.it/"><div id="nextart">Next:<br>Installare Artix Linux (con runit, criptando la cartella root)</div></a>
+</div>
+<div style="clear:both" class=taglist>Related<br><a id="tag_sync" href="https://retrothink.click/tags/sync">Sync</a></div>
+</article>
+</main>
+
+<footer style="text-align: center; padding: 1em 0; background-color: #4141412f; border-top: 1px solid #D08770;">
+	<div style="margin-bottom: 0.5em;">
+		<a href="https://retrothink.click/" style="text-decoration: none; color: #D08770; font-weight: bold;">
+			https://retrothink.click/
+		</a>
+	</div>
+	<div style="display: flex; justify-content: center; gap: 15px; align-items: center;">
+		<a href="/index.xml" title="Subscribe via RSS for updates.">
+			<img src="/rss.svg" alt="RSS Feed" style="height: 24px;">
+		</a>
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
+			<img src="/youtube.png" alt="YouTube Channel" style="height: 24px;">
+		</a>
+	</div>
+	
+</footer>
+
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+  feather.replace()
+</script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+body {
+	background: #151515; /* Sostituisce #151515 */
+	color: #D8DEE9;      /* Sostituisce antiquewhite */
+	max-width: 850px;
+	margin: auto;
+	padding: 0 16px;
+	margin-bottom: 500px;
+	scrollbar-color: #E5E9F0 #2E3440; /* Sostituisce lightgray #151515 */
+	font-family: sans-serif;
+  }
+  
+  ::-webkit-scrollbar {
+	width: .66vw;
+	background-color: #2E3440; /* Sostituisce #151515 */
+  }
+  ::-webkit-scrollbar-thumb {
+	background-color: #E5E9F0; /* Sostituisce lightgray */
+	border-radius: 5px;
+  }
+  
+  a {
+	color: #81A1C1; /* Sostituisce gray */
+	text-decoration: none;
+  }
+  
+  #tagcloud {
+	list-style: none;
+	text-align: center;
+	padding: 0;
+  }
+  
+  #tagcloud li {
+	display: inline-block;
+  }
+  
+  #tagcloud a {
+	margin: .1em .25em;
+  }
+  
+  a:visited {
+	color: #EBCB8B; /* Sostituisce wheat */
+  }
+  
+  a:hover {
+	color: #E5E9F0; /* Sostituisce lightgray */
+	text-decoration: underline;
+  }
+  
+  h1 {
+	color: #D08770; /* Sostituisce coral */
+	border-style: solid;
+	border-width: 0px 0px 2px 0px;
+	text-align: center;
+  }
+  
+  h2 {
+	color: #D8DEE9; /* Sostituisce antiquewhite */
+	text-align: center;
+  }
+  
+  footer {
+	text-align: center;
+	border-style: solid;
+	border-width: 2px 0px 0px 0px;
+	padding: 1em;
+  }
+  
+  img {
+	max-width: 90%;
+	max-height: 400px;
+	margin: auto;
+	display: block;
+  }
+  
+  code {
+	overflow-wrap: break-word;
+	color: #8FBCBB; /* Sostituisce aquamarine */
+  }
+  
+  .taglist {
+	text-align: center;
+	margin-bottom: 2em;
+	margin-top: 2em;
+  }
+  
+  img[alt="BTC Logo"],
+  img[alt="ETH Logo"],
+  img[alt="XMR Logo"] {
+	max-width: 1em;
+	max-height: 1em;
+	display: inline;
+  }
+  
+  @media (pointer: coarse) {
+	li > a {
+	  display: inline-block;
+	  padding: 0.2em 0;
+	}
+  }
+  
+  @media print {
+	a[href] {
+	  text-decoration: none;
+	  color: black;
+	}
+  
+	footer, .taglist {
+	  display: none;
+	}
+  
+	body {
+	  margin: 0;
+	}
+  }
+  
+  .older-article {
+	display: none;
+  }
+  
+  .hidden {
+	display: none !important;
+  }
+  
+  #artlist {
+	font-size: large;
+  }
+  
+  #artlist li {
+	padding: .25em;
+  }
+  
+  @media (min-width: 55em) {
+	#artlist {
+	  column-count: 2;
+	}
+  }
+  
+  @media (min-width: 100em) {
+	#artlist {
+	  column-count: 3;
+	}
+  }
+  
+  input#search {
+	all: unset;
+	background: #3B4252; /* Sostituisce #222 */
+	color: #ECEFF4;      /* Sostituisce #fff */
+	padding: 0.7rem 1rem;
+	border-radius: 5px;
+	width: 100%;
+  }
+  
+  .search {
+	width: 400px;
+	max-width: 85vw;
+	position: relative;
+	margin: 0.5rem auto 1.2rem;
+	display: flex;
+  }
+  
+  button#clear-search {
+	all: unset;
+	position: absolute;
+	right: 4px;
+	top: 5px;
+	height: 30px;
+	width: 30px;
+	color: #4C566A; /* Sostituisce #888 */
+	cursor: pointer;
+	transition: color 180ms ease-in-out;
+  }
+  button#clear-search:hover {
+	color: #D8DEE9; /* Sostituisce #eee */
+  }
+  
+  .matched-post {
+	font-size: x-large;
+	display: list-item !important;
+  }
+  
+  .list-searched {
+	column-count: 1 !important;
+	list-style: decimal;
+	max-width: 600px;
+	margin: auto;
+  }
+  
+  #tag_laptop::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f109"; /* fa-laptop */
+	font-weight: 900;
+	margin-right: 0.5em;
+  }
+  
+  #tag_arch::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\056";
+	font-weight: 900;
+	margin-right: 0.5em;
+  }
+  
+  #tag_mobile::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f3cd"; /* fa-mobile-alt */
+	font-weight: 900;
+	margin-right: 0.5em;
+  }
+  
+  #tag_pdf::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f1c1"; /* fa-file-pdf */
+	font-weight: 900;
+	margin-right: 0.5em;
+  }
+  
+  #tag_server::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f233"; /* fa-server */
+	font-weight: 900;
+	margin-right: 0.5em;
+  }
+  
+  #tag_software::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f0a0"; /* fa-cogs */
+	font-weight: 900;
+	margin-right: 0.5em;
+  }
+  
+  #tag_sync::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f021"; /* fa-sync */
+	font-weight: 900;
+	margin-right: 0.5em;
+  }
+  
+  #tag_thinkpad::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f109"; /* fa-laptop, riutilizzato per ThinkPad */
+	font-weight: 900;
+	margin-right: 0.5em;
+}
+
+#tag_linux::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f17c"; /* fa-linux (Tux) */
+	font-weight: 900;
+	margin-right: 0.5em;
+}
+
+#tag_retro::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f1b2"; /* fa-cube, può richiamare tecnologia vintage o elementi modulari */
+	font-weight: 900;
+	margin-right: 0.5em;
+}
+
+#tag_terminal::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f120"; /* fa-terminal */
+	font-weight: 900;
+	margin-right: 0.5em;
+}
+
+#tag_typing::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f11c"; /* fa-keyboard */
+	font-weight: 900;
+	margin-right: 0.5em;
+}
+
+#tag_fountainpen::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f5ad"; /* fa-pen-nib */
+	font-weight: 900;
+	margin-right: 0.5em;
+}
+
+#tag_markdown::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f60f"; /* fa-markdown (solo Pro in alcune versioni, alternativa sotto) */
+	font-weight: 900;
+	margin-right: 0.5em;
+}
+
+/* Alternativa se markdown non è disponibile */
+#tag_markdown_alt::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f044"; /* fa-edit / fa-pen */
+	font-weight: 900;
+	margin-right: 0.5em;
+}
+
+#tag_writingtools::before {
+	font-family: "Font Awesome 6 Free";
+	content: "\f303"; /* fa-pencil-alt */
+	font-weight: 900;
+	margin-right: 0.5em;
+}
+
+
+  .qr {
+	max-height: 150px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+  }
+
+  .feather,
+  [data-feather] {
+	vertical-align: sub;
+	/* oppure: baseline, secondo i gusti */
+	width: 1em;
+	height: 1em;
+	stroke-width: 2;
+  }
+  
+  .js-only {
+	display: none;
+  }
+
+  

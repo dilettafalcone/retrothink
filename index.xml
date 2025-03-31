@@ -1,16 +1,582 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Retro Think</title>
-    <link>https://retrothink.click/</link>
-    <description>Recent content on Retro Think</description>
-    <image>
-      <title>Retro Think</title>
-      <url>https://retrothink.click/images/og_default.jpg</url>
-      <link>https://retrothink.click/images/og_default.jpg</link>
-    </image>
-    <generator>Hugo -- 0.133.0</generator>
-    <language>en</language>
-    <atom:link href="https://retrothink.click/index.xml" rel="self" type="application/rss+xml" />
-  </channel>
+	<title>Retro Think</title>
+	<link>https://retrothink.click/</link>
+	<description>Recent content on Retro Think</description>
+	<generator>Hugo -- gohugo.io</generator>
+	<language>en-US</language>
+	<lastBuildDate>Mon, 24 Apr 2023 14:46:36 +0200</lastBuildDate>
+    
+        <atom:link href="https://retrothink.click/index.xml" rel="self" type="application/rss+xml" />
+	
+	
+	<item>
+		<title>Home Server su un Thinkpad R61i</title>
+		<link>https://retrothink.click/home_server.it/</link>
+		<pubDate>Mon, 24 Apr 2023 14:46:36 +0200</pubDate>
+		
+		<guid>https://retrothink.click/home_server.it/</guid>
+		<description>&lt;h2 id=&#34;introduzione&#34;&gt;Introduzione&lt;/h2&gt;
+&lt;p&gt;Ho un NAS Synology ma volevo provare a far un altro server con un Thinkpad in disuso, un R61i con 4GB di RAM e un SSD da 128GB. Ho ordinato un caddy per sostituire il lettore CD con un HDD da 2.5 da 1TB e ampliarne così lo spazio.&lt;/p&gt;
+&lt;p&gt;Utilizzeremo Debian.&lt;/p&gt;
+&lt;h2 id=&#34;procedimento&#34;&gt;Procedimento&lt;/h2&gt;
+&lt;p&gt;Per prima cosa installiamo SSH.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt update
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt install openssh-server
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo systemctl enable ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo systemctl start ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Adesso verifichiamo che il servizio SSH sia attivo&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo systemctl status ssh
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Da un altro computer scriveremo nel terminale&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ssh nomeutentedelserver@indirizzoipdelserver
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Siamo adesso dentro al nostro server.&lt;/p&gt;
+&lt;p&gt;Installiamo adesso Samba per condividere i nostri file nella rete locale.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt install samba 
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Controlliamo di averlo installato correttamente.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;samba --version
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Creiamo adesso una cartella condivisa:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mkdir r61i-share
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo nano /etc/samba/smb.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Andiamo in fondo al file e aggiungiamo queste righe:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;[r61i-share]
+    comment = R61i Samba Share
+    path = /home/username/r61i-share
+    read only = no
+    browsable = yes
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Dopodichè Ctrl+X, &amp;ldquo;Y&amp;rdquo; e Enter e riavviamo Samba:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo service smbd restart
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Configuriamo il firewall:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo ufw allow samba
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Creiamo una password per Samba:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo smbpasswd -a username
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Accederemo alla nostra cartella da un altro computer usando il seguente percorso:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;\\indirizzoipdelserver\r61i-share
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Digitando username e la password per Samba che abbiamo creato poco fa.&lt;/p&gt;
+&lt;h2 id=&#34;plex&#34;&gt;Plex&lt;/h2&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;cd ~
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mkdir Plex
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;cd Plex/
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mkdir Movies Shows
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&#34;https://linuxize.com/post/how-to-install-plex-media-server-on-ubuntu-20-04/&#34;&gt;https://linuxize.com/post/how-to-install-plex-media-server-on-ubuntu-20-04/&lt;/a&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt install plexmediaserver
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo systemctl status plexmediaserver
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Adesso da qualsiasi computer nella nostra rete locale digitiamo nel browser:&lt;/p&gt;
+&lt;p&gt;http://indirizzoipdelserver:32400/manage&lt;/p&gt;
+&lt;h2 id=&#34;docker&#34;&gt;Docker&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.docker.com/engine/install/ubuntu/&#34;&gt;https://docs.docker.com/engine/install/ubuntu/&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Per assicurarci che docker sia installato correttamente:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo docker run hello-world
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&#34;https://docs.linuxserver.io/general/docker-compose&#34;&gt;https://docs.linuxserver.io/general/docker-compose&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;installiamo-syncthing-in-docker&#34;&gt;Installiamo syncthing in docker&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://hub.docker.com/r/linuxserver/syncthing&#34;&gt;https://hub.docker.com/r/linuxserver/syncthing&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+</description>
+	</item>
+	
+	<item>
+		<title>Programmi utili</title>
+		<link>https://retrothink.click/useful_programs.it/</link>
+		<pubDate>Tue, 18 Apr 2023 13:24:46 +0200</pubDate>
+		
+		<guid>https://retrothink.click/useful_programs.it/</guid>
+		<description>&lt;h1 id=&#34;arch-linux&#34;&gt;Arch Linux&lt;/h1&gt;
+&lt;h2 id=&#34;yay&#34;&gt;yay&lt;/h2&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;pacman -Syyu --needed git base-devel
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;git clone https://aur.archlinux.org/yay.git
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;cd yay
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;makepkg -si
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&#34;https://aur.chaotic.cx/&#34;&gt;https://aur.chaotic.cx/&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;browser&#34;&gt;Browser&lt;/h2&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo pacman -S brave-bin
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;notes&#34;&gt;Notes&lt;/h2&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo pacman -S obsidian
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;yay logseq-desktop
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;usb&#34;&gt;USB&lt;/h2&gt;
+&lt;h3 id=&#34;ventoy&#34;&gt;Ventoy&lt;/h3&gt;
+&lt;p&gt;A new multiboot USB solution&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;yay ventoy-bin
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;kde&#34;&gt;KDE&lt;/h2&gt;
+&lt;h3 id=&#34;window-title-applet&#34;&gt;Window Title Applet&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;yay kirigami2
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;yay kdeclarative
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;yay kirigami-addons
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;yay plasma5-applets-window-title
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;window-buttons-applet&#34;&gt;Window Buttons Applet&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/psifidotos/applet-window-buttons/blob/master/INSTALLATION.md&#34;&gt;https://github.com/psifidotos/applet-window-buttons/blob/master/INSTALLATION.md&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;disabilitare-lo-screensaver&#34;&gt;Disabilitare lo screensaver&lt;/h2&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;yay caffeine-ng
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;gestire-i-pdf&#34;&gt;Gestire i PDF&lt;/h2&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;yay zotero-bin
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;sincronizzare-cartelle&#34;&gt;Sincronizzare cartelle&lt;/h2&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo pacman -S syncthing
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;tailscale&#34;&gt;Tailscale&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://tailscale.com/download/linux/arch&#34;&gt;https://tailscale.com/download/linux/arch&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+</description>
+	</item>
+	
+	<item>
+		<title>Organizzare i PDF con Zotero</title>
+		<link>https://retrothink.click/organize_pdfs_with_zotero.it/</link>
+		<pubDate>Sun, 16 Apr 2023 12:31:56 +0200</pubDate>
+		
+		<guid>https://retrothink.click/organize_pdfs_with_zotero.it/</guid>
+		<description>&lt;h2 id=&#34;cosè-zotero-e-come-installarlo&#34;&gt;Cos&amp;rsquo;è Zotero e come installarlo&lt;/h2&gt;
+&lt;p&gt;Zotero è utilissimo per organizzare i propri PDF.&lt;/p&gt;
+&lt;h3 id=&#34;debianubuntu&#34;&gt;Debian/Ubuntu&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt install curl -y
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;curl -sL https://raw.githubusercontent.com/retorquere/zotero-deb/master/install.sh | sudo bash
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt update
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt install zotero
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;arch-linux&#34;&gt;Arch Linux&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.lffl.org/2021/01/guida-yay-arch-linux-manjaro.html&#34;&gt;Installa yay&lt;/a&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;yay zotero-bin
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;crea-un-account-gratuito-su-zotero&#34;&gt;Crea un account gratuito su Zotero&lt;/h2&gt;
+&lt;p&gt;Vai a Preferenze, Sincronizzazione e crea un account.&lt;/p&gt;
+&lt;h2 id=&#34;utilizzare-syncthing-per-sincronizzare-i-dati-di-zotero&#34;&gt;Utilizzare Syncthing per sincronizzare i dati di Zotero&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://dilfal.github.io/posts/how_to_use_syncthing/&#34;&gt;Installa Syncthing&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Aggiungi una cartella mettendo come percorso:&lt;/p&gt;
+&lt;p&gt;/home/tuonomeutente/Zotero/storage/&lt;/p&gt;
+&lt;p&gt;e sincronizzala con tutti i tuoi computer su cui hai installato Zotero&lt;/p&gt;
+&lt;p&gt;In Zotero, vai su Preferenze, Sincronizzazione, inserisci nome utente e password di Zotero, spunta Sincronizza automaticamente, &lt;strong&gt;togli&lt;/strong&gt; entrambe le spunte dalle opzioni di sincronizzazione dei file, se ne occuperà Syncthing! Adesso Zotero sincronizzerà il database e Syncthing tutti i file allegati.&lt;/p&gt;
+&lt;h2 id=&#34;utilizzare-webdav-per-sincronizzare-i-dati-di-zotero&#34;&gt;Utilizzare WebDAV per sincronizzare i dati di Zotero&lt;/h2&gt;
+&lt;p&gt;Puoi usare un WebDAV Server per sincronizzare i tuoi dati in Zotero su tutti i tuoi dispositivi. In questo caso utilizzeremo un NAS Synology.&lt;/p&gt;
+&lt;p&gt;Dalla pagina principale del tuo Synology vai su Packet Center e installa &amp;ldquo;WebDAV Server&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;Apri e spunta &amp;ldquo;Enable HTTP&amp;rdquo; e &amp;ldquo;Enable HTTPS&amp;rdquo;, salva e applica.&lt;/p&gt;
+&lt;p&gt;Apri File Station e nella cartella home (/homes/tuonomeutente) crea una cartella chiamata &amp;ldquo;zotero&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;Apri l&amp;rsquo;applicazione di Zotero (su Android utilizzo con successo Zoo for Zotero) ed entra nelle Preference, vai su Sincronizzazione e spunta solamente &amp;ldquo;Sincronizza gli allegati nella biblioteca personale con&amp;rdquo; scegliendo &amp;ldquo;WebDAV&amp;rdquo;, ad url metti&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;http
+tuoindirizzoNAS:5005/homes/tuonomeutente&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Inserisci il Nome utente e Password che usi per il tuo NAS Synology&lt;/p&gt;
+&lt;hr&gt;
+</description>
+	</item>
+	
+	<item>
+		<title>Installare Artix Linux (con runit, criptando la cartella root)</title>
+		<link>https://retrothink.click/install_artix.it/</link>
+		<pubDate>Sat, 08 Apr 2023 10:55:57 +0200</pubDate>
+		
+		<guid>https://retrothink.click/install_artix.it/</guid>
+		<description>&lt;h2 id=&#34;introduzione&#34;&gt;Introduzione&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://artixlinux.org/&#34;&gt;Artix Linux&lt;/a&gt; è una distribuzione rolling-release basata su Arch Linux che invece di systemd utilizza come &lt;a href=&#34;https://it.wikipedia.org/wiki/Init&#34;&gt;init&lt;/a&gt; OpenRC, runit, s6 o Dinit. In questa guida vedremo come installarla criptando la cartella root per maggiore sicurezza del sistema, utilizzeremo la versione con runit.&lt;/p&gt;
+&lt;h2 id=&#34;1-scaricare-limmagine-iso-e-scriverla-su-una-chiavetta-usb&#34;&gt;1. Scaricare l&amp;rsquo;immagine .iso e scriverla su una chiavetta USB&lt;/h2&gt;
+&lt;p&gt;Inserisci la USB drive nel terminale e digita&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsblk
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Riconoscerai la tua USB drive, nel mio caso è &amp;lsquo;sdb&amp;rsquo;, dobbiamo scrivere il file .iso su questa chiavetta.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://retrothink.click/Screenshot_20230408_111733.png&#34; alt=&#34;Screenshot_20230408_111733&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Vai sulla &lt;a href=&#34;https://artixlinux.org/download.php&#34;&gt;pagina download del sito artixlinux.org&lt;/a&gt;, scarica l&amp;rsquo;iso artix-base-runit-&lt;em&gt;data release&lt;/em&gt;-x86_64.iso:
+&lt;img src=&#34;https://retrothink.click/Screenshot_20230408_112709.png&#34; alt=&#34;Screenshot_20230408_112709&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Entra in modalità amministratore&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;su
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Apri il terminale nella cartella dove hai scaricato l&amp;rsquo;.iso, altrimenti trascina l&amp;rsquo;.iso nel terminale dopo aver digitato &amp;lsquo;dd if=&amp;rsquo; e incollerà direttamente nel terminale tutto il percorso.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;dd if=file.iso of=/dev/sdX status=progress bs=2M
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Nel mio caso dopo aver aperto il terminale nella cartella Downloads scriverò:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;dd if=artix-base-runit-20230401-x86_64.iso of=/dev/sdb status=progress bs=2M
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Attendi qualche minuto finchè non comparirà un messaggio come questo&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://retrothink.click/Screenshot_20230408_114828.png&#34; alt=&#34;Screenshot_20230408_114828.png&#34;&gt;&lt;/p&gt;
+&lt;h2 id=&#34;2-installazione&#34;&gt;2. Installazione&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Inserisci la chiavetta USB nel computer dove desideri installare Artix&lt;/li&gt;
+&lt;li&gt;Avvia da chiavetta USB (dipende dal bios, nel mio Thinkpad premo F12 al boot)&lt;/li&gt;
+&lt;li&gt;Scorri fino a keytable e premi invio, scegli it&lt;/li&gt;
+&lt;li&gt;Scorri fino a &amp;lsquo;From Stick/HDD: artix.x86_64&amp;rsquo; e premi invio&lt;/li&gt;
+&lt;li&gt;Entra con le credenziali del live environment&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;artixlinux login: artix
+Password: artix
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;6&#34;&gt;
+&lt;li&gt;Premi Ctrl+L&lt;/li&gt;
+&lt;li&gt;Adesso dobbiamo connetterci al Wi-Fi, digita questi comandi:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;su
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;rfkill unblock wifi
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ip link set wlan0 up
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;connmanctl
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Adesso digita solo ciò che è scritto a destra di &amp;lsquo;connmanctl&amp;gt;&amp;rsquo;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;connmanctl&amp;gt; scan wifi
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;connmanctl&amp;gt; services
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Troverai la lista di network Wi-Fi nelle vicinanze, adesso digita&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;connmanctl&amp;gt; agent on
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Vedrai scritto&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Agent Registered
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Scegli il tuo network Wi-Fi, ci interessa il nome a destra (&amp;lsquo;wifi_1234&amp;hellip;&amp;rsquo;), digita&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;connmanctl&amp;gt; connect wifi
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;E premi il tasto Tab sulla tastiera (⇆) per non doverlo scrivere tutto a mano, ti comparirà la prima parte del codice, scrivi i primi numeri del tuo network e ripremi Tab per l&amp;rsquo;autocompletamento di tutto il nome. Premi invio.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Passphrase?
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Inserisci la password del tuo Wi-Fi, poi usciamo digitando&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;connmanctl&amp;gt; quit
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Testiamo la connessione digitando&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ping google.com
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Interrompiamo con Ctrl-C
+10. Occupiamoci delle partizioni&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsblk
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Adesso eliminiamo le partizioni presenti. Eventualmente sostituire sda col vostro volume.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;fdisk /dev/sda
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Command (m for help): d
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Se ci sono più partizioni il comando &amp;rsquo;d&amp;rsquo; andrà dato finchè non compare questo messaggio &lt;span style=&#34;color:red&#34;&gt;No partition is defined yet!&lt;/span&gt;. Adesso creiamo le nuove partizioni.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Command (m for help): n
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Dobbiamo scegliere il tipo di partizione, basta premere invio per scegliere p (primary)&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Select (default p):
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Premiamo di nuovo invio per default 1.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Partition number (1-4, default 1):
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Ancora invio per default 2048&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;First sector (..., default 2048):
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;A Last sector digitiamo invece +1G per creare una partizione /boot di 1G&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Last sector: +1G
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Rispondiamo Y ad eventuali domande. Adesso dobbiamo creare la partizione /root&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Command (m for help): n
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Dopodichè premete invio ad oltranza (4 volte) perché per la seconda partizione vanno bene le opzioni di default. Rispondere Y ad eventuali domande. Scrivere con il comando write&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Command (m for help): write
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Puliamo con Ctrl+L e formattiamo la partizione boot (nel mio caso /dev/sda1)&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mkfs.fat -F32 /dev/sda1
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Adesso dobbiamo criptare la partizione /root (nel mio caso /dev/sda2). In altre installazioni di distribuzioni Arch ho criptato l&amp;rsquo;hard disk direttamente dall&amp;rsquo;installer Calamares, ma ciò risultava in un&amp;rsquo;estrema lentezza ad ogni avvio nel decriptare l&amp;rsquo;hard disk.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;cryptsetup luksFormat /dev/sda2
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Conferma digitando YES e scegli la password per la decriptazione.&lt;/p&gt;
+&lt;p&gt;Adesso apriamo la partizione criptata con&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;cryptsetup open /dev/sda2 sda2_encrypted
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Inserisci la password che hai scelto prima, per scrivere sulla partizione criptata bisogna infatti fare l&amp;rsquo;accesso attraverso il nome mappato del dispositivo (sda2_encrypted). Adesso possiamo creare un file system per la partizione.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mkfs.btrfs /dev/mapper/sda2_encrypted 
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;E montare la patizione /root&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mount /dev/mapper/sda2_encrypted /mnt
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;E quella /boot&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mkdir /mnt/boot
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mount /dev/sda1 /mnt/boot/
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Controlliamo con lsblk&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsblk
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Questa è la foto del risultato ottenuto nel mio caso
+&lt;img src=&#34;https://retrothink.click/P20230408_16_07.jpg&#34; alt=&#34;P20230408_16_07.jpg&#34;&gt;&lt;/p&gt;
+&lt;ol start=&#34;10&#34;&gt;
+&lt;li&gt;Adesso installiamo i pacchetti necessari (il comando sarà basestrap e non pacstrap come su Arch), digita nel terminale:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;basestrap -i /mnt base base-devel runit elogind-runit linux linux-firmware grub networkmanager networkmanager-runit cryptsetup lvm2 lvm2 runit neovim vim nano&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol start=&#34;11&#34;&gt;
+&lt;li&gt;Finita l&amp;rsquo;installazione entriamo nella sessione di Artix che stiamo installando&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;artix-chroot /mnt bash
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;12&#34;&gt;
+&lt;li&gt;Impostiamo il nostro fuso orario&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ln -sf /usr/share/zoneinfo/Europe/Rome /etc/localtime
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Eseguiamo hwclock per generare /etc/adjtime:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;hwclock --systohc
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;13&#34;&gt;
+&lt;li&gt;Configuriamo la localizzazione e il layout di tastiera&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Apriamo /etc/locale.gen e decommentiamo (togliendo #) it_IT.UTF-8 UTF-8&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nano /etc/locale.gen
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Generiamo le localizzazioni digitando&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;locale-gen
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Adesso impostiamo la relativa variabile LANF in locale.conf che creiamo con&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nano /etc/locale.conf 
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;In questo file vuoto dobbiamo scrivere&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;LANG=it_IT.UTF-8
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Adesso digitiamo&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nano /etc/vconsole.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;E settiamo il layout di tastiera scrivendo nel file vuoto:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;KEYMAP=it
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;13&#34;&gt;
+&lt;li&gt;Creiamo l&amp;rsquo;host name&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;echo &amp;#34;hostname&amp;#34; &amp;gt; /etc/hostname
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Controlliamo&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;cat /etc/hostname
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;13&#34;&gt;
+&lt;li&gt;Modifichiamo il file hosts&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nano /etc/hosts
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;127.0.0.1        localhost
+::1              localhost
+127.0.1.1        miohostname.localdomain  miohostname
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;14&#34;&gt;
+&lt;li&gt;Adesso diciamo ad Artix di far partire networkmanager ad ogni boot&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ln -s /etc/runit/sv/NetworkManager /etc/runit/runsvdir/default/
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Nota importante: l&amp;rsquo;unica volta in cui colleghi un servizio a /etc/runit/runsvdir/default/ è durante la prima installazione come adesso, dal primo avvio in poi li devi collegare solo a /run/runit/service&lt;/p&gt;
+&lt;ol start=&#34;15&#34;&gt;
+&lt;li&gt;Scegli una password per root&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;passwd
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;16&#34;&gt;
+&lt;li&gt;Aggiungiamo un user&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;useradd -G wheel -m nomeutente
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Scegli una password per l&amp;rsquo;utente&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;password nomeutente
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;E adesso per l&amp;rsquo;autologin&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nano /etc/runit/sv/agetty-tty1/conf
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;E aggiungi a GETTY_ARGS=&amp;quot;&amp;ndash;noclear &amp;ndash;autologin nomeutente&amp;quot;&lt;/p&gt;
+&lt;ol start=&#34;17&#34;&gt;
+&lt;li&gt;Modifichiamo mkinitcpio.conf&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nano /etc/mkinitcpio.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Aggiungi &amp;rsquo;encrypt&amp;rsquo; e &amp;rsquo;lvm2&amp;rsquo; separati da uno spazio, tra &amp;lsquo;block&amp;rsquo; e &amp;lsquo;filesystems&amp;rsquo;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;mkinitcpio -p linux
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;exit
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;lsblk -f &amp;gt;&amp;gt; /mnt/etc/default/grub
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;fstabgen -U /mnt &amp;gt;&amp;gt; /mnt/etc/fstab
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;artix-chroot /mnt bash
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;18&#34;&gt;
+&lt;li&gt;Per questo passaggio ci serve una minima conoscenza del programma di scrittura vim, riporterò comunque ogni azione da effettuare, vi consiglio comunque di aprire un terminale e scrivere &lt;em&gt;vimtutor&lt;/em&gt; per un breve tutorial su come usare vim&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;vim /etc/default/grub
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Vai in fondo al file fino all&amp;rsquo;ultima riga e premi d sulle righe che vuoi cancellare, ovvero tutte tranne la riga che comincia per sda2 e per sda2_encrypted, se sbagli qualcosa e vuoi uscire da vim senza salvare digita &amp;lsquo;:q!&amp;rsquo;, adesso che hai queste due righe vai di nuovo in fondo al file all&amp;rsquo;ultima lettera premi esc e poi il tasto v per selezionare le due righe, adesso che le due righe sono selezionate premi d, hai tagliato il testo&lt;/p&gt;
+&lt;p&gt;Vai in cima al file e portati nella riga vuota sotto GRUB_CMDLINE_LINUX&amp;quot;&amp;quot;, premi p (paste), adesso premi i (modalità inserimento testo in vim) e commenta con # le due linee, premi esc, portati sulla prima lettera dell&amp;rsquo;identificativo di sda2, premi v, seleziona tutto l&amp;rsquo;identificativo, premi y (copia)&lt;/p&gt;
+&lt;p&gt;Vai su GRUB_CMDLINE_LINUX_DEFAULT=&amp;ldquo;loglevel=3 quiet&amp;rdquo;, premi i e dopo &amp;lsquo;quiet&amp;rsquo; aggiungi uno spazio e scrivi &amp;lsquo;cryptdevice=UUID=&amp;rsquo;, premi esc e poi p per incollare l&amp;rsquo;identificativo di sda2, adesso continua a scrivere premendo i e aggiungi subito dopo al codice identificativo senza spazi &amp;lsquo;:cryptlvm root=UUID=&amp;rsquo; fai la stessa cosa di prima selezionando il testo stavolta dalla seconda riga che inizia per sda2_encrypted (esc e poi v, seleziona testo e premi y) e copiandolo con p subito dopo UUID=, un esempio:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;GRUB_CMDLINE_LINUX_DEFAULT=&amp;ldquo;loglevel=3 quiet cryptdevice=UUID=testocopiatodallaprimariga:cryptlvm root=UUID=testocopiatodallasecondariga&amp;rdquo;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Premi esc, poi digita :wq per salvare e uscire.&lt;/p&gt;
+&lt;p&gt;Cliccando qui potete vedere come vengono effettuate le operazioni di quest&amp;rsquo;ultimo passaggio &lt;a href=&#34;https://youtu.be/dI3bGeT31Bo?t=2083&#34;&gt;Install Artix or Arch Linux (Encrypted system)
+&lt;/a&gt;&lt;/p&gt;
+&lt;ol start=&#34;19&#34;&gt;
+&lt;li&gt;Installa grub&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;grub-install /dev/sda
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;grub-mkconfig -o /boot/grub/grub.cfg
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;20&#34;&gt;
+&lt;li&gt;Abbiamo finito! Digita Ctrl+D e reboot now, adesso puoi togliere la chiavetta USB&lt;/li&gt;
+&lt;li&gt;Al riavvio digita la password che hai scelto per decriptare il drive&lt;/li&gt;
+&lt;li&gt;Adesso per connetterci ad internet con Networkmanager digitiamo:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nmcli device wifi list
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nmcli device wifi connect *SSIDoppureBSSID* password *tuapassword*
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo nano /etc/X11/xorg.conf.d/00-keyboard.conf
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Section &amp;#34;InputClass&amp;#34;
+        Identifier &amp;#34;system-keyboard&amp;#34;
+        MatchIsKeyboard &amp;#34;on&amp;#34;
+        Option &amp;#34;XkbLayout&amp;#34; &amp;#34;it&amp;#34;
+        Option &amp;#34;XkbModel&amp;#34; &amp;#34;pc105&amp;#34;
+        Option &amp;#34;XkbOptions&amp;#34; &amp;#34;terminate:ctrl_alt_bksp&amp;#34;
+EndSection
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;su
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;usermod -aG wheel dilfal
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;nano /etc/sudoers
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Togli il commento a&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;%wheel  ALL=(ALL)       ALL
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;larbs&#34;&gt;LARBS&lt;/h2&gt;
+&lt;p&gt;curl -LO larbs.xyz/larbs.sh
+sh larbs.sh&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://larbs.xyz/&#34;&gt;https://larbs.xyz/&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;installazione-di-xfce&#34;&gt;Installazione di XFCE&lt;/h2&gt;
+&lt;p&gt;pacman -S xfce4 xfce4-goodies&lt;/p&gt;
+&lt;h2 id=&#34;installazione-di-kde&#34;&gt;Installazione di KDE&lt;/h2&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;pacman -Syuu
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;pacman -S plasma kde-applications
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;pacman -S sddm-runit
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;pacman -S plasma-nm plasma-pa dolphin konsole kdeplasma-addons kde-gtk-config kscreen mpv gwenview kate 
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;ln -s /etc/runit/sv/sddm-runit /run/runit/service
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;a href=&#34;https://www.lffl.org/2021/01/guida-yay-arch-linux-manjaro.html&#34;&gt;Installare yay&lt;/a&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;yay brave bin
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Documentazione e video consultati per questa guida:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;https://wiki.artixlinux.org/Main/Installation&#34;&gt;Artix Wiki - Installation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://wiki.archlinux.org/title/Installation_guide_(Italiano)&#34;&gt;Arch Linux - Guida di installazione&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://youtu.be/dI3bGeT31Bo?t=2083&#34;&gt;Install Artix or Arch Linux (Encrypted system)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=mIpZA6z-Ctk&#34;&gt;Artix Linux Full Install with runit&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+</description>
+	</item>
+	
+	<item>
+		<title>Come sincronizzare le cartelle con Syncthing</title>
+		<link>https://retrothink.click/how_to_use_syncthing.it/</link>
+		<pubDate>Thu, 06 Apr 2023 17:23:56 +0200</pubDate>
+		
+		<guid>https://retrothink.click/how_to_use_syncthing.it/</guid>
+		<description>&lt;h2 id=&#34;1-cosè-syncthing&#34;&gt;1. Cos&amp;rsquo;è Syncthing&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://syncthing.net/&#34;&gt;Syncthing&lt;/a&gt; è un meraviglioso software libero, open-source, peer-to-peer, col quale sincronizzare cartelle.&lt;/p&gt;
+&lt;h2 id=&#34;2-come-installarlo-su-linux&#34;&gt;2. Come installarlo su Linux&lt;/h2&gt;
+&lt;h3 id=&#34;debianubuntulinux-mintpop_osmx-linux&#34;&gt;Debian/Ubuntu/Linux Mint/Pop!_OS/MX Linux&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt update
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt install syncthing
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Altrimenti:&lt;/p&gt;
+&lt;h4 id=&#34;aggiungi-le-release-pgp-keys&#34;&gt;Aggiungi le release PGP keys:&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo curl -o /usr/share/keyrings/syncthing-archive-keyring.gpg https://syncthing.net/release-key.gpg
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Il canale &amp;lsquo;stable&amp;rsquo; è aggiornato con le stable release builds solitamente ogni primo martedì del mese, il canale &amp;lsquo;candidate&amp;rsquo; è aggiornato con le release candidate builds ogni secondo martedì del mese, anticipando il canale &amp;lsquo;stable&amp;rsquo; di circa tre settimane. Scegli tra &amp;lsquo;stable&amp;rsquo; e &amp;lsquo;candidate&amp;rsquo; e copia il relativo codice.&lt;/p&gt;
+&lt;h4 id=&#34;aggiungi-il-canale-stable-alle-tue-apt-sources&#34;&gt;Aggiungi il canale &amp;ldquo;stable&amp;rdquo; alle tue APT sources:&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;echo &amp;#34;deb [signed-by=/usr/share/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing stable&amp;#34; | sudo tee /etc/apt/sources.list.d/syncthing.list
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;aggiungi-il-canale-candidate-alle-tue-apt-sources&#34;&gt;Aggiungi il canale &amp;ldquo;candidate&amp;rdquo; alle tue APT sources:&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;echo &amp;#34;deb [signed-by=/usr/share/keyrings/syncthing-archive-keyring.gpg] https://apt.syncthing.net/ syncthing candidate&amp;#34; | sudo tee /etc/apt/sources.list.d/syncthing.list
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;aggiorna-il-sistema-e-installa-syncthing&#34;&gt;Aggiorna il sistema e installa syncthing:&lt;/h4&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt update
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo apt install syncthing
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;arch-linux&#34;&gt;Arch Linux&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo pacman -Syu syncthing
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;fedora&#34;&gt;Fedora&lt;/h3&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo dnf install syncthing
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;3-far-partire-il-servizio-syncthing-automaticamente-ad-ogni-avvio-del-sistema&#34;&gt;3. Far partire il servizio Syncthing automaticamente ad ogni avvio del sistema&lt;/h2&gt;
+&lt;p&gt;Al posto di &lt;em&gt;tuonomeutente&lt;/em&gt; va messo ciò che ottieni digitando nel terminale&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;whoami
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Procediamo:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo systemctl enable syncthing@tuonomeutente.service
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo systemctl start syncthing@tuonomeutente.service
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;4-come-installarlo-su-android&#34;&gt;4. Come installarlo su Android&lt;/h2&gt;
+&lt;p&gt;L&amp;rsquo;applicazione per Android app è disponibile su &lt;strong&gt;Google Play&lt;/strong&gt; e &lt;strong&gt;F-Droid&lt;/strong&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;5-utilizzo&#34;&gt;5. Utilizzo&lt;/h2&gt;
+&lt;h3 id=&#34;51-controlliamo-che-il-servizio-sia-attivo&#34;&gt;5.1. Controlliamo che il servizio sia attivo&lt;/h3&gt;
+&lt;p&gt;Controlla che il servizio sia attivo&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;sudo systemctl status syncthing@tuonomeutente.service
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Dove troveremo &amp;ldquo;Active: &lt;span style=&#34;color:green&#34;&gt;active (running)&lt;/span&gt;&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;Esci con &amp;lsquo;Ctrl + C&amp;rsquo;&lt;/p&gt;
+&lt;h3 id=&#34;51-configurazione&#34;&gt;5.1. Configurazione&lt;/h3&gt;
+&lt;p&gt;Copia e incolla questo indirizzo nel tuo browser&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;http://localhost:8384/
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Ti verrà chiesto se desideri acconsentire o no ad un report aninimo di utilizzo a fini statistici, rispondi e continua.&lt;/p&gt;
+&lt;p&gt;Syncthing ti avviserà che non sono stati impostati nome utente e password per accedere alla GUI, l&amp;rsquo;interfaccia grafica del software.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Clicca su &amp;lsquo;Impostazioni&amp;rsquo; (se non vedi più l&amp;rsquo;avviso, clicca su &amp;lsquo;Azioni&amp;rsquo; e poi su &amp;lsquo;Impostazioni&amp;rsquo;)&lt;/li&gt;
+&lt;li&gt;Scegli la voce &amp;lsquo;Interfaccia Grafica Utente&amp;rsquo;&lt;/li&gt;
+&lt;li&gt;Inventa un nome utente ed una password e inseriscili nei campi &amp;lsquo;Utente dell&amp;rsquo;Interfaccia grafica&amp;rsquo; e &amp;lsquo;Password dell&amp;rsquo;interfaccia grafica&amp;rsquo;&lt;/li&gt;
+&lt;li&gt;Salva&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Ripeti gli stessi passaggi in tutti i dispositivi.&lt;/p&gt;
+&lt;h3 id=&#34;52-connessione-dei-dispositivi&#34;&gt;5.2 Connessione dei dispositivi&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Clicca su &amp;lsquo;Azioni&amp;rsquo; e poi su &amp;lsquo;Mostra ID&amp;rsquo;, ti compariranno un codice identificativo e un QR Code&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Se vuoi associare un dispositivo Android, apri l&amp;rsquo;applicazione, scegli la voce &amp;lsquo;Devices&amp;rsquo;, vai su &amp;lsquo;+&amp;rsquo; e poi sul simbolino del QR code.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Copia il codice&lt;/li&gt;
+&lt;li&gt;Sul secondo dispositivo, vai su http://localhost:8384/ e clicca su &amp;lsquo;Aggiungi Dispositivo Remoto&amp;rsquo;&lt;/li&gt;
+&lt;li&gt;Incolla l&amp;rsquo;ID disposivo del primo dispositivo e salva.&lt;/li&gt;
+&lt;li&gt;Se torni al primo dispositivo, troverai adesso un messaggio che ti segnala che il secondo dispositivo vuole connettersi, conferma cliccando su &amp;lsquo;Aggiungi Dispositivo&amp;rsquo;, si aprirà un&amp;rsquo;altra finestra dove potrai scegliere il nome che preferisci per il secondo dispositivo, scegline uno e salva.&lt;/li&gt;
+&lt;li&gt;Entrambi i dispositivi appariranno connessi l&amp;rsquo;uno all&amp;rsquo;altro.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;53-sincronizzazione-cartelle&#34;&gt;5.3 Sincronizzazione cartelle&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;Tra le cartelle ne troverai già una di default, eliminila premendo su Modifica e poi Rimuovi.&lt;/li&gt;
+&lt;li&gt;Premi su &amp;lsquo;Aggiungi Cartella&amp;rsquo;&lt;/li&gt;
+&lt;li&gt;Scegli un Etichetta descrittiva per la cartella (il nome con cui la cartella apparirà nell&amp;rsquo;interfaccia)&lt;/li&gt;
+&lt;li&gt;In &amp;lsquo;Percorso Cartella&amp;rsquo; inserisci il percorso della cartella che vuoi condividere nel tuo computer (Es. /home/dilfal/Documenti/)&lt;/li&gt;
+&lt;li&gt;Alla voce &amp;lsquo;Condivisione&amp;rsquo; spunta i dispositivi con cui vuoi condividere la cartella&lt;/li&gt;
+&lt;li&gt;Alla voce &amp;lsquo;Controllo Versione File&amp;rsquo; metti &amp;ldquo;Controllo Versione Semplice&amp;rdquo; oppure &amp;ldquo;Controllo Versione cadenzato&amp;rdquo;, non è obbligatorio ma è altamente raccomandato per poter ripristinare versioni precedenti dei file in caso vengano accidentalmente eliminati. Salva.&lt;/li&gt;
+&lt;li&gt;Vai sull&amp;rsquo;altro dispositivo, in alto troverai una notifica di questa condivisione, conferma.&lt;/li&gt;
+&lt;li&gt;Scegli l&amp;rsquo;Etichetta descrittiva per la cartella (in genere la stessa etichetta scelta in precedenza), scegli un &amp;lsquo;Percorso Cartella&amp;rsquo; a tuo piacimento (questa cartella si sincronizzerà con quella del primo dispositivo), alla voce &amp;lsquo;Condivisione&amp;rsquo; spunta i dispositivi con cui vuoi condividere la cartella, alla voce &amp;lsquo;Controllo Versione File&amp;rsquo; metti &amp;ldquo;Controllo Versione Semplice&amp;rdquo; oppure &amp;ldquo;Controllo Versione cadenzato&amp;rdquo;. Salva.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;finito&#34;&gt;Finito!&lt;/h2&gt;
+&lt;p&gt;Fai un test: aggiungi un file in una delle due cartelle e lo vedrai comparire nella cartella dell&amp;rsquo;altro dispositivo.&lt;/p&gt;
+&lt;p&gt;Sito ufficiale: &lt;a href=&#34;https://syncthing.net/&#34;&gt;https://syncthing.net/&lt;/a&gt;&lt;/p&gt;
+</description>
+	</item>
+	
+	<item>
+		<title>Installare Syncthing su un NAS Synology</title>
+		<link>https://retrothink.click/install_syncthing_synology_nas.it/</link>
+		<pubDate>Wed, 05 Apr 2023 16:40:22 +0200</pubDate>
+		
+		<guid>https://retrothink.click/install_syncthing_synology_nas.it/</guid>
+		<description>&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Apri Package Center&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Installa Docker&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Apri File Station&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Apri la cartella &amp;lsquo;docker&amp;rsquo; sulla sinistra e crea al suo interno 3 nuove cartelle chiamate syncthing, data1, data2&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Apri Control Panel, apri Task Scheduler, clicca su Create -&amp;gt; Scheduled Task -&amp;gt; User-defined script&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;General:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Task: Installazione Syncthing&lt;/li&gt;
+&lt;li&gt;User: root&lt;/li&gt;
+&lt;li&gt;Togli la spunta da &amp;lsquo;Enabled&amp;rsquo;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Schedule:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Spunta &amp;lsquo;Run on the following date&amp;rsquo;, lascia la data di oggi, &amp;lsquo;Do not repeat&amp;rsquo;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Task settings:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Spunta &amp;lsquo;Send run details by email&amp;rsquo; e inserisci la tua mail&lt;/li&gt;
+&lt;li&gt;In &amp;lsquo;Run command&amp;rsquo; inserisci questo testo, modificandolo secondo i tuoi valori di PUID, PGID, Time Zone (TZ) e volumi:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;docker run -d --name=syncthing \
+-p 8384:8384 \
+-p 22000:22000/tcp \
+-p 22000:22000/udp \
+-p 21027:21027/udp \
+-e PUID=1026 \
+-e PGID=100 \
+-e TZ=Europe/Rome \
+-v /volume1/docker/syncthing:/config \
+-v /volume1/docker/data1:/data1 \
+-v /volume1/docker/data2:/data2 \
+--restart always \
+ghcr.io/linuxserver/syncthing
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Clicca OK sull&amp;rsquo;avviso che appare&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Clicca col tasto destro su &amp;lsquo;Installazione Syncthing&amp;rsquo; che hai creato e clicca su &amp;lsquo;Run&amp;rsquo;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Aspetta un po&amp;rsquo; poi vai su http://&lt;tuo ip&gt;:8384&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Ti apparirà un avviso, vai su Impostazioni&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Generale: inserisci il nome del tuo NAS nella voce Nome Dispositivo&lt;/li&gt;
+&lt;li&gt;Interfaccia Grafica Utente: scegli un username e una password&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Segui &lt;a href=&#34;https://retrothink.click/how_to_use_syncthing.it/&#34;&gt;la guida su come si usa Syncthing&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;hr&gt;
+</description>
+	</item>
+	
+	<item>
+		<title>GrapheneOS: riprendere il controllo del proprio telefono</title>
+		<link>https://retrothink.click/grapheneos.it/</link>
+		<pubDate>Wed, 05 Apr 2023 14:05:09 +0200</pubDate>
+		
+		<guid>https://retrothink.click/grapheneos.it/</guid>
+		<description>&lt;h2 id=&#34;cosè-grapheneos&#34;&gt;Cos&amp;rsquo;è GrapheneOS&lt;/h2&gt;
+&lt;p&gt;GrapheneOS è un sistema operativo open source basato su Android Open Source Project (AOSP), incentrato sulla sicurezza e sulla privacy. Il progetto è stato fondato da Daniel Micay nel 2014.&lt;/p&gt;
+&lt;h2 id=&#34;telefoni-ufficialmente-supportati&#34;&gt;Telefoni ufficialmente supportati&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Pixel 7 Pro (cheetah)&lt;/li&gt;
+&lt;li&gt;Pixel 7 (panther)&lt;/li&gt;
+&lt;li&gt;Pixel 6a (bluejay)&lt;/li&gt;
+&lt;li&gt;Pixel 6 Pro (raven)&lt;/li&gt;
+&lt;li&gt;Pixel 6 (oriole)&lt;/li&gt;
+&lt;li&gt;Pixel 5a (barbet)&lt;/li&gt;
+&lt;li&gt;Pixel 5 (redfin)&lt;/li&gt;
+&lt;li&gt;Pixel 4a (5G) (bramble)&lt;/li&gt;
+&lt;li&gt;Pixel 4a (sunfish)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;installazione-tramite-web-installer&#34;&gt;Installazione tramite Web installer&lt;/h2&gt;
+&lt;p&gt;Il sistema operativo si installa facilmente sul telefono tramite il &lt;a href=&#34;https://grapheneos.org/install/web&#34;&gt;&lt;strong&gt;Web Installer&lt;/strong&gt;&lt;/a&gt;, basta collegare al pc il vostro telefono Pixel con un cavo di buona qualità (il primo cavo dati che ho usato non funzionava) e seguire le istruzioni.&lt;/p&gt;
+&lt;p&gt;Questi video del canale &lt;a href=&#34;https://www.youtube.com/@sideofburritos&#34;&gt;&lt;strong&gt;Side Of Burritos&lt;/strong&gt;&lt;/a&gt; (che vi consiglio di seguire) spiegano tutto il processo di installazione passo dopo passo per il Pixel 6a e per il Pixel 7 Pro:&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=qruzL9IdUr8&#34;&gt;How to install GrapheneOS on Google Pixel 6a (GP6a) + Setup for new users&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.youtube.com/watch?v=ZAZlmYKrwfk&#34;&gt;How to install GrapheneOS on Google Pixel 7 (Pixel 7 Pro) + Setup for new users&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;sito-ufficiale&#34;&gt;Sito ufficiale&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&#34;https://grapheneos.org/&#34;&gt;https://grapheneos.org/&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+</description>
+	</item>
+	
+	</channel>
 </rss>

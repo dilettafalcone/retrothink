@@ -1,16 +1,52 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  
-  <sitemap>
-    <loc>https://retrothink.click/en/sitemap.xml</loc>
-    
-  </sitemap>
-  
-  <sitemap>
-    <loc>https://retrothink.click/it/sitemap.xml</loc>
-    
-      <lastmod>2023-04-24T14:46:36+02:00</lastmod>
-    
-  </sitemap>
-  
-</sitemapindex>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://retrothink.click/home_server.it/</loc>
+    <lastmod>2023-04-24T14:46:36+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/</loc>
+    <lastmod>2023-04-24T14:46:36+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/tags/server/</loc>
+    <lastmod>2023-04-24T14:46:36+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/tags/</loc>
+    <lastmod>2023-04-24T14:46:36+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/useful_programs.it/</loc>
+    <lastmod>2023-04-18T13:24:46+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/tags/software/</loc>
+    <lastmod>2023-04-18T13:24:46+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/organize_pdfs_with_zotero.it/</loc>
+    <lastmod>2023-04-16T12:31:56+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/tags/pdf/</loc>
+    <lastmod>2023-04-16T12:31:56+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/tags/arch/</loc>
+    <lastmod>2023-04-08T10:55:57+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/install_artix.it/</loc>
+    <lastmod>2023-04-08T10:55:57+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/how_to_use_syncthing.it/</loc>
+    <lastmod>2023-04-06T17:23:56+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/tags/sync/</loc>
+    <lastmod>2023-04-06T17:23:56+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/install_syncthing_synology_nas.it/</loc>
+    <lastmod>2023-04-05T16:40:22+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/grapheneos.it/</loc>
+    <lastmod>2023-04-05T14:05:09+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/tags/mobile/</loc>
+    <lastmod>2023-04-05T14:05:09+02:00</lastmod>
+  </url><url>
+    <loc>https://retrothink.click/categories/</loc>
+  </url>
+</urlset>

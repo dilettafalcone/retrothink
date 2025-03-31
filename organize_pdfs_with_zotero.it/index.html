@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Organizzare I PDF Con Zotero | Retro Think</title>
+	<link rel="canonical" href="https://retrothink.click/">
+	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="icon" href="/favicon.ico">
+	<meta name="description" content="Cos&rsquo;è Zotero e come installarlo Zotero è utilissimo per organizzare i propri PDF.
+Debian/Ubuntu sudo apt install curl -y curl -sL https://raw.githubusercontent.com/retorquere/zotero-deb/master/install.sh | sudo bash sudo apt update sudo apt install zotero Arch Linux Installa yay
+yay zotero-bin Crea un account gratuito su Zotero Vai a Preferenze, Sincronizzazione e crea un account.
+Utilizzare Syncthing per sincronizzare i dati di Zotero Installa Syncthing
+Aggiungi una cartella mettendo come percorso:
+/home/tuonomeutente/Zotero/storage/
+e sincronizzala con tutti i tuoi computer su cui hai installato Zotero">
+	<meta name="keywords" content="pdf">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+</head>
+<body>
+<main>
+<header><h1 id="tag_Organizzare i PDF con Zotero">
+Organizzare i PDF con Zotero
+</h1></header>
+<article>
+
+<h2 id="cosè-zotero-e-come-installarlo">Cos&rsquo;è Zotero e come installarlo</h2>
+<p>Zotero è utilissimo per organizzare i propri PDF.</p>
+<h3 id="debianubuntu">Debian/Ubuntu</h3>
+<pre tabindex="0"><code>sudo apt install curl -y
+</code></pre><pre tabindex="0"><code>curl -sL https://raw.githubusercontent.com/retorquere/zotero-deb/master/install.sh | sudo bash
+</code></pre><pre tabindex="0"><code>sudo apt update
+</code></pre><pre tabindex="0"><code>sudo apt install zotero
+</code></pre><h3 id="arch-linux">Arch Linux</h3>
+<p><a href="https://www.lffl.org/2021/01/guida-yay-arch-linux-manjaro.html">Installa yay</a></p>
+<pre tabindex="0"><code>yay zotero-bin
+</code></pre><h2 id="crea-un-account-gratuito-su-zotero">Crea un account gratuito su Zotero</h2>
+<p>Vai a Preferenze, Sincronizzazione e crea un account.</p>
+<h2 id="utilizzare-syncthing-per-sincronizzare-i-dati-di-zotero">Utilizzare Syncthing per sincronizzare i dati di Zotero</h2>
+<p><a href="https://dilfal.github.io/posts/how_to_use_syncthing/">Installa Syncthing</a></p>
+<p>Aggiungi una cartella mettendo come percorso:</p>
+<p>/home/tuonomeutente/Zotero/storage/</p>
+<p>e sincronizzala con tutti i tuoi computer su cui hai installato Zotero</p>
+<p>In Zotero, vai su Preferenze, Sincronizzazione, inserisci nome utente e password di Zotero, spunta Sincronizza automaticamente, <strong>togli</strong> entrambe le spunte dalle opzioni di sincronizzazione dei file, se ne occuperà Syncthing! Adesso Zotero sincronizzerà il database e Syncthing tutti i file allegati.</p>
+<h2 id="utilizzare-webdav-per-sincronizzare-i-dati-di-zotero">Utilizzare WebDAV per sincronizzare i dati di Zotero</h2>
+<p>Puoi usare un WebDAV Server per sincronizzare i tuoi dati in Zotero su tutti i tuoi dispositivi. In questo caso utilizzeremo un NAS Synology.</p>
+<p>Dalla pagina principale del tuo Synology vai su Packet Center e installa &ldquo;WebDAV Server&rdquo;</p>
+<p>Apri e spunta &ldquo;Enable HTTP&rdquo; e &ldquo;Enable HTTPS&rdquo;, salva e applica.</p>
+<p>Apri File Station e nella cartella home (/homes/tuonomeutente) crea una cartella chiamata &ldquo;zotero&rdquo;</p>
+<p>Apri l&rsquo;applicazione di Zotero (su Android utilizzo con successo Zoo for Zotero) ed entra nelle Preference, vai su Sincronizzazione e spunta solamente &ldquo;Sincronizza gli allegati nella biblioteca personale con&rdquo; scegliendo &ldquo;WebDAV&rdquo;, ad url metti</p>
+<blockquote>
+<p>http
+tuoindirizzoNAS:5005/homes/tuonomeutente</p>
+</blockquote>
+<p>Inserisci il Nome utente e Password che usi per il tuo NAS Synology</p>
+<hr>
+
+
+
+<div id="nextprev">
+<a href="/install_artix.it/"><div id="prevart">Previous:<br>Installare Artix Linux (con runit, criptando la cartella root)</div></a>
+<a href="/useful_programs.it/"><div id="nextart">Next:<br>Programmi utili</div></a>
+</div>
+<div style="clear:both" class=taglist>Related<br><a id="tag_pdf" href="https://retrothink.click/tags/pdf">Pdf</a></div>
+</article>
+</main>
+
+<footer style="text-align: center; padding: 1em 0; background-color: #4141412f; border-top: 1px solid #D08770;">
+	<div style="margin-bottom: 0.5em;">
+		<a href="https://retrothink.click/" style="text-decoration: none; color: #D08770; font-weight: bold;">
+			https://retrothink.click/
+		</a>
+	</div>
+	<div style="display: flex; justify-content: center; gap: 15px; align-items: center;">
+		<a href="/index.xml" title="Subscribe via RSS for updates.">
+			<img src="/rss.svg" alt="RSS Feed" style="height: 24px;">
+		</a>
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
+			<img src="/youtube.png" alt="YouTube Channel" style="height: 24px;">
+		</a>
+	</div>
+	
+</footer>
+
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+  feather.replace()
+</script>
+</body>
+</html>

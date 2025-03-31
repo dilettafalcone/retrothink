@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head><title>Test ricerca</title></head>
+<body>
+
+<div class="search">
+  <input id="search" placeholder="Search...">
+</div>
+
+<ul id="artlist">
+  <li data-tags="pasta italian">Pasta alla carbonara</li>
+  <li data-tags="dessert french">Crème brûlée</li>
+  <li data-tags="cake chocolate">Torta al cioccolato</li>
+</ul>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const posts = document.querySelectorAll("#artlist li");
+  const search = document.getElementById("search");
+
+  search.addEventListener("input", () => {
+    const searchText = search.value.toLowerCase();
+    posts.forEach(post => {
+      const match = post.textContent.toLowerCase().includes(searchText);
+      post.hidden = !match;
+    });
+  });
+});
+</script>
+
+</body>
+</html>

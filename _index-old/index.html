@@ -1,19 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta name="generator" content="Hugo 0.133.0">
-	<title>Retro Think</title>
-	<link rel="canonical" href="https://retrothink.click/">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+	<title>Retro Think | Retro Think</title>
+	<link rel="canonical" href="http://localhost:1313/">
 	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
 	<link rel='stylesheet' type='text/css' href='/style.css'>
 	<link rel="icon" href="/favicon.ico">
-	<meta name="description" content="The no-bloated blog.">
+	<meta name="description" content="The fast-loading blog.">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="robots" content="index, follow">
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-  crossorigin="anonymous" referrerpolicy="no-referrer" />
-  
 </head>
 <body>
 <main>
@@ -22,9 +18,9 @@ Retro Think
 </h1></header>
 <article>
 
-<h2 id="what-are-you-looking-for">What are you looking for?</h2>
+<h2 id="search">Search</h2>
 <div class="search js-only">
-  <input type="text" id="search" placeholder="Search all posts...">
+  <input type="text" id="search" placeholder="Search...">
   <button id="clear-search">
     <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Backspace</title><path d="M135.19 390.14a28.79 28.79 0 0021.68 9.86h246.26A29 29 0 00432 371.13V140.87A29 29 0 00403.13 112H156.87a28.84 28.84 0 00-21.67 9.84v0L46.33 256l88.86 134.11z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"></path><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M336.67 192.33L206.66 322.34M336.67 322.34L206.66 192.33M336.67 192.33L206.66 322.34M336.67 322.34L206.66 192.33"></path></svg>
   </button>
@@ -44,6 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const artlist = document.getElementById("artlist");
 
   search.addEventListener("input", () => {
+    // grab search input value
     const searchText = search.value.toLowerCase().trim().normalize('NFD').replace(/\p{Diacritic}/gu, "");
     const searchTerms = searchText.split(" ");
     const hasFilter = searchText.length > 0;
@@ -51,6 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
     artlist.classList.toggle("list-searched", hasFilter);
     oldheading.classList.toggle("hidden", hasFilter);
 
+    // for each post hide all but matched
     posts.forEach(post => {
       const searchString = `${post.textContent} ${post.dataset.tags}`.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
       const isMatch = searchTerms.every(term => searchString.includes(term));
@@ -75,50 +73,51 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 <h2 id="newest-posts">Newest Posts</h2>
 <ul id="artlist"><li data-tags="[server]" >
-    2023-04-24 | <a href="https://retrothink.click/home_server.it/">Home Server su un Thinkpad R61i</a>
+    2023-04-24 | <a href="http://localhost:1313/home_server.it/">Home Server su un Thinkpad R61i</a>
   </li><li data-tags="[software]" >
-    2023-04-18 | <a href="https://retrothink.click/useful_programs.it/">Programmi utili</a>
+    2023-04-18 | <a href="http://localhost:1313/useful_programs.it/">Programmi utili</a>
   </li><li data-tags="[pdf]" >
-    2023-04-16 | <a href="https://retrothink.click/organize_pdfs_with_zotero.it/">Organizzare i PDF con Zotero</a>
+    2023-04-16 | <a href="http://localhost:1313/organize_pdfs_with_zotero.it/">Organizzare i PDF con Zotero</a>
   </li><li data-tags="[arch]" >
-    2023-04-08 | <a href="https://retrothink.click/install_artix.it/">Installare Artix Linux (con runit, criptando la cartella root)</a>
+    2023-04-08 | <a href="http://localhost:1313/install_artix.it/">Installare Artix Linux (con runit, criptando la cartella root)</a>
   </li><li data-tags="[sync]" >
-    2023-04-06 | <a href="https://retrothink.click/how_to_use_syncthing.it/">Come sincronizzare le cartelle con Syncthing</a>
+    2023-04-06 | <a href="http://localhost:1313/how_to_use_syncthing.it/">Come sincronizzare le cartelle con Syncthing</a>
   </li><li data-tags="[sync]" >
-    2023-04-05 | <a href="https://retrothink.click/install_syncthing_synology_nas.it/">Installare Syncthing su un NAS Synology</a>
+    2023-04-05 | <a href="http://localhost:1313/install_syncthing_synology_nas.it/">Installare Syncthing su un NAS Synology</a>
   </li><li data-tags="[mobile]" >
-    2023-04-05 | <a href="https://retrothink.click/grapheneos.it/">GrapheneOS: riprendere il controllo del proprio telefono</a>
+    2023-04-05 | <a href="http://localhost:1313/grapheneos.it/">GrapheneOS: riprendere il controllo del proprio telefono</a>
+  </li><li data-tags="" >
+    0001-01-01 | <a href="http://localhost:1313/_index-old/">Retro Think</a>
   </li></ul>
 
 
 <h2 id="or-browse-by-category">Or Browse by Category&hellip;</h2>
    <ul id="tagcloud">
-    <li><a href="https://retrothink.click/tags/arch" id="tag_arch">Arch</a></li>
-    <li><a href="https://retrothink.click/tags/mobile" id="tag_mobile">Mobile</a></li>
-    <li><a href="https://retrothink.click/tags/pdf" id="tag_pdf">Pdf</a></li>
-    <li><a href="https://retrothink.click/tags/server" id="tag_server">Server</a></li>
-    <li><a href="https://retrothink.click/tags/software" id="tag_software">Software</a></li>
-    <li><a href="https://retrothink.click/tags/sync" id="tag_sync">Sync</a></li>
+    <li><a href="http://localhost:1313/tags/arch" id="tag_arch">Arch</a></li>
+    <li><a href="http://localhost:1313/tags/mobile" id="tag_mobile">Mobile</a></li>
+    <li><a href="http://localhost:1313/tags/pdf" id="tag_pdf">Pdf</a></li>
+    <li><a href="http://localhost:1313/tags/server" id="tag_server">Server</a></li>
+    <li><a href="http://localhost:1313/tags/software" id="tag_software">Software</a></li>
+    <li><a href="http://localhost:1313/tags/sync" id="tag_sync">Sync</a></li>
     </ul>
 
 <h2 id="about-this-site">About this site</h2>
-<div style="text-align: center;">
-  <p>No-bloated blog about retro computing, ThinkPads, Linux, writing tools, and more.<br>
-  You'll also find transcripts of the videos from my YouTube channel, 
-  <a href="https://www.youtube.com/@Retro_Think"><i data-feather="youtube"></i>
+<p>No-bloated blog about retro computing, ThinkPads, Linux, writing tools, and more.<br>
+You&rsquo;ll also find transcripts of the videos from my YouTube channel, <a href="https://www.youtube.com/@Retro_Think"><i data-feather="youtube"></i>
 Retro Think</a></p>
+
+
+
+<div id="nextprev"><a href="/grapheneos.it/"><div id="nextart">Next:<br>GrapheneOS: riprendere il controllo del proprio telefono</div></a>
 </div>
-
-
-
 
 </article>
 </main>
 
 <footer style="text-align: center; padding: 1em 0; background-color: #4141412f; border-top: 1px solid #D08770;">
 	<div style="margin-bottom: 0.5em;">
-		<a href="https://retrothink.click/" style="text-decoration: none; color: #D08770; font-weight: bold;">
-			https://retrothink.click/
+		<a href="http://localhost:1313/" style="text-decoration: none; color: #D08770; font-weight: bold;">
+			http://localhost:1313/
 		</a>
 	</div>
 	<div style="display: flex; justify-content: center; gap: 15px; align-items: center;">

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Installare Artix Linux (Con Runit, Criptando La Cartella Root) | Retro Think</title>
+	<link rel="canonical" href="https://retrothink.click/">
+	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="icon" href="/favicon.ico">
+	<meta name="description" content="Introduzione Artix Linux è una distribuzione rolling-release basata su Arch Linux che invece di systemd utilizza come init OpenRC, runit, s6 o Dinit. In questa guida vedremo come installarla criptando la cartella root per maggiore sicurezza del sistema, utilizzeremo la versione con runit.
+1. Scaricare l&rsquo;immagine .iso e scriverla su una chiavetta USB Inserisci la USB drive nel terminale e digita
+lsblk Riconoscerai la tua USB drive, nel mio caso è &lsquo;sdb&rsquo;, dobbiamo scrivere il file .">
+	<meta name="keywords" content="arch">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="index, follow">
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+</head>
+<body>
+<main>
+<header><h1 id="tag_Installare Artix Linux (con runit, criptando la cartella root)">
+Installare Artix Linux (con runit, criptando la cartella root)
+</h1></header>
+<article>
+
+<h2 id="introduzione">Introduzione</h2>
+<p><a href="https://artixlinux.org/">Artix Linux</a> è una distribuzione rolling-release basata su Arch Linux che invece di systemd utilizza come <a href="https://it.wikipedia.org/wiki/Init">init</a> OpenRC, runit, s6 o Dinit. In questa guida vedremo come installarla criptando la cartella root per maggiore sicurezza del sistema, utilizzeremo la versione con runit.</p>
+<h2 id="1-scaricare-limmagine-iso-e-scriverla-su-una-chiavetta-usb">1. Scaricare l&rsquo;immagine .iso e scriverla su una chiavetta USB</h2>
+<p>Inserisci la USB drive nel terminale e digita</p>
+<pre tabindex="0"><code>lsblk
+</code></pre><p>Riconoscerai la tua USB drive, nel mio caso è &lsquo;sdb&rsquo;, dobbiamo scrivere il file .iso su questa chiavetta.</p>
+<p><img src="/Screenshot_20230408_111733.png" alt="Screenshot_20230408_111733"></p>
+<p>Vai sulla <a href="https://artixlinux.org/download.php">pagina download del sito artixlinux.org</a>, scarica l&rsquo;iso artix-base-runit-<em>data release</em>-x86_64.iso:
+<img src="/Screenshot_20230408_112709.png" alt="Screenshot_20230408_112709"></p>
+<p>Entra in modalità amministratore</p>
+<pre tabindex="0"><code>su
+</code></pre><p>Apri il terminale nella cartella dove hai scaricato l&rsquo;.iso, altrimenti trascina l&rsquo;.iso nel terminale dopo aver digitato &lsquo;dd if=&rsquo; e incollerà direttamente nel terminale tutto il percorso.</p>
+<pre tabindex="0"><code>dd if=file.iso of=/dev/sdX status=progress bs=2M
+</code></pre><p>Nel mio caso dopo aver aperto il terminale nella cartella Downloads scriverò:</p>
+<pre tabindex="0"><code>dd if=artix-base-runit-20230401-x86_64.iso of=/dev/sdb status=progress bs=2M
+</code></pre><p>Attendi qualche minuto finchè non comparirà un messaggio come questo</p>
+<p><img src="/Screenshot_20230408_114828.png" alt="Screenshot_20230408_114828.png"></p>
+<h2 id="2-installazione">2. Installazione</h2>
+<ol>
+<li>Inserisci la chiavetta USB nel computer dove desideri installare Artix</li>
+<li>Avvia da chiavetta USB (dipende dal bios, nel mio Thinkpad premo F12 al boot)</li>
+<li>Scorri fino a keytable e premi invio, scegli it</li>
+<li>Scorri fino a &lsquo;From Stick/HDD: artix.x86_64&rsquo; e premi invio</li>
+<li>Entra con le credenziali del live environment</li>
+</ol>
+<pre tabindex="0"><code>artixlinux login: artix
+Password: artix
+</code></pre><ol start="6">
+<li>Premi Ctrl+L</li>
+<li>Adesso dobbiamo connetterci al Wi-Fi, digita questi comandi:</li>
+</ol>
+<pre tabindex="0"><code>su
+</code></pre><pre tabindex="0"><code>rfkill unblock wifi
+</code></pre><pre tabindex="0"><code>ip link set wlan0 up
+</code></pre><pre tabindex="0"><code>connmanctl
+</code></pre><p>Adesso digita solo ciò che è scritto a destra di &lsquo;connmanctl&gt;&rsquo;</p>
+<pre tabindex="0"><code>connmanctl&gt; scan wifi
+</code></pre><pre tabindex="0"><code>connmanctl&gt; services
+</code></pre><p>Troverai la lista di network Wi-Fi nelle vicinanze, adesso digita</p>
+<pre tabindex="0"><code>connmanctl&gt; agent on
+</code></pre><p>Vedrai scritto</p>
+<pre tabindex="0"><code>Agent Registered
+</code></pre><p>Scegli il tuo network Wi-Fi, ci interessa il nome a destra (&lsquo;wifi_1234&hellip;&rsquo;), digita</p>
+<pre tabindex="0"><code>connmanctl&gt; connect wifi
+</code></pre><p>E premi il tasto Tab sulla tastiera (⇆) per non doverlo scrivere tutto a mano, ti comparirà la prima parte del codice, scrivi i primi numeri del tuo network e ripremi Tab per l&rsquo;autocompletamento di tutto il nome. Premi invio.</p>
+<pre tabindex="0"><code>Passphrase?
+</code></pre><p>Inserisci la password del tuo Wi-Fi, poi usciamo digitando</p>
+<pre tabindex="0"><code>connmanctl&gt; quit
+</code></pre><p>Testiamo la connessione digitando</p>
+<pre tabindex="0"><code>ping google.com
+</code></pre><p>Interrompiamo con Ctrl-C
+10. Occupiamoci delle partizioni</p>
+<pre tabindex="0"><code>lsblk
+</code></pre><p>Adesso eliminiamo le partizioni presenti. Eventualmente sostituire sda col vostro volume.</p>
+<pre tabindex="0"><code>fdisk /dev/sda
+</code></pre><pre tabindex="0"><code>Command (m for help): d
+</code></pre><p>Se ci sono più partizioni il comando &rsquo;d&rsquo; andrà dato finchè non compare questo messaggio <span style="color:red">No partition is defined yet!</span>. Adesso creiamo le nuove partizioni.</p>
+<pre tabindex="0"><code>Command (m for help): n
+</code></pre><p>Dobbiamo scegliere il tipo di partizione, basta premere invio per scegliere p (primary)</p>
+<pre tabindex="0"><code>Select (default p):
+</code></pre><p>Premiamo di nuovo invio per default 1.</p>
+<pre tabindex="0"><code>Partition number (1-4, default 1):
+</code></pre><p>Ancora invio per default 2048</p>
+<pre tabindex="0"><code>First sector (..., default 2048):
+</code></pre><p>A Last sector digitiamo invece +1G per creare una partizione /boot di 1G</p>
+<pre tabindex="0"><code>Last sector: +1G
+</code></pre><p>Rispondiamo Y ad eventuali domande. Adesso dobbiamo creare la partizione /root</p>
+<pre tabindex="0"><code>Command (m for help): n
+</code></pre><p>Dopodichè premete invio ad oltranza (4 volte) perché per la seconda partizione vanno bene le opzioni di default. Rispondere Y ad eventuali domande. Scrivere con il comando write</p>
+<pre tabindex="0"><code>Command (m for help): write
+</code></pre><p>Puliamo con Ctrl+L e formattiamo la partizione boot (nel mio caso /dev/sda1)</p>
+<pre tabindex="0"><code>mkfs.fat -F32 /dev/sda1
+</code></pre><p>Adesso dobbiamo criptare la partizione /root (nel mio caso /dev/sda2). In altre installazioni di distribuzioni Arch ho criptato l&rsquo;hard disk direttamente dall&rsquo;installer Calamares, ma ciò risultava in un&rsquo;estrema lentezza ad ogni avvio nel decriptare l&rsquo;hard disk.</p>
+<pre tabindex="0"><code>cryptsetup luksFormat /dev/sda2
+</code></pre><p>Conferma digitando YES e scegli la password per la decriptazione.</p>
+<p>Adesso apriamo la partizione criptata con</p>
+<pre tabindex="0"><code>cryptsetup open /dev/sda2 sda2_encrypted
+</code></pre><p>Inserisci la password che hai scelto prima, per scrivere sulla partizione criptata bisogna infatti fare l&rsquo;accesso attraverso il nome mappato del dispositivo (sda2_encrypted). Adesso possiamo creare un file system per la partizione.</p>
+<pre tabindex="0"><code>mkfs.btrfs /dev/mapper/sda2_encrypted 
+</code></pre><p>E montare la patizione /root</p>
+<pre tabindex="0"><code>mount /dev/mapper/sda2_encrypted /mnt
+</code></pre><p>E quella /boot</p>
+<pre tabindex="0"><code>mkdir /mnt/boot
+</code></pre><pre tabindex="0"><code>mount /dev/sda1 /mnt/boot/
+</code></pre><p>Controlliamo con lsblk</p>
+<pre tabindex="0"><code>lsblk
+</code></pre><p>Questa è la foto del risultato ottenuto nel mio caso
+<img src="/P20230408_16_07.jpg" alt="P20230408_16_07.jpg"></p>
+<ol start="10">
+<li>Adesso installiamo i pacchetti necessari (il comando sarà basestrap e non pacstrap come su Arch), digita nel terminale:</li>
+</ol>
+<blockquote>
+<p>basestrap -i /mnt base base-devel runit elogind-runit linux linux-firmware grub networkmanager networkmanager-runit cryptsetup lvm2 lvm2 runit neovim vim nano</p>
+</blockquote>
+<ol start="11">
+<li>Finita l&rsquo;installazione entriamo nella sessione di Artix che stiamo installando</li>
+</ol>
+<pre tabindex="0"><code>artix-chroot /mnt bash
+</code></pre><ol start="12">
+<li>Impostiamo il nostro fuso orario</li>
+</ol>
+<pre tabindex="0"><code>ln -sf /usr/share/zoneinfo/Europe/Rome /etc/localtime
+</code></pre><p>Eseguiamo hwclock per generare /etc/adjtime:</p>
+<pre tabindex="0"><code>hwclock --systohc
+</code></pre><ol start="13">
+<li>Configuriamo la localizzazione e il layout di tastiera</li>
+</ol>
+<p>Apriamo /etc/locale.gen e decommentiamo (togliendo #) it_IT.UTF-8 UTF-8</p>
+<pre tabindex="0"><code>nano /etc/locale.gen
+</code></pre><p>Generiamo le localizzazioni digitando</p>
+<pre tabindex="0"><code>locale-gen
+</code></pre><p>Adesso impostiamo la relativa variabile LANF in locale.conf che creiamo con</p>
+<pre tabindex="0"><code>nano /etc/locale.conf 
+</code></pre><p>In questo file vuoto dobbiamo scrivere</p>
+<pre tabindex="0"><code>LANG=it_IT.UTF-8
+</code></pre><p>Adesso digitiamo</p>
+<pre tabindex="0"><code>nano /etc/vconsole.conf
+</code></pre><p>E settiamo il layout di tastiera scrivendo nel file vuoto:</p>
+<pre tabindex="0"><code>KEYMAP=it
+</code></pre><ol start="13">
+<li>Creiamo l&rsquo;host name</li>
+</ol>
+<pre tabindex="0"><code>echo &#34;hostname&#34; &gt; /etc/hostname
+</code></pre><p>Controlliamo</p>
+<pre tabindex="0"><code>cat /etc/hostname
+</code></pre><ol start="13">
+<li>Modifichiamo il file hosts</li>
+</ol>
+<pre tabindex="0"><code>nano /etc/hosts
+</code></pre><pre tabindex="0"><code>127.0.0.1        localhost
+::1              localhost
+127.0.1.1        miohostname.localdomain  miohostname
+</code></pre><ol start="14">
+<li>Adesso diciamo ad Artix di far partire networkmanager ad ogni boot</li>
+</ol>
+<pre tabindex="0"><code>ln -s /etc/runit/sv/NetworkManager /etc/runit/runsvdir/default/
+</code></pre><p>Nota importante: l&rsquo;unica volta in cui colleghi un servizio a /etc/runit/runsvdir/default/ è durante la prima installazione come adesso, dal primo avvio in poi li devi collegare solo a /run/runit/service</p>
+<ol start="15">
+<li>Scegli una password per root</li>
+</ol>
+<pre tabindex="0"><code>passwd
+</code></pre><ol start="16">
+<li>Aggiungiamo un user</li>
+</ol>
+<pre tabindex="0"><code>useradd -G wheel -m nomeutente
+</code></pre><p>Scegli una password per l&rsquo;utente</p>
+<pre tabindex="0"><code>password nomeutente
+</code></pre><p>E adesso per l&rsquo;autologin</p>
+<pre tabindex="0"><code>nano /etc/runit/sv/agetty-tty1/conf
+</code></pre><p>E aggiungi a GETTY_ARGS=&quot;&ndash;noclear &ndash;autologin nomeutente&quot;</p>
+<ol start="17">
+<li>Modifichiamo mkinitcpio.conf</li>
+</ol>
+<pre tabindex="0"><code>nano /etc/mkinitcpio.conf
+</code></pre><p>Aggiungi &rsquo;encrypt&rsquo; e &rsquo;lvm2&rsquo; separati da uno spazio, tra &lsquo;block&rsquo; e &lsquo;filesystems&rsquo;</p>
+<pre tabindex="0"><code>mkinitcpio -p linux
+</code></pre><pre tabindex="0"><code>exit
+</code></pre><pre tabindex="0"><code>lsblk -f &gt;&gt; /mnt/etc/default/grub
+</code></pre><pre tabindex="0"><code>fstabgen -U /mnt &gt;&gt; /mnt/etc/fstab
+</code></pre><pre tabindex="0"><code>artix-chroot /mnt bash
+</code></pre><ol start="18">
+<li>Per questo passaggio ci serve una minima conoscenza del programma di scrittura vim, riporterò comunque ogni azione da effettuare, vi consiglio comunque di aprire un terminale e scrivere <em>vimtutor</em> per un breve tutorial su come usare vim</li>
+</ol>
+<pre tabindex="0"><code>vim /etc/default/grub
+</code></pre><p>Vai in fondo al file fino all&rsquo;ultima riga e premi d sulle righe che vuoi cancellare, ovvero tutte tranne la riga che comincia per sda2 e per sda2_encrypted, se sbagli qualcosa e vuoi uscire da vim senza salvare digita &lsquo;:q!&rsquo;, adesso che hai queste due righe vai di nuovo in fondo al file all&rsquo;ultima lettera premi esc e poi il tasto v per selezionare le due righe, adesso che le due righe sono selezionate premi d, hai tagliato il testo</p>
+<p>Vai in cima al file e portati nella riga vuota sotto GRUB_CMDLINE_LINUX&quot;&quot;, premi p (paste), adesso premi i (modalità inserimento testo in vim) e commenta con # le due linee, premi esc, portati sulla prima lettera dell&rsquo;identificativo di sda2, premi v, seleziona tutto l&rsquo;identificativo, premi y (copia)</p>
+<p>Vai su GRUB_CMDLINE_LINUX_DEFAULT=&ldquo;loglevel=3 quiet&rdquo;, premi i e dopo &lsquo;quiet&rsquo; aggiungi uno spazio e scrivi &lsquo;cryptdevice=UUID=&rsquo;, premi esc e poi p per incollare l&rsquo;identificativo di sda2, adesso continua a scrivere premendo i e aggiungi subito dopo al codice identificativo senza spazi &lsquo;:cryptlvm root=UUID=&rsquo; fai la stessa cosa di prima selezionando il testo stavolta dalla seconda riga che inizia per sda2_encrypted (esc e poi v, seleziona testo e premi y) e copiandolo con p subito dopo UUID=, un esempio:</p>
+<blockquote>
+<p>GRUB_CMDLINE_LINUX_DEFAULT=&ldquo;loglevel=3 quiet cryptdevice=UUID=testocopiatodallaprimariga:cryptlvm root=UUID=testocopiatodallasecondariga&rdquo;</p>
+</blockquote>
+<p>Premi esc, poi digita :wq per salvare e uscire.</p>
+<p>Cliccando qui potete vedere come vengono effettuate le operazioni di quest&rsquo;ultimo passaggio <a href="https://youtu.be/dI3bGeT31Bo?t=2083">Install Artix or Arch Linux (Encrypted system)
+</a></p>
+<ol start="19">
+<li>Installa grub</li>
+</ol>
+<pre tabindex="0"><code>grub-install /dev/sda
+</code></pre><pre tabindex="0"><code>grub-mkconfig -o /boot/grub/grub.cfg
+</code></pre><ol start="20">
+<li>Abbiamo finito! Digita Ctrl+D e reboot now, adesso puoi togliere la chiavetta USB</li>
+<li>Al riavvio digita la password che hai scelto per decriptare il drive</li>
+<li>Adesso per connetterci ad internet con Networkmanager digitiamo:</li>
+</ol>
+<pre tabindex="0"><code>nmcli device wifi list
+</code></pre><pre tabindex="0"><code>nmcli device wifi connect *SSIDoppureBSSID* password *tuapassword*
+</code></pre><pre tabindex="0"><code>sudo nano /etc/X11/xorg.conf.d/00-keyboard.conf
+</code></pre><pre tabindex="0"><code>Section &#34;InputClass&#34;
+        Identifier &#34;system-keyboard&#34;
+        MatchIsKeyboard &#34;on&#34;
+        Option &#34;XkbLayout&#34; &#34;it&#34;
+        Option &#34;XkbModel&#34; &#34;pc105&#34;
+        Option &#34;XkbOptions&#34; &#34;terminate:ctrl_alt_bksp&#34;
+EndSection
+</code></pre><pre tabindex="0"><code>su
+</code></pre><pre tabindex="0"><code>usermod -aG wheel dilfal
+</code></pre><pre tabindex="0"><code>nano /etc/sudoers
+</code></pre><p>Togli il commento a</p>
+<pre tabindex="0"><code>%wheel  ALL=(ALL)       ALL
+</code></pre><h2 id="larbs">LARBS</h2>
+<p>curl -LO larbs.xyz/larbs.sh
+sh larbs.sh</p>
+<p><a href="https://larbs.xyz/">https://larbs.xyz/</a></p>
+<h2 id="installazione-di-xfce">Installazione di XFCE</h2>
+<p>pacman -S xfce4 xfce4-goodies</p>
+<h2 id="installazione-di-kde">Installazione di KDE</h2>
+<pre tabindex="0"><code>pacman -Syuu
+</code></pre><pre tabindex="0"><code>pacman -S plasma kde-applications
+</code></pre><pre tabindex="0"><code>pacman -S sddm-runit
+</code></pre><pre tabindex="0"><code>pacman -S plasma-nm plasma-pa dolphin konsole kdeplasma-addons kde-gtk-config kscreen mpv gwenview kate 
+</code></pre><pre tabindex="0"><code>ln -s /etc/runit/sv/sddm-runit /run/runit/service
+</code></pre><p><a href="https://www.lffl.org/2021/01/guida-yay-arch-linux-manjaro.html">Installare yay</a></p>
+<pre tabindex="0"><code>yay brave bin
+</code></pre><p>Documentazione e video consultati per questa guida:</p>
+<ol>
+<li><a href="https://wiki.artixlinux.org/Main/Installation">Artix Wiki - Installation</a></li>
+<li><a href="https://wiki.archlinux.org/title/Installation_guide_(Italiano)">Arch Linux - Guida di installazione</a></li>
+<li><a href="https://youtu.be/dI3bGeT31Bo?t=2083">Install Artix or Arch Linux (Encrypted system)</a></li>
+<li><a href="https://www.youtube.com/watch?v=mIpZA6z-Ctk">Artix Linux Full Install with runit</a></li>
+</ol>
+<hr>
+
+
+
+<div id="nextprev">
+<a href="/how_to_use_syncthing.it/"><div id="prevart">Previous:<br>Come sincronizzare le cartelle con Syncthing</div></a>
+<a href="/organize_pdfs_with_zotero.it/"><div id="nextart">Next:<br>Organizzare i PDF con Zotero</div></a>
+</div>
+<div style="clear:both" class=taglist>Related<br><a id="tag_arch" href="https://retrothink.click/tags/arch">Arch</a></div>
+</article>
+</main>
+
+<footer style="text-align: center; padding: 1em 0; background-color: #4141412f; border-top: 1px solid #D08770;">
+	<div style="margin-bottom: 0.5em;">
+		<a href="https://retrothink.click/" style="text-decoration: none; color: #D08770; font-weight: bold;">
+			https://retrothink.click/
+		</a>
+	</div>
+	<div style="display: flex; justify-content: center; gap: 15px; align-items: center;">
+		<a href="/index.xml" title="Subscribe via RSS for updates.">
+			<img src="/rss.svg" alt="RSS Feed" style="height: 24px;">
+		</a>
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
+			<img src="/youtube.png" alt="YouTube Channel" style="height: 24px;">
+		</a>
+	</div>
+	
+</footer>
+
+<script src="https://unpkg.com/feather-icons"></script>
+<script>
+  feather.replace()
+</script>
+</body>
+</html>
