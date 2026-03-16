@@ -118,9 +118,13 @@ function generatePostHtml(meta, htmlContent, allPosts) {
 <a href="/" class="back-link">&#8592; tutti gli articoli</a>
 
 <h1>${title}</h1>
-<p class="article-meta">${date}</p>
+<div class="article-meta">
+  <span>${date}</span>${tags.length ? ' · ' + tagLinks : ''}
+</div>
 
-${htmlContent}${prevNextHtml}${tagListHtml}
+<article>
+${htmlContent}${prevNextHtml}
+</article>
 </article>
 </main>
 

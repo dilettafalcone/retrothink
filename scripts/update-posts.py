@@ -107,16 +107,31 @@ def generate_post_html(meta, html_content, all_posts):
 \t<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
 </head>
 <body>
-<main>
-<header><h1>{title}</h1></header>
-<article>
 
-{html_content}{prev_next_html}{tag_list_html}
+<nav class="site-nav">
+\t<div class="nav-inner">
+\t\t<a href="/" class="nav-brand">Retro Think</a>
+\t\t<a href="/index.xml" class="nav-rss" title="Feed RSS">
+\t\t\t<img src="/rss.svg" alt="RSS">
+\t\t</a>
+\t</div>
+</nav>
+
+<main>
+<a href="/" class="back-link">&#8592; tutti gli articoli</a>
+
+<h1>{title}</h1>
+<div class="article-meta">
+  <span>{meta.get("date", "")}</span>{(" &middot; " + tag_links) if tags else ""}
+</div>
+
+<article>
+{html_content}{prev_next_html}
 </article>
 </main>
 
 <footer>
-\t<a href="{SITE_URL}/" class="footer-brand">{SITE_URL}/</a>
+\t<a href="/" class="footer-brand">retrothink.click</a>
 \t<div class="footer-icons">
 \t\t<a href="/index.xml" title="Iscriviti via RSS">
 \t\t\t<img src="/rss.svg" alt="RSS Feed">

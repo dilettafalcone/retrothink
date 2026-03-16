@@ -287,6 +287,26 @@ button#clear-search:hover { color: var(--text); }
 .about-site a { color: var(--link); }
 
 /* ─── Article pages ──────────────────────────────────────────────── */
+
+/* meta (data + tag) in cima all'articolo */
+.article-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-variant: small-caps;
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1.25rem;
+  margin-bottom: 2rem;
+}
+.article-meta .art-tag {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
 .back-link {
   display: inline-block;
   font-size: 0.8rem;
@@ -372,6 +392,18 @@ pre code {
   color: var(--code);
 }
 
+/* ─── Figure / caption ───────────────────────────────────────────── */
+figure {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+figcaption {
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 0.5rem;
+}
+
 /* ─── Images ─────────────────────────────────────────────────────── */
 img {
   max-width: 100%;
@@ -412,6 +444,28 @@ img[alt="XMR Logo"] {
 
 #nextart { text-align: right; }
 #prevart { text-align: left; }
+
+/* ─── Tag page header ────────────────────────────────────────────── */
+.tag-page-title {
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  font-weight: normal;
+  font-variant: small-caps;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  text-align: center;
+  margin: 2rem 0 0.5rem;
+  border: none;
+}
+
+.art-count {
+  display: block;
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-variant: small-caps;
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+}
 
 /* ─── Taglist (article pages) ────────────────────────────────────── */
 .taglist {
