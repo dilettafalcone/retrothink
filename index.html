@@ -1,18 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
-	<meta name="generator" content="Hugo 0.133.0">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Retro Think</title>
+	<meta name="description" content="Blog minimalista su retro computing, ThinkPad, Linux e strumenti di scrittura.">
+	<meta name="robots" content="index, follow">
 	<link rel="canonical" href="https://retrothink.click/">
 	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
-	<link rel='stylesheet' type='text/css' href='/style.css'>
 	<link rel="icon" href="/favicon.ico">
-	<meta name="description" content="The no-bloated blog.">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="robots" content="index, follow">
-	<meta charset="utf-8">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://retrothink.click/">
+	<meta property="og:title" content="Retro Think">
+	<meta property="og:description" content="Blog minimalista su retro computing, ThinkPad, Linux e strumenti di scrittura.">
+	<link rel='stylesheet' type='text/css' href='/style.css'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
   crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
   
 </head>
 <body>
@@ -25,7 +31,7 @@ Retro Think
 <h2 id="what-are-you-looking-for">What are you looking for?</h2>
 <div class="search js-only">
   <input type="text" id="search" placeholder="Search all posts...">
-  <button id="clear-search">
+  <button id="clear-search" aria-label="Cancella ricerca">
     <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Backspace</title><path d="M135.19 390.14a28.79 28.79 0 0021.68 9.86h246.26A29 29 0 00432 371.13V140.87A29 29 0 00403.13 112H156.87a28.84 28.84 0 00-21.67 9.84v0L46.33 256l88.86 134.11z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"></path><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M336.67 192.33L206.66 322.34M336.67 322.34L206.66 192.33M336.67 192.33L206.66 322.34M336.67 322.34L206.66 192.33"></path></svg>
   </button>
 </div>
@@ -84,10 +90,10 @@ document.addEventListener("DOMContentLoaded", () => {
     2023-04-08 | <a href="https://retrothink.click/install_artix.it/">Installare Artix Linux (con runit, criptando la cartella root)</a>
   </li><li data-tags="[sync]" >
     2023-04-06 | <a href="https://retrothink.click/how_to_use_syncthing.it/">Come sincronizzare le cartelle con Syncthing</a>
-  </li><li data-tags="[sync]" >
-    2023-04-05 | <a href="https://retrothink.click/install_syncthing_synology_nas.it/">Installare Syncthing su un NAS Synology</a>
   </li><li data-tags="[mobile]" >
     2023-04-05 | <a href="https://retrothink.click/grapheneos.it/">GrapheneOS: riprendere il controllo del proprio telefono</a>
+  </li><li data-tags="[sync]" >
+    2023-04-05 | <a href="https://retrothink.click/install_syncthing_synology_nas.it/">Installare Syncthing su un NAS Synology</a>
   </li></ul>
 
 
@@ -102,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
     </ul>
 
 <h2 id="about-this-site">About this site</h2>
-<div style="text-align: center;">
+<div class="about-site">
   <p>No-bloated blog about retro computing, ThinkPads, Linux, writing tools, and more.<br>
   You'll also find transcripts of the videos from my YouTube channel, 
   <a href="https://www.youtube.com/@Retro_Think"><i data-feather="youtube"></i>
@@ -115,26 +121,21 @@ Retro Think</a></p>
 </article>
 </main>
 
-<footer style="text-align: center; padding: 1em 0; background-color: #4141412f; border-top: 1px solid #D08770;">
-	<div style="margin-bottom: 0.5em;">
-		<a href="https://retrothink.click/" style="text-decoration: none; color: #D08770; font-weight: bold;">
-			https://retrothink.click/
-		</a>
-	</div>
-	<div style="display: flex; justify-content: center; gap: 15px; align-items: center;">
-		<a href="/index.xml" title="Subscribe via RSS for updates.">
-			<img src="/rss.svg" alt="RSS Feed" style="height: 24px;">
+<footer>
+	<a href="https://retrothink.click/" class="footer-brand">https://retrothink.click/</a>
+	<div class="footer-icons">
+		<a href="/index.xml" title="Iscriviti via RSS">
+			<img src="/rss.svg" alt="RSS Feed">
 		</a>
 		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
-			<img src="/youtube.png" alt="YouTube Channel" style="height: 24px;">
+			<img src="/youtube.png" alt="YouTube Channel">
 		</a>
 	</div>
-	
 </footer>
 
-<script src="https://unpkg.com/feather-icons"></script>
-<script>
-  feather.replace()
+<script src="https://unpkg.com/feather-icons" defer></script>
+<script defer>
+  document.addEventListener("DOMContentLoaded", () => feather.replace());
 </script>
 </body>
 </html>

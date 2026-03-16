@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
 <head>
 	<title>Installare Syncthing Su Un NAS Synology | Retro Think</title>
-	<link rel="canonical" href="https://retrothink.click/">
+	<link rel="canonical" href="https://retrothink.click/install_syncthing_synology_nas.it/">
 	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
 	<link rel='stylesheet' type='text/css' href='/style.css'>
 	<link rel="icon" href="/favicon.ico">
@@ -20,6 +20,9 @@ Spunta &lsquo;Run on the following date&rsquo;, lascia la data di oggi, &lsquo;D
 	<meta charset="utf-8">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
   crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
   
 </head>
 <body>
@@ -111,26 +114,21 @@ ghcr.io/linuxserver/syncthing
 </article>
 </main>
 
-<footer style="text-align: center; padding: 1em 0; background-color: #4141412f; border-top: 1px solid #D08770;">
-	<div style="margin-bottom: 0.5em;">
-		<a href="https://retrothink.click/" style="text-decoration: none; color: #D08770; font-weight: bold;">
-			https://retrothink.click/
-		</a>
-	</div>
-	<div style="display: flex; justify-content: center; gap: 15px; align-items: center;">
-		<a href="/index.xml" title="Subscribe via RSS for updates.">
-			<img src="/rss.svg" alt="RSS Feed" style="height: 24px;">
+<footer>
+	<a href="https://retrothink.click/" class="footer-brand">https://retrothink.click/</a>
+	<div class="footer-icons">
+		<a href="/index.xml" title="Iscriviti via RSS">
+			<img src="/rss.svg" alt="RSS Feed">
 		</a>
 		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
-			<img src="/youtube.png" alt="YouTube Channel" style="height: 24px;">
+			<img src="/youtube.png" alt="YouTube Channel">
 		</a>
 	</div>
-	
 </footer>
 
-<script src="https://unpkg.com/feather-icons"></script>
+<script src="https://unpkg.com/feather-icons" defer></script>
 <script>
-  feather.replace()
+  document.addEventListener("DOMContentLoaded", () => feather.replace());
 </script>
 </body>
 </html>
