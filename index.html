@@ -53,43 +53,64 @@ document.addEventListener("DOMContentLoaded", () => {
     e.classList.remove("js-only");
   }
 
-  const posts      = document.querySelectorAll("#artlist li");
-  const search     = document.getElementById("search");
-  const heading    = document.getElementById("newest-posts");
-  const clearBtn   = document.getElementById("clear-search");
-  const artlist    = document.getElementById("artlist");
+  const posts    = document.querySelectorAll("#artlist li");
+  const search   = document.getElementById("search");
+  const heading  = document.getElementById("newest-posts");
+  const clearBtn = document.getElementById("clear-search");
+  const artlist  = document.getElementById("artlist");
+  const countEl  = document.getElementById("art-count");
 
-  search.addEventListener("input", () => {
-    const text  = search.value.toLowerCase().trim().normalize('NFD').replace(/\p{Diacritic}/gu, "");
-    const terms = text.split(" ");
-    const has   = text.length > 0;
+  if (countEl) countEl.textContent = `(${posts.length})`;
 
-    artlist.classList.toggle("list-searched", has);
-    heading.classList.toggle("hidden", has);
+  let activeTag = "";
+
+  function applyFilters() {
+    const text  = search.value.toLowerCase().trim().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+    const terms = text.split(" ").filter(t => t.length > 0);
+    const hasSearch = terms.length > 0;
+
+    heading.classList.toggle("hidden", hasSearch);
+    artlist.classList.toggle("list-searched", hasSearch);
 
     posts.forEach(post => {
-      const str   = `${post.textContent} ${post.dataset.tags}`.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
-      const match = terms.every(t => str.includes(t));
+      const str        = `${post.textContent} ${post.dataset.tags}`.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+      const matchSearch = !hasSearch || terms.every(t => str.includes(t));
+      const matchTag    = !activeTag  || post.dataset.tags.includes(activeTag);
+      const match       = matchSearch && matchTag;
       post.hidden = !match;
-      post.classList.toggle("matched-post", has && match);
+      post.classList.toggle("matched-post", hasSearch && match);
     });
-  });
+  }
+
+  search.addEventListener("input", applyFilters);
 
   clearBtn.addEventListener("click", () => {
     search.value = "";
-    posts.forEach(post => { post.hidden = false; post.classList.remove("matched-post"); });
-    artlist.classList.remove("list-searched");
-    heading.classList.remove("hidden");
+    applyFilters();
   });
 
-  // Contatore articoli
-  const countEl = document.getElementById("art-count");
-  if (countEl) countEl.textContent = `(${posts.length})`;
+  document.querySelectorAll(".tag-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tag-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeTag = btn.dataset.tag || "";
+      applyFilters();
+    });
+  });
 });
 // @license-end
 </script>
 
-<h2 class="section-label" id="newest-posts">Articoli recenti <span id="art-count" style="font-weight:normal;opacity:0.5"></span></h2>
+<h2 class="section-label" id="newest-posts">Articoli <span id="art-count" style="font-weight:normal;opacity:0.5"></span></h2>
+<div class="tag-filters js-only">
+  <button class="tag-btn active" data-tag="">Tutti</button>
+  <button class="tag-btn" data-tag="arch" id="tag_arch">Arch</button>
+  <button class="tag-btn" data-tag="mobile" id="tag_mobile">Mobile</button>
+  <button class="tag-btn" data-tag="pdf" id="tag_pdf">Pdf</button>
+  <button class="tag-btn" data-tag="server" id="tag_server">Server</button>
+  <button class="tag-btn" data-tag="software" id="tag_software">Software</button>
+  <button class="tag-btn" data-tag="sync" id="tag_sync">Sync</button>
+</div>
 <ul id="artlist"><li data-tags="[server]">
     <a href="https://retrothink.click/home_server.it/">
       <span class="art-date">2023-04-24</span>
@@ -134,16 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
     </a>
   </li></ul>
 
-<h2 class="section-label">Sfoglia per tag</h2>
-<ul id="tagcloud">
-    <li><a href="https://retrothink.click/tags/arch" id="tag_arch">Arch</a></li>
-    <li><a href="https://retrothink.click/tags/mobile" id="tag_mobile">Mobile</a></li>
-    <li><a href="https://retrothink.click/tags/pdf" id="tag_pdf">Pdf</a></li>
-    <li><a href="https://retrothink.click/tags/server" id="tag_server">Server</a></li>
-    <li><a href="https://retrothink.click/tags/software" id="tag_software">Software</a></li>
-    <li><a href="https://retrothink.click/tags/sync" id="tag_sync">Sync</a></li>
-    </ul>
-
 <h2 class="section-label">Il blog</h2>
 <div class="about-site">
   <p>Blog minimalista su retro computing, ThinkPad, Linux e strumenti di scrittura.<br>
@@ -154,7 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </main>
 
 <footer>
-	<a href="https://retrothink.click/" class="footer-brand">retrothink.click</a>
+	<a href="/" class="footer-brand">retrothink.click</a>
 	<div class="footer-icons">
 		<a href="/index.xml" title="Iscriviti via RSS">
 			<img src="/rss.svg" alt="RSS Feed">

@@ -168,15 +168,15 @@ function rebuildIndexHtml(allPosts) {
     `<ul id="artlist">${artlistItems}</ul>`
   );
 
-  // Tagcloud
+  // Tag filter buttons
   const allTags = [...new Set(allPosts.flatMap(({ meta }) => toArray(meta.tags)))].sort();
-  const tagcloudItems = allTags.map(t =>
-    `    <li><a href="${SITE_URL}/tags/${t}" id="tag_${t}">${capitalize(t)}</a></li>`
+  const tagBtns = allTags.map(t =>
+    `  <button class="tag-btn" data-tag="${t}" id="tag_${t}">${capitalize(t)}</button>`
   ).join('\n');
 
   content = content.replace(
-    /<ul id="tagcloud">[\s\S]*?<\/ul>/,
-    `<ul id="tagcloud">\n${tagcloudItems}\n    </ul>`
+    /<div class="tag-filters js-only">[\s\S]*?<\/div>/,
+    `<div class="tag-filters js-only">\n  <button class="tag-btn active" data-tag="">Tutti</button>\n${tagBtns}\n</div>`
   );
 
   fs.writeFileSync(indexPath, content, 'utf8');
