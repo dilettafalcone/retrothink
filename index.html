@@ -16,89 +16,122 @@
 	<link rel='stylesheet' type='text/css' href='/style.css'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
   crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
-  
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
 </head>
 <body>
-<main>
-<header><h1 id="tag_Retro Think">
-Retro Think
-</h1></header>
-<article>
 
-<h2 id="what-are-you-looking-for">What are you looking for?</h2>
+<nav class="site-nav">
+	<div class="nav-inner">
+		<a href="/" class="nav-brand">Retro Think</a>
+		<a href="/index.xml" class="nav-rss" title="Feed RSS">
+			<img src="/rss.svg" alt="RSS">
+		</a>
+	</div>
+</nav>
+
+<main>
+
+<section class="site-hero">
+	<h1>Retro Think</h1>
+	<p class="site-tagline">retro computing · thinkpad · linux · strumenti di scrittura</p>
+</section>
+
+<h2 class="section-label">Cerca</h2>
 <div class="search js-only">
-  <input type="text" id="search" placeholder="Search all posts...">
+  <input type="text" id="search" placeholder="Cerca tra gli articoli…" aria-label="Cerca articoli">
   <button id="clear-search" aria-label="Cancella ricerca">
-    <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><title>Backspace</title><path d="M135.19 390.14a28.79 28.79 0 0021.68 9.86h246.26A29 29 0 00432 371.13V140.87A29 29 0 00403.13 112H156.87a28.84 28.84 0 00-21.67 9.84v0L46.33 256l88.86 134.11z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"></path><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M336.67 192.33L206.66 322.34M336.67 322.34L206.66 192.33M336.67 192.33L206.66 322.34M336.67 322.34L206.66 192.33"></path></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="16" height="16"><path d="M135.19 390.14a28.79 28.79 0 0021.68 9.86h246.26A29 29 0 00432 371.13V140.87A29 29 0 00403.13 112H156.87a28.84 28.84 0 00-21.67 9.84v0L46.33 256l88.86 134.11z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M336.67 192.33L206.66 322.34M336.67 322.34L206.66 192.33"/></svg>
   </button>
 </div>
+
 <script>
 // @license magnet:?xt=urn:btih:5ac446d35272cc2e4e85e4325b146d0b7ca8f50c&dn=unlicense.txt Unlicense
-
 document.addEventListener("DOMContentLoaded", () => {
-  for (e of document.getElementsByClassName("js-only")) {
+  for (const e of document.getElementsByClassName("js-only")) {
     e.classList.remove("js-only");
   }
 
-  const posts = document.querySelectorAll("#artlist li");
-  const search = document.getElementById("search");
-  const oldheading = document.getElementById("newest-posts");
-  const clearSearch = document.getElementById("clear-search");
-  const artlist = document.getElementById("artlist");
+  const posts      = document.querySelectorAll("#artlist li");
+  const search     = document.getElementById("search");
+  const heading    = document.getElementById("newest-posts");
+  const clearBtn   = document.getElementById("clear-search");
+  const artlist    = document.getElementById("artlist");
 
   search.addEventListener("input", () => {
-    const searchText = search.value.toLowerCase().trim().normalize('NFD').replace(/\p{Diacritic}/gu, "");
-    const searchTerms = searchText.split(" ");
-    const hasFilter = searchText.length > 0;
+    const text  = search.value.toLowerCase().trim().normalize('NFD').replace(/\p{Diacritic}/gu, "");
+    const terms = text.split(" ");
+    const has   = text.length > 0;
 
-    artlist.classList.toggle("list-searched", hasFilter);
-    oldheading.classList.toggle("hidden", hasFilter);
+    artlist.classList.toggle("list-searched", has);
+    heading.classList.toggle("hidden", has);
 
     posts.forEach(post => {
-      const searchString = `${post.textContent} ${post.dataset.tags}`.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
-      const isMatch = searchTerms.every(term => searchString.includes(term));
+      const str   = `${post.textContent} ${post.dataset.tags}`.toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, "");
+      const match = terms.every(t => str.includes(t));
+      post.hidden = !match;
+      post.classList.toggle("matched-post", has && match);
+    });
+  });
 
-      post.hidden = !isMatch;
-      post.classList.toggle("matched-post", hasFilter && isMatch);
-    })
-  })
-
-  clearSearch.addEventListener("click", () => {
+  clearBtn.addEventListener("click", () => {
     search.value = "";
-    posts.forEach(post => {
-      post.hidden = false;
-      post.classList.remove("matched-post");
-    })
-
+    posts.forEach(post => { post.hidden = false; post.classList.remove("matched-post"); });
     artlist.classList.remove("list-searched");
-    oldheading.classList.remove("hidden");
-  })
-})
+    heading.classList.remove("hidden");
+  });
+});
 // @license-end
 </script>
-<h2 id="newest-posts">Newest Posts</h2>
-<ul id="artlist"><li data-tags="[server]" >
-    2023-04-24 | <a href="https://retrothink.click/home_server.it/">Home Server su un Thinkpad R61i</a>
-  </li><li data-tags="[software]" >
-    2023-04-18 | <a href="https://retrothink.click/useful_programs.it/">Programmi utili</a>
-  </li><li data-tags="[pdf]" >
-    2023-04-16 | <a href="https://retrothink.click/organize_pdfs_with_zotero.it/">Organizzare i PDF con Zotero</a>
-  </li><li data-tags="[arch]" >
-    2023-04-08 | <a href="https://retrothink.click/install_artix.it/">Installare Artix Linux (con runit, criptando la cartella root)</a>
-  </li><li data-tags="[sync]" >
-    2023-04-06 | <a href="https://retrothink.click/how_to_use_syncthing.it/">Come sincronizzare le cartelle con Syncthing</a>
-  </li><li data-tags="[mobile]" >
-    2023-04-05 | <a href="https://retrothink.click/grapheneos.it/">GrapheneOS: riprendere il controllo del proprio telefono</a>
-  </li><li data-tags="[sync]" >
-    2023-04-05 | <a href="https://retrothink.click/install_syncthing_synology_nas.it/">Installare Syncthing su un NAS Synology</a>
+
+<h2 class="section-label" id="newest-posts">Articoli recenti</h2>
+<ul id="artlist"><li data-tags="[server]">
+    <a href="https://retrothink.click/home_server.it/">
+      <span class="art-date">2023-04-24</span>
+      <span class="art-title">Home Server su un Thinkpad R61i</span>
+      <span class="art-tag">server</span>
+    </a>
+  </li><li data-tags="[software]">
+    <a href="https://retrothink.click/useful_programs.it/">
+      <span class="art-date">2023-04-18</span>
+      <span class="art-title">Programmi utili</span>
+      <span class="art-tag">software</span>
+    </a>
+  </li><li data-tags="[pdf]">
+    <a href="https://retrothink.click/organize_pdfs_with_zotero.it/">
+      <span class="art-date">2023-04-16</span>
+      <span class="art-title">Organizzare i PDF con Zotero</span>
+      <span class="art-tag">pdf</span>
+    </a>
+  </li><li data-tags="[arch]">
+    <a href="https://retrothink.click/install_artix.it/">
+      <span class="art-date">2023-04-08</span>
+      <span class="art-title">Installare Artix Linux (con runit, criptando la cartella root)</span>
+      <span class="art-tag">arch</span>
+    </a>
+  </li><li data-tags="[sync]">
+    <a href="https://retrothink.click/how_to_use_syncthing.it/">
+      <span class="art-date">2023-04-06</span>
+      <span class="art-title">Come sincronizzare le cartelle con Syncthing</span>
+      <span class="art-tag">sync</span>
+    </a>
+  </li><li data-tags="[mobile]">
+    <a href="https://retrothink.click/grapheneos.it/">
+      <span class="art-date">2023-04-05</span>
+      <span class="art-title">GrapheneOS: riprendere il controllo del proprio telefono</span>
+      <span class="art-tag">mobile</span>
+    </a>
+  </li><li data-tags="[sync]">
+    <a href="https://retrothink.click/install_syncthing_synology_nas.it/">
+      <span class="art-date">2023-04-05</span>
+      <span class="art-title">Installare Syncthing su un NAS Synology</span>
+      <span class="art-tag">sync</span>
+    </a>
   </li></ul>
 
-
-<h2 id="or-browse-by-category">Or Browse by Category&hellip;</h2>
-   <ul id="tagcloud">
+<h2 class="section-label">Sfoglia per tag</h2>
+<ul id="tagcloud">
     <li><a href="https://retrothink.click/tags/arch" id="tag_arch">Arch</a></li>
     <li><a href="https://retrothink.click/tags/mobile" id="tag_mobile">Mobile</a></li>
     <li><a href="https://retrothink.click/tags/pdf" id="tag_pdf">Pdf</a></li>
@@ -107,28 +140,23 @@ document.addEventListener("DOMContentLoaded", () => {
     <li><a href="https://retrothink.click/tags/sync" id="tag_sync">Sync</a></li>
     </ul>
 
-<h2 id="about-this-site">About this site</h2>
+<h2 class="section-label">Il blog</h2>
 <div class="about-site">
-  <p>No-bloated blog about retro computing, ThinkPads, Linux, writing tools, and more.<br>
-  You'll also find transcripts of the videos from my YouTube channel, 
-  <a href="https://www.youtube.com/@Retro_Think"><i data-feather="youtube"></i>
-Retro Think</a></p>
+  <p>Blog minimalista su retro computing, ThinkPad, Linux e strumenti di scrittura.<br>
+  Qui trovi anche le trascrizioni dei video del mio canale YouTube,
+  <a href="https://www.youtube.com/@Retro_Think"><i data-feather="youtube"></i> Retro Think</a>.</p>
 </div>
 
-
-
-
-</article>
 </main>
 
 <footer>
-	<a href="https://retrothink.click/" class="footer-brand">https://retrothink.click/</a>
+	<a href="https://retrothink.click/" class="footer-brand">retrothink.click</a>
 	<div class="footer-icons">
 		<a href="/index.xml" title="Iscriviti via RSS">
 			<img src="/rss.svg" alt="RSS Feed">
 		</a>
-		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
-			<img src="/youtube.png" alt="YouTube Channel">
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il canale YouTube">
+			<img src="/youtube.png" alt="YouTube">
 		</a>
 	</div>
 </footer>

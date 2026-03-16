@@ -144,9 +144,14 @@ def rebuild_index_html(all_posts):
 
     # Artlist
     items = "".join(
-        f'<li data-tags="[{", ".join(to_list(p["meta"].get("tags")))}]" >\n'
-        f'    {p["meta"]["date"]} | '
-        f'<a href="{SITE_URL}/{p["meta"]["slug"]}/">{p["meta"]["title"]}</a>\n  </li>'
+        (lambda m, tags, first_tag: (
+            f'<li data-tags="[{", ".join(tags)}]">\n'
+            f'    <a href="{SITE_URL}/{m["slug"]}/">\n'
+            f'      <span class="art-date">{m["date"]}</span>\n'
+            f'      <span class="art-title">{m["title"]}</span>\n'
+            + (f'      <span class="art-tag">{first_tag}</span>\n' if first_tag else '')
+            + f'    </a>\n  </li>'
+        ))(p["meta"], to_list(p["meta"].get("tags")), to_list(p["meta"].get("tags"))[0] if to_list(p["meta"].get("tags")) else "")
         for p in all_posts
     )
     content = re.sub(
