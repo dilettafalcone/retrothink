@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Synctrain - Automazione iOS | Retro Think</title>
 	<meta name="description" content="Come mantenere sincronizzati i file su iOS con Synctrain e Comandi Rapidi">
-	<meta name="keywords" content="\[iOS]">
+	<meta name="keywords" content="mobile, sync, ios">
 	<meta name="robots" content="index, follow">
 	<link rel="canonical" href="https://retrothink.click/synctrain_automazione_ios.it/">
 	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
@@ -36,12 +36,12 @@
 
 <h1>Synctrain - Automazione iOS</h1>
 <div class="article-meta">
-  <span>2026-04-14</span> &middot; <a id="tag_\[iOS]" href="https://retrothink.click/tags/\[iOS]">\[iOS]</a>
+  <span>2026-04-14</span> &middot; <a id="tag_mobile" href="https://retrothink.click/tags/mobile">Mobile</a> <a id="tag_sync" href="https://retrothink.click/tags/sync">Sync</a> <a id="tag_ios" href="https://retrothink.click/tags/ios">Ios</a>
 </div>
 
 <article>
 <p>Guida per configurare un Comando Rapido su iPhone che sincronizza file grandi (1–2 GB) tramite Synctrain e Tailscale, con avvio automatico all'apertura dell'app e quando l'iPhone è collegato all'alimentazione.</p>
-<h2>\</h2>
+<hr />
 <h2>Requisiti</h2>
 <p>Prima di iniziare, verifica di avere installato e configurato:</p>
 <ul>
@@ -51,7 +51,7 @@
 <li>iPhone connesso al Wi-Fi durante la sincronizzazione</li>
 <li>iOS 16 o successivo per le automazioni senza richiesta di conferma</li>
 </ul>
-<p>---</p>
+<hr />
 <h2>Struttura del Comando Rapido</h2>
 <p>Il flusso è costruito attorno a un blocco <strong>Ripeti 200 volte</strong>, che mantiene Synctrain attivo abbastanza a lungo da completare trasferimenti da 1–2 GB.</p>
 <div class="codehilite"><pre><span></span><code><span class="nv">Ripeti</span><span class="w"> </span><span class="mi">200</span><span class="w"> </span><span class="nv">volte</span>
@@ -73,7 +73,7 @@
 <tbody>
 <tr>
 <td>Connect to Tailscale</td>
-<td>\~1–2 s</td>
+<td>~1–2 s</td>
 </tr>
 <tr>
 <td>Attendi</td>
@@ -81,7 +81,7 @@
 </tr>
 <tr>
 <td>Riscansiona cartella</td>
-<td>\~1–2 s</td>
+<td>~1–2 s</td>
 </tr>
 <tr>
 <td>Sincronizza per un po'</td>
@@ -89,16 +89,16 @@
 </tr>
 <tr>
 <td><strong>Totale per ciclo</strong></td>
-<td><strong>\~23–24 s</strong></td>
+<td><strong>~23–24 s</strong></td>
 </tr>
 <tr>
 <td><strong>200 cicli</strong></td>
-<td><strong>\~75–80 minuti</strong></td>
+<td><strong>~75–80 minuti</strong></td>
 </tr>
 </tbody>
 </table>
 <p>Per file più piccoli puoi ridurre il numero di ripetizioni (es. 60–80 per file da 200–500 MB).</p>
-<p>---</p>
+<hr />
 <h2>Come Creare il Comando Rapido</h2>
 <h3>1. Crea un nuovo comando</h3>
 <p>Apri <strong>Comandi Rapidi</strong> → tocca <strong>+</strong> in alto a destra → tocca <strong>Aggiungi azione</strong>.</p>
@@ -143,12 +143,12 @@
 
 <p>Tocca <strong>Fine</strong> in alto a destra e assegna un nome al comando, ad esempio:</p>
 <blockquote>
-<p><code>Synctrain — File Grandi</code></p>
+<p>Synctrain — File Grandi</p>
 </blockquote>
-<p>---</p>
+<hr />
 <h2>Configurare le Automazioni</h2>
 <p>Le automazioni consentono di avviare il comando <strong>senza toccare nulla</strong>. Devi creare <strong>due automazioni separate</strong>: una per l'apertura dell'app, una per il collegamento all'alimentazione.</p>
-<p>---</p>
+<hr />
 <h3>Automazione 1 — Apertura e Riapertura di Synctrain</h3>
 <p>Questa automazione si attiva ogni volta che apri Synctrain (prima apertura o ritorno in foreground).</p>
 <h4>Passaggi</h4>
@@ -168,9 +168,7 @@
 <li>
 <p>Spunta entrambe le opzioni:</p>
 </li>
-<li>
-<p>✅ <strong>L'app è aperta</strong></p>
-</li>
+<li>✅ <strong>L'app è aperta</strong></li>
 <li>
 <p>✅ <strong>L'app è chiusa</strong> <em>(opzionale — utile per avviare un ciclo anche dopo aver usato l'app)</em></p>
 </li>
@@ -181,16 +179,16 @@
 <p>Tocca <strong>Nuova azione vuota</strong> → cerca il comando <code>Synctrain — File Grandi</code> che hai appena creato → selezionalo</p>
 </li>
 <li>
-<p>Tocca <strong>Avanti</strong> → disattiva <strong>"Chiedi prima di eseguire"</strong> se disponibile</p>
+<p>Tocca <strong>Avanti</strong> → disattiva <strong>Chiedi prima di eseguire</strong> se disponibile</p>
 </li>
 <li>
 <p>Tocca <strong>Fine</strong></p>
 </li>
 </ol>
 <blockquote>
-<p>**Nota:** Su iOS 16 e successivi le automazioni personali possono essere eseguite automaticamente senza conferma. Se il toggle non è disponibile, significa che iOS richiede sempre una notifica di conferma (la puoi eseguire con un tap sulla notifica).</p>
+<p><strong>Nota:</strong> Su iOS 16 e successivi le automazioni personali possono essere eseguite automaticamente senza conferma. Se il toggle non è disponibile, significa che iOS richiede sempre una notifica di conferma (la puoi eseguire con un tap sulla notifica).</p>
 </blockquote>
-<p>---</p>
+<hr />
 <h3>Automazione 2 — iPhone Collegato all'Alimentazione</h3>
 <p>Questa automazione si attiva non appena colleghi il cavo o il caricabatterie, avviando la sincronizzazione in background.</p>
 <h4>Passaggi</h4>
@@ -214,16 +212,16 @@
 <p>Tocca <strong>Nuova azione vuota</strong> → seleziona il comando <code>Synctrain — File Grandi</code></p>
 </li>
 <li>
-<p>Tocca <strong>Avanti</strong> → disattiva <strong>"Chiedi prima di eseguire"</strong> se disponibile</p>
+<p>Tocca <strong>Avanti</strong> → disattiva <strong>Chiedi prima di eseguire</strong> se disponibile</p>
 </li>
 <li>
 <p>Tocca <strong>Fine</strong></p>
 </li>
 </ol>
 <blockquote>
-<p>Puoi anche spuntare **"Non è collegato"** se vuoi interrompere o gestire qualcosa alla disconnessione, ma per questo caso d'uso è sufficiente il trigger di collegamento.</p>
+<p>Puoi anche spuntare <strong>"Non è collegato"</strong> se vuoi interrompere o gestire qualcosa alla disconnessione, ma per questo caso d'uso è sufficiente il trigger di collegamento.</p>
 </blockquote>
-<p>---</p>
+<hr />
 <h2>Riepilogo delle Automazioni</h2>
 <table>
 <thead>
@@ -246,7 +244,7 @@
 </tr>
 </tbody>
 </table>
-<p>---</p>
+<hr />
 <h2>Consigli per File da 1–2 GB</h2>
 <ul>
 <li><strong>Tieni iPhone collegato alla corrente</strong> per tutta la durata della sincronizzazione: iOS sospende più facilmente i processi in background a batteria scarica</li>
@@ -255,23 +253,23 @@
 <li>In Synctrain, verifica che la cartella abbia <strong>"Watch for changes"</strong> attivo nelle impostazioni avanzate della cartella, così le modifiche vengono rilevate in tempo reale</li>
 <li>Se la sincronizzazione è già completa prima della fine dei 200 cicli, puoi interrompere manualmente il comando senza conseguenze</li>
 </ul>
-<p>---</p>
+<hr />
 <h2>Struttura Completa — Schema Finale</h2>
-<div class="codehilite"><pre><span></span><code>\[<span class="nv">AUTOMAZIONE</span><span class="w"> </span><span class="mi">1</span>]
-<span class="nv">Trigger</span>:<span class="w"> </span><span class="nv">Synctrain</span><span class="w"> </span><span class="nv">aperta</span><span class="w"> </span><span class="nv">o</span><span class="w"> </span><span class="nv">riaperta</span>
-↓
-<span class="nv">Esegui</span>:<span class="w"> </span><span class="nv">Synctrain</span><span class="w"> </span>—<span class="w"> </span><span class="nv">File</span><span class="w"> </span><span class="nv">Grandi</span>
-<span class="w">    </span>└─<span class="w"> </span><span class="nv">Ripeti</span><span class="w"> </span><span class="mi">200</span><span class="w"> </span><span class="nv">volte</span>
-<span class="w">           </span>①<span class="w"> </span><span class="k">Connect</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">your</span><span class="w"> </span><span class="nv">Tailscale</span><span class="w"> </span><span class="nv">network</span>
-<span class="w">           </span>②<span class="w"> </span><span class="nv">Attendi</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="nv">secondi</span>
-<span class="w">           </span>③<span class="w"> </span><span class="nv">Riscansiona</span><span class="w"> </span><span class="nv">cartella</span>
-<span class="w">           </span>④<span class="w"> </span><span class="nv">Sincronizza</span><span class="w"> </span><span class="nv">per</span><span class="w"> </span><span class="nv">un</span><span class="w"> </span><span class="nv">po</span><span class="err">&#39; — 15 secondi</span>
+<div class="codehilite"><pre><span></span><code><span class="k">[AUTOMAZIONE 1]</span>
+<span class="na">Trigger</span><span class="o">:</span><span class="w"> </span><span class="s">Synctrain aperta o riaperta</span>
+<span class="na">↓</span>
+<span class="na">Esegui</span><span class="o">:</span><span class="w"> </span><span class="s">Synctrain — File Grandi</span>
+<span class="w">    </span><span class="na">└─ Ripeti 200 volte</span>
+<span class="w">           </span><span class="na">① Connect to your Tailscale network</span>
+<span class="w">           </span><span class="na">② Attendi 5 secondi</span>
+<span class="w">           </span><span class="na">③ Riscansiona cartella</span>
+<span class="w">           </span><span class="na">④ Sincronizza per un po&#39; — 15 secondi</span>
 
-<span class="err">\[AUTOMAZIONE 2]</span>
-<span class="nv">Trigger</span>:<span class="w"> </span><span class="nv">iPhone</span><span class="w"> </span><span class="nv">collegato</span><span class="w"> </span><span class="nv">all</span><span class="err">&#39;alimentazione</span>
-<span class="err">↓</span>
-<span class="err">Esegui: Synctrain — File Grandi</span>
-<span class="err">    └─ (stesso flusso sopra)</span>
+<span class="k">[AUTOMAZIONE 2]</span>
+<span class="na">Trigger</span><span class="o">:</span><span class="w"> </span><span class="s">iPhone collegato all&#39;alimentazione</span>
+<span class="na">↓</span>
+<span class="na">Esegui</span><span class="o">:</span><span class="w"> </span><span class="s">Synctrain — File Grandi</span>
+<span class="w">    </span><span class="na">└─ (stesso flusso sopra)</span>
 </code></pre></div>
 <div id="nextprev"><a href="/home_server.it/"><div id="prevart">Precedente:<br>Home Server su un Thinkpad R61i</div></a></div>
 </article>
