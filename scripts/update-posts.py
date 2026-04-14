@@ -210,6 +210,18 @@ def main():
             meta["slug"] = f.stem
         if "date" not in meta:
             meta["date"] = "1970-01-01"
+        # Ensure a title exists. If missing, try to extract the first
+        # Markdown H1 from the body and remove it to avoid duplicate
+        # headings in the generated HTML. Fallback to the slug.
+        if "title" not in meta:
+            m = re.search(r'^\s*#\s+(.*)', body, re.MULTILINE)
+            if m:
+                meta["title"] = m.group(1).strip()
+                # Remove the first H1 line and any immediately following blank line
+                body = re.sub(r'^\s*#\s+.*(?:\r?\n){1,2}', '', body, count=1, flags=re.MULTILINE)
+            else:
+                meta["title"] = meta["slug"]
+
         all_posts.append({"meta": meta, "body": body})
 
     # Ordine: più recente prima
