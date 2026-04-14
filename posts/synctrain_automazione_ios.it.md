@@ -6,10 +6,6 @@ description: Come mantenere sincronizzati i file su iOS con Synctrain e Comandi 
 
 ---
 
-# 
-
-# Synctrain su iPhone: Automazione Completa con Tailscale
-
 Guida per configurare un Comando Rapido su iPhone che sincronizza file grandi (1–2 GB) tramite Synctrain e Tailscale, con avvio automatico all'apertura dell'app e quando l'iPhone è collegato all'alimentazione.
 
 \
