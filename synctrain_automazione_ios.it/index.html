@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title> | Retro Think</title>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<meta name="robots" content="index, follow">
+	<link rel="canonical" href="https://retrothink.click/synctrain_automazione_ios.it/">
+	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
+	<link rel="icon" href="/favicon.ico">
+	<meta property="og:type" content="article">
+	<meta property="og:url" content="https://retrothink.click/synctrain_automazione_ios.it/">
+	<meta property="og:title" content="">
+	<meta property="og:description" content="">
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="site-nav">
+	<div class="nav-inner">
+		<a href="/" class="nav-brand">Retro Think</a>
+		<a href="/index.xml" class="nav-rss" title="Feed RSS">
+			<img src="/rss.svg" alt="RSS">
+		</a>
+	</div>
+</nav>
+
+<main>
+<a href="/" class="back-link">&#8592; tutti gli articoli</a>
+
+<h1></h1>
+<div class="article-meta">
+  <span>1970-01-01</span>
+</div>
+
+<article>
+<h1>Synctrain su iPhone: Automazione Completa con Tailscale</h1>
+<p>Guida per configurare un Comando Rapido su iPhone che sincronizza file grandi (1–2 GB) tramite Synctrain e Tailscale, con avvio automatico all'apertura dell'app e quando l'iPhone è collegato all'alimentazione.</p>
+<hr />
+<h2>Requisiti</h2>
+<p>Prima di iniziare, verifica di avere installato e configurato:</p>
+<ul>
+<li><strong>Synctrain</strong> — app per Syncthing su iOS, con almeno una cartella già condivisa</li>
+<li><strong>Tailscale</strong> — VPN mesh, già connessa e funzionante</li>
+<li><strong>Comandi Rapidi</strong> — app nativa Apple (preinstallata da iOS 13+)</li>
+<li>iPhone connesso al Wi-Fi durante la sincronizzazione</li>
+<li>iOS 16 o successivo per le automazioni senza richiesta di conferma</li>
+</ul>
+<hr />
+<h2>Struttura del Comando Rapido</h2>
+<p>Il flusso è costruito attorno a un blocco <strong>Ripeti 200 volte</strong>, che mantiene Synctrain attivo abbastanza a lungo da completare trasferimenti da 1–2 GB.</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Ripeti</span><span class="w"> </span><span class="mi">200</span><span class="w"> </span><span class="nv">volte</span>
+<span class="w">    </span><span class="k">Connect</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">your</span><span class="w"> </span><span class="nv">Tailscale</span><span class="w"> </span><span class="nv">network</span>
+<span class="w">    </span><span class="nv">Attendi</span><span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="nv">secondi</span>
+<span class="w">    </span><span class="nv">Riscansiona</span><span class="w"> </span><span class="nv">cartella</span><span class="w">          </span>←<span class="w"> </span><span class="nv">azione</span><span class="w"> </span><span class="nv">Synctrain</span>
+<span class="w">    </span><span class="nv">Sincronizza</span><span class="w"> </span><span class="nv">per</span><span class="w"> </span><span class="nv">un</span><span class="w"> </span><span class="nv">po</span><span class="err">&#39;        ← azione Synctrain (15 secondi)</span>
+<span class="err">Fine Ripeti</span>
+</code></pre></div>
+
+<h3>Calcolo del tempo totale</h3>
+<table>
+<thead>
+<tr>
+<th>Azione per ciclo</th>
+<th>Durata stimata</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Connect to Tailscale</td>
+<td>~1–2 s</td>
+</tr>
+<tr>
+<td>Attendi</td>
+<td>5 s</td>
+</tr>
+<tr>
+<td>Riscansiona cartella</td>
+<td>~1–2 s</td>
+</tr>
+<tr>
+<td>Sincronizza per un po'</td>
+<td>15 s</td>
+</tr>
+<tr>
+<td><strong>Totale per ciclo</strong></td>
+<td><strong>~23–24 s</strong></td>
+</tr>
+<tr>
+<td><strong>200 cicli</strong></td>
+<td><strong>~75–80 minuti</strong></td>
+</tr>
+</tbody>
+</table>
+<p>Per file più piccoli puoi ridurre il numero di ripetizioni (es. 60–80 per file da 200–500 MB).</p>
+<hr />
+<h2>Come Creare il Comando Rapido</h2>
+<h3>1. Crea un nuovo comando</h3>
+<p>Apri <strong>Comandi Rapidi</strong> → tocca <strong>+</strong> in alto a destra → tocca <strong>Aggiungi azione</strong>.</p>
+<h3>2. Aggiungi il blocco Ripeti</h3>
+<ul>
+<li>Cerca <code>Ripeti</code> nel campo di ricerca azioni</li>
+<li>Seleziona <strong>Ripeti</strong></li>
+<li>Imposta il numero di ripetizioni su <strong>200</strong></li>
+</ul>
+<h3>3. Dentro Ripeti — aggiungi Tailscale</h3>
+<ul>
+<li>Tocca <strong>+</strong> dentro il blocco Ripeti</li>
+<li>Cerca <code>Tailscale</code> → seleziona <strong>Connect to your Tailscale network</strong></li>
+</ul>
+<h3>4. Aggiungi l'attesa</h3>
+<ul>
+<li>Tocca <strong>+</strong> sotto Tailscale</li>
+<li>Cerca <code>Attendi</code> → seleziona <strong>Attendi</strong></li>
+<li>Imposta su <strong>5 secondi</strong></li>
+</ul>
+<h3>5. Aggiungi la scansione Synctrain</h3>
+<ul>
+<li>Tocca <strong>+</strong> → cerca <code>Synctrain</code> o <code>Riscansiona</code></li>
+<li>Seleziona <strong>Riscansiona cartella</strong></li>
+<li>Se richiesto, scegli la cartella desiderata</li>
+</ul>
+<h3>6. Aggiungi la sincronizzazione Synctrain</h3>
+<ul>
+<li>Tocca <strong>+</strong> → cerca <code>Sincronizza per un po'</code></li>
+<li>Seleziona l'azione <strong>Sincronizza per un po'</strong> di Synctrain</li>
+<li>Imposta la durata su <strong>15 secondi</strong></li>
+</ul>
+<h3>7. Verifica l'ordine e salva</h3>
+<p>Controlla che l'ordine dentro il blocco Ripeti sia esattamente:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">Ripeti</span><span class="w"> </span><span class="mi">200</span><span class="w"> </span><span class="nv">volte</span>
+<span class="w">    </span>①<span class="w"> </span><span class="k">Connect</span><span class="w"> </span><span class="nv">to</span><span class="w"> </span><span class="nv">your</span><span class="w"> </span><span class="nv">Tailscale</span><span class="w"> </span><span class="nv">network</span>
+<span class="w">    </span>②<span class="w"> </span><span class="nv">Attendi</span><span class="w"> </span>—<span class="w"> </span><span class="mi">5</span><span class="w"> </span><span class="nv">secondi</span>
+<span class="w">    </span>③<span class="w"> </span><span class="nv">Riscansiona</span><span class="w"> </span><span class="nv">cartella</span>
+<span class="w">    </span>④<span class="w"> </span><span class="nv">Sincronizza</span><span class="w"> </span><span class="nv">per</span><span class="w"> </span><span class="nv">un</span><span class="w"> </span><span class="nv">po</span><span class="err">&#39; — 15 secondi</span>
+<span class="err">Fine Ripeti</span>
+</code></pre></div>
+
+<p>Tocca <strong>Fine</strong> in alto a destra e assegna un nome al comando, ad esempio:</p>
+<blockquote>
+<p><code>Synctrain — File Grandi</code></p>
+</blockquote>
+<hr />
+<h2>Configurare le Automazioni</h2>
+<p>Le automazioni consentono di avviare il comando <strong>senza toccare nulla</strong>. Devi creare <strong>due automazioni separate</strong>: una per l'apertura dell'app, una per il collegamento all'alimentazione.</p>
+<hr />
+<h3>Automazione 1 — Apertura e Riapertura di Synctrain</h3>
+<p>Questa automazione si attiva ogni volta che apri Synctrain (prima apertura o ritorno in foreground).</p>
+<h4>Passaggi</h4>
+<ol>
+<li>Apri <strong>Comandi Rapidi</strong> → scheda <strong>Automazione</strong> (icona orologio in basso)</li>
+<li>Tocca <strong>+</strong> in alto a destra</li>
+<li>Seleziona <strong>App</strong> come tipo di trigger</li>
+<li>Tocca <strong>Scegli</strong> accanto ad App → cerca e seleziona <strong>Synctrain</strong></li>
+<li>Spunta entrambe le opzioni:</li>
+<li>✅ <strong>L'app è aperta</strong></li>
+<li>✅ <strong>L'app è chiusa</strong> <em>(opzionale — utile per avviare un ciclo anche dopo aver usato l'app)</em></li>
+<li>Tocca <strong>Avanti</strong></li>
+<li>Tocca <strong>Nuova azione vuota</strong> → cerca il comando <code>Synctrain — File Grandi</code> che hai appena creato → selezionalo</li>
+<li>Tocca <strong>Avanti</strong> → disattiva <strong>"Chiedi prima di eseguire"</strong> se disponibile</li>
+<li>Tocca <strong>Fine</strong></li>
+</ol>
+<blockquote>
+<p><strong>Nota:</strong> Su iOS 16 e successivi le automazioni personali possono essere eseguite automaticamente senza conferma. Se il toggle non è disponibile, significa che iOS richiede sempre una notifica di conferma (la puoi eseguire con un tap sulla notifica).</p>
+</blockquote>
+<hr />
+<h3>Automazione 2 — iPhone Collegato all'Alimentazione</h3>
+<p>Questa automazione si attiva non appena colleghi il cavo o il caricabatterie, avviando la sincronizzazione in background.</p>
+<h4>Passaggi</h4>
+<ol>
+<li>Apri <strong>Comandi Rapidi</strong> → scheda <strong>Automazione</strong> → tocca <strong>+</strong></li>
+<li>Seleziona <strong>Caricabatterie</strong> come tipo di trigger</li>
+<li>Spunta:</li>
+<li>✅ <strong>È collegato</strong></li>
+<li>Tocca <strong>Avanti</strong></li>
+<li>Tocca <strong>Nuova azione vuota</strong> → seleziona il comando <code>Synctrain — File Grandi</code></li>
+<li>Tocca <strong>Avanti</strong> → disattiva <strong>"Chiedi prima di eseguire"</strong> se disponibile</li>
+<li>Tocca <strong>Fine</strong></li>
+</ol>
+<blockquote>
+<p>Puoi anche spuntare <strong>"Non è collegato"</strong> se vuoi interrompere o gestire qualcosa alla disconnessione, ma per questo caso d'uso è sufficiente il trigger di collegamento.</p>
+</blockquote>
+<hr />
+<h2>Riepilogo delle Automazioni</h2>
+<table>
+<thead>
+<tr>
+<th>Automazione</th>
+<th>Trigger</th>
+<th>Azione</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>App aperta</strong></td>
+<td>Synctrain viene aperta o riaperta</td>
+<td>Esegui <code>Synctrain — File Grandi</code></td>
+</tr>
+<tr>
+<td><strong>Alimentazione collegata</strong></td>
+<td>iPhone collegato al caricabatterie</td>
+<td>Esegui <code>Synctrain — File Grandi</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>Consigli per File da 1–2 GB</h2>
+<ul>
+<li><strong>Tieni iPhone collegato alla corrente</strong> per tutta la durata della sincronizzazione: iOS sospende più facilmente i processi in background a batteria scarica</li>
+<li><strong>Usa il Wi-Fi</strong>, non la rete cellulare, per trasferimenti così grandi</li>
+<li><strong>Non bloccare lo schermo subito</strong>: lascia qualche secondo affinché Tailscale completi la connessione prima che iOS inizi a limitare l'attività</li>
+<li>In Synctrain, verifica che la cartella abbia <strong>"Watch for changes"</strong> attivo nelle impostazioni avanzate della cartella, così le modifiche vengono rilevate in tempo reale</li>
+<li>Se la sincronizzazione è già completa prima della fine dei 200 cicli, puoi interrompere manualmente il comando senza conseguenze</li>
+</ul>
+<hr />
+<h2>Struttura Completa — Schema Finale</h2>
+<div class="codehilite"><pre><span></span><code><span class="k">[AUTOMAZIONE 1]</span>
+<span class="na">Trigger</span><span class="o">:</span><span class="w"> </span><span class="s">Synctrain aperta o riaperta</span>
+<span class="na">↓</span>
+<span class="na">Esegui</span><span class="o">:</span><span class="w"> </span><span class="s">Synctrain — File Grandi</span>
+<span class="w">    </span><span class="na">└─ Ripeti 200 volte</span>
+<span class="w">           </span><span class="na">① Connect to your Tailscale network</span>
+<span class="w">           </span><span class="na">② Attendi 5 secondi</span>
+<span class="w">           </span><span class="na">③ Riscansiona cartella</span>
+<span class="w">           </span><span class="na">④ Sincronizza per un po&#39; — 15 secondi</span>
+
+<span class="k">[AUTOMAZIONE 2]</span>
+<span class="na">Trigger</span><span class="o">:</span><span class="w"> </span><span class="s">iPhone collegato all&#39;alimentazione</span>
+<span class="na">↓</span>
+<span class="na">Esegui</span><span class="o">:</span><span class="w"> </span><span class="s">Synctrain — File Grandi</span>
+<span class="w">    </span><span class="na">└─ (stesso flusso sopra)</span>
+</code></pre></div>
+<div id="nextprev"><a href="/install_syncthing_synology_nas.it/"><div id="nextart">Prossimo:<br>Installare Syncthing su un NAS Synology</div></a></div>
+</article>
+</main>
+
+<footer>
+	<a href="/" class="footer-brand">retrothink.click</a>
+	<div class="footer-icons">
+		<a href="/index.xml" title="Iscriviti via RSS">
+			<img src="/rss.svg" alt="RSS Feed">
+		</a>
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
+			<img src="/youtube.png" alt="YouTube Channel">
+		</a>
+	</div>
+</footer>
+
+<script src="https://unpkg.com/feather-icons" defer></script>
+<script defer>
+  document.addEventListener("DOMContentLoaded", () => feather.replace());
+</script>
+</body>
+</html>
