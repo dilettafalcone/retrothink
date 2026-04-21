@@ -1,5 +1,8 @@
 @echo off
 cd /d "%~dp0"
+echo Correggo i post...
+for %%f in (posts\*.md) do python scripts/fix-post.py "%%f"
+echo.
 echo Aggiorno i post...
 python scripts/update-posts.py
 echo.

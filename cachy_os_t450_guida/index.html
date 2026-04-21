@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>CachyOS su ThinkPad T450: guida completa all'installazione e configurazione | Retro Think</title>
+	<meta name="description" content="Guida dettagliata e personalizzata per installare CachyOS su ThinkPad T450 con i7-5500U, 16GB DDR3, Intel HD 5500 + NVIDIA 940M e doppia batteria.">
+	<meta name="keywords" content="thinkpad, cachyos, linux, nvidia, optimus">
+	<meta name="robots" content="index, follow">
+	<link rel="canonical" href="https://retrothink.click/cachy_os_t450_guida/">
+	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
+	<link rel="icon" href="/favicon.ico">
+	<meta property="og:type" content="article">
+	<meta property="og:url" content="https://retrothink.click/cachy_os_t450_guida/">
+	<meta property="og:title" content="CachyOS su ThinkPad T450: guida completa all'installazione e configurazione">
+	<meta property="og:description" content="Guida dettagliata e personalizzata per installare CachyOS su ThinkPad T450 con i7-5500U, 16GB DDR3, Intel HD 5500 + NVIDIA 940M e doppia batteria.">
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="site-nav">
+	<div class="nav-inner">
+		<a href="/" class="nav-brand">Retro Think</a>
+		<a href="/index.xml" class="nav-rss" title="Feed RSS">
+			<img src="/rss.svg" alt="RSS">
+		</a>
+	</div>
+</nav>
+
+<main>
+<a href="/" class="back-link">&#8592; tutti gli articoli</a>
+
+<h1>CachyOS su ThinkPad T450: guida completa all'installazione e configurazione</h1>
+<div class="article-meta">
+  <span>2026-04-21</span> &middot; <a id="tag_thinkpad" href="https://retrothink.click/tags/thinkpad">Thinkpad</a> <a id="tag_cachyos" href="https://retrothink.click/tags/cachyos">Cachyos</a> <a id="tag_linux" href="https://retrothink.click/tags/linux">Linux</a> <a id="tag_nvidia" href="https://retrothink.click/tags/nvidia">Nvidia</a> <a id="tag_optimus" href="https://retrothink.click/tags/optimus">Optimus</a>
+</div>
+
+<article>
+<p>Questa guida è scritta per questo specifico T450, con le seguenti specifiche rilevate dal sistema: Intel Core i7-5500U (Broadwell, 2 core / 4 thread, frequenza base 2.4 GHz, boost fino a 3.0 GHz), 16 GB DDR3 1600 MT/s in configurazione dual channel (2× 8 GB), Intel HD Graphics 5500 come GPU integrata più NVIDIA GeForce 940M (architettura Maxwell, chip GM108M) come GPU dedicata in configurazione Optimus, SSD SATA da 238.5 GB, doppia batteria SANYO (BAT0 interna + BAT1 esterna), e scheda WiFi/Bluetooth Intel Wireless 7265.</p>
+<p>Ogni passaggio è spiegato nel dettaglio per evitare errori. I comandi vanno eseguiti esattamente come scritti, salvo dove indicato diversamente.</p>
+<hr />
+<h2>1. Preparazione — creare la USB bootable</h2>
+<p>Prima di fare qualsiasi cosa sul T450, bisogna creare una USB avviabile con la ISO di CachyOS da un altro computer o dallo stesso T450 con il sistema attuale ancora funzionante.</p>
+<h3>Scaricare la ISO</h3>
+<p>Aprire il browser e andare su <code>https://cachyos.org/download</code>. Scaricare la versione <strong>x86_64</strong> — l'unica disponibile per desktop/laptop moderni. Il T450 con i7-5500U è a 64 bit. Il file si chiamerà qualcosa come <code>cachyos-x86\_64-YYYYMMDD.iso</code>. Salvarlo in una posizione nota, ad esempio <code>\~/Downloads</code>.</p>
+<h3>Creare la USB con Ventoy (metodo consigliato)</h3>
+<p>Ventoy è uno strumento che formatta la USB in modo da poter copiare le ISO direttamente come file, senza doverla riscrivere ogni volta che se ne cambia una. Scaricare Ventoy da <code>https://ventoy.net/en/download.html</code>, estrarre l'archivio e aprire un terminale nella cartella estratta.</p>
+<p>Prima identificare quale dispositivo è la USB:</p>
+<div class="codehilite"><pre><span></span><code>lsblk
+</code></pre></div>
+
+<p>Nell'output, trovare il dispositivo che corrisponde alla USB in base alla dimensione. Non confonderlo con <code>/dev/sda</code> (SSD interno del T450) né con dischi esterni. Installare Ventoy sulla USB — sostituire <code>/dev/sdX</code> con il dispositivo corretto:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>bash<span class="w"> </span>Ventoy2Disk.sh<span class="w"> </span>-i<span class="w"> </span>/dev/sdX
+</code></pre></div>
+
+<p>Ventoy crea due partizioni sulla USB. Montare la partizione grande (chiamata "Ventoy") e copiarci dentro il file ISO scaricato. Nessun altro passaggio necessario: Ventoy mostrerà un menu all'avvio con tutte le ISO presenti.</p>
+<h3>Creare la USB con dd (metodo alternativo)</h3>
+<p>Se non si vuole usare Ventoy, <code>dd</code> scrive la ISO direttamente sulla USB sovrascrivendo tutto ciò che c'è senza chiedere conferma. Sostituire <code>/dev/sdX</code> con il dispositivo USB corretto:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>dd<span class="w"> </span><span class="k">if</span><span class="o">=</span><span class="se">\~</span>/Downloads/cachyos-x86<span class="se">\_</span><span class="m">64</span>-<span class="se">\*</span>.iso<span class="w"> </span><span class="nv">of</span><span class="o">=</span>/dev/sdX<span class="w"> </span><span class="nv">bs</span><span class="o">=</span>4M<span class="w"> </span><span class="nv">status</span><span class="o">=</span>progress<span class="w"> </span><span class="nv">oflag</span><span class="o">=</span>sync
+</code></pre></div>
+
+<p>Il parametro <code>status=progress</code> mostra l'avanzamento. Quando il comando termina e restituisce il prompt, la USB è pronta.</p>
+<blockquote>
+<p><strong>Attenzione dischi:</strong> il disco interno è <code>/dev/sda</code> (238.5 GB, SSD) e il disco esterno è <code>/dev/sdb</code> (7.3 TB con array RAID <code>md127</code>). Nessuno dei due va toccato durante la creazione della USB. Il target di installazione di CachyOS sarà <code>/dev/sda</code>.</p>
+</blockquote>
+<hr />
+<h2>2. Configurazione BIOS</h2>
+<p>Prima di avviare dalla USB, il BIOS del T450 va configurato correttamente. Il firmware rilevato è <strong>Lenovo JBET54WW v1.19 del 2015</strong>. Prima di procedere, è consigliabile verificare su <code>https://support.lenovo.com</code> se esiste una versione più recente: cercare "ThinkPad T450 BIOS update" e seguire le istruzioni Lenovo.</p>
+<h3>Accedere al BIOS</h3>
+<p>Spegnere completamente il T450 — non ibernazione, non sospensione, spegnimento completo. Premere il tasto di accensione e immediatamente, in modo ripetuto, premere <strong>F1</strong> fino a quando appare la schermata del BIOS. Se il sistema avvia normalmente senza mostrare il BIOS, riprovare: la finestra temporale è breve. Navigare con i tasti freccia.</p>
+<h3>Modifiche da applicare</h3>
+<p><strong>Security → Secure Boot → Disabled.</strong> Secure Boot impedisce l'avvio di sistemi operativi non firmati da Microsoft. CachyOS non ha la firma richiesta, quindi va disabilitato. Senza questa modifica la USB non si avvierà.</p>
+<p><strong>Startup → UEFI/Legacy Boot → UEFI Only.</strong> Il T450 supporta sia UEFI che il vecchio BIOS legacy. CachyOS va installato in modalità UEFI, che è lo standard moderno e permette il partizionamento GPT. "UEFI Only" elimina l'ambiguità.</p>
+<p><strong>Startup → Boot Order.</strong> Spostare "USB FDD" o "USB HDD" in prima posizione, prima del disco interno. Questo permette al T450 di avviare dalla USB quando è inserita.</p>
+<p><strong>Config → Power → Wake on LAN → Disabled.</strong> Funzione non necessaria che consuma energia in standby.</p>
+<p><strong>Security → Anti-Theft → Disabled</strong> (se presente). Va disabilitata per evitare conflitti durante l'installazione.</p>
+<p><strong>Config → Display → Graphics Device.</strong> Il T450 ha la NVIDIA 940M: se l'opzione è presente, lasciarla su <strong>Hybrid Graphics</strong> (o "Switchable") per mantenere la configurazione Optimus. Scegliere "Discrete only" solo se si vuole usare solo la NVIDIA, disabilitando permanentemente l'Intel — sconsigliato per l'autonomia.</p>
+<p>Salvare ed uscire con <strong>F10</strong> → confermare con "Yes".</p>
+<hr />
+<h2>3. Avvio dalla USB e installazione con Calamares</h2>
+<h3>Avviare dalla USB</h3>
+<p>Inserire la USB. All'accensione del T450 apparirà il menu Ventoy (o l'avvio diretto se si è usato <code>dd</code>). Selezionare la ISO di CachyOS e attendere il caricamento del live environment. Se il sistema avvia dal disco interno, spegnere e riprovare, oppure premere <strong>F12</strong> appena acceso per il menu di avvio temporaneo.</p>
+<h3>Scegliere il profilo al boot</h3>
+<p>All'avvio della ISO, CachyOS mostra un menu con voci come "CachyOS (open drivers)" e "CachyOS (proprietary NVIDIA)". Selezionare <strong>la voce con i driver proprietari NVIDIA</strong>: carica il modulo corretto per la 940M già nel live environment e riduce il rischio di schermo nero durante l'installazione.</p>
+<h3>Partizioni</h3>
+<p>Una volta nel live environment, avviare Calamares dall'icona sul desktop. Seguire le schermate per lingua, fuso orario e tastiera, poi arrivare alla schermata <strong>Partizioni</strong>.</p>
+<p>Scegliere <strong>"Cancella disco"</strong> e lasciare che Calamares gestisca tutto automaticamente: creerà la partizione EFI in FAT32, root e swap. Su questa schermata è possibile attivare la <strong>cifratura LUKS</strong> spuntando l'apposita opzione e inserendo una passphrase. Equivale alla configurazione LUKS+ext4 del sistema precedente, ma gestita interamente dall'installer senza configurazione manuale.</p>
+<p>In alternativa, con il partizionamento manuale, lo schema consigliato per il disco da 238 GB è:</p>
+<div class="codehilite"><pre><span></span><code>/dev/sda1  →  512 MB  → FAT32  → flag: esp  → mount: /boot/efi
+
+/dev/sda2  →    1 GB  → ext4               → mount: /boot
+
+/dev/sda3  →   60 GB+ → btrfs              → mount: /
+
+/dev/sda4  →    4 GB  → swap
+
+/dev/sda5  →  resto   → btrfs              → mount: /home
+</code></pre></div>
+
+<p>La partizione <code>/boot</code> separata da 1 GB è utile con LUKS: il kernel e GRUB devono essere leggibili prima che la cifratura venga sbloccata, quindi <code>/boot</code> rimane non cifrato mentre il resto è cifrato.</p>
+<h3>Filesystem</h3>
+<p>Il filesystem consigliato è <strong>btrfs</strong>. CachyOS integra snapper per gli snapshot automatici, che permettono di tornare indietro in pochi secondi se un aggiornamento del kernel dovesse rompere qualcosa — su una distribuzione con aggiornamenti frequenti come CachyOS è una funzionalità concreta. I subvolumi standard sono <code>@</code> per <code>/</code>, <code>@home</code> per <code>/home</code>, <code>@log</code> per <code>/var/log</code>, <code>@cache</code> per <code>/var/cache</code> e <code>@tmp</code> per <code>/tmp</code>. Calamares li crea automaticamente se si sceglie btrfs con l'opzione subvolumi.</p>
+<h3>Kernel</h3>
+<p>Nell'apposita schermata, scegliere <strong><code>linux-cachyos</code></strong>: include lo scheduler BORE/EEVDF ottimizzato per la reattività. L'i7-5500U supporta AVX2 (x86-64-v3): se l'installer propone la selezione del profilo di ottimizzazione, scegliere <strong>x86-64-v3</strong> per un miglioramento concreto rispetto al profilo generico.</p>
+<p>Avviare l'installazione, attendere il completamento, rimuovere la USB quando richiesto e riavviare.</p>
+<hr />
+<h2>4. Post-installazione base</h2>
+<p>Al primo avvio, se è presente <strong>CachyOS Hello</strong>, eseguirlo: guida la configurazione iniziale e l'installazione di pacchetti comuni. È il punto di partenza ufficiale.</p>
+<h3>Aggiornare il sistema</h3>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-Syu
+</code></pre></div>
+
+<p><code>pacman</code> è il gestore pacchetti. Il flag <code>-S</code> installa o aggiorna, <code>-y</code> sincronizza il database dai mirror, <code>-u</code> aggiorna tutti i pacchetti installati. Va sempre eseguito per primo, prima di installare qualsiasi altra cosa, per evitare conflitti di dipendenze.</p>
+<h3>Installare driver e firmware essenziali</h3>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>linux-firmware<span class="w"> </span>intel-ucode<span class="w"> </span><span class="se">\\</span>
+
+<span class="p">&amp;</span><span class="c1">#x20; thermald tlp tlp-rdw acpi\_call \\</span>
+
+<span class="p">&amp;</span><span class="c1">#x20; mesa lib32-mesa vulkan-intel lib32-vulkan-intel \\</span>
+
+<span class="p">&amp;</span><span class="c1">#x20; intel-media-driver libva-intel-driver libva-utils \\</span>
+
+<span class="p">&amp;</span><span class="c1">#x20; xf86-video-intel \\</span>
+
+<span class="p">&amp;</span><span class="c1">#x20; bluez bluez-utils networkmanager</span>
+</code></pre></div>
+
+<ul>
+<li>
+<p><code>linux-firmware</code>: firmware binari per l'hardware, incluso il firmware per il WiFi Intel 7265 (<code>iwlwifi</code>). Supportato nativamente, senza pacchetti aggiuntivi.</p>
+</li>
+<li>
+<p><code>intel-ucode</code>: aggiornamenti microcode per la CPU Intel. Corregge bug della CPU caricati all'avvio. Per un i7-5500U (Broadwell) rilevante per sicurezza e stabilità.</p>
+</li>
+<li>
+<p><code>thermald</code>: demone per il controllo termico. Usa i sensori per prevenire il throttling prima che il kernel debba intervenire d'urgenza.</p>
+</li>
+<li>
+<p><code>tlp</code> + <code>tlp-rdw</code> + <code>acpi\_call</code>: gestione avanzata del risparmio energetico. TLP è il pacchetto principale. <code>tlp-rdw</code> gestisce i dispositivi radio in base alla fonte di alimentazione. <code>acpi\_call</code> è necessario per le soglie di carica delle batterie ThinkPad — senza di esso le soglie in <code>/etc/tlp.conf</code> non avranno effetto.</p>
+</li>
+<li>
+<p><code>mesa</code> + <code>lib32-mesa</code>: driver OpenGL open-source per Intel.</p>
+</li>
+<li>
+<p><code>vulkan-intel</code> + <code>lib32-vulkan-intel</code>: supporto Vulkan per l'Intel HD 5500. I pacchetti <code>lib32-\*</code> sono necessari per le applicazioni a 32 bit (ad esempio Steam).</p>
+</li>
+<li>
+<p><code>intel-media-driver</code> + <code>libva-intel-driver</code> + <code>libva-utils</code>: accelerazione hardware per la decodifica video (VA-API). <code>intel-media-driver</code> è il driver moderno per Broadwell e successivi. <code>libva-utils</code> fornisce <code>vainfo</code> per verificare che funzioni.</p>
+</li>
+<li>
+<p><code>xf86-video-intel</code>: driver X11 per la GPU Intel. Non necessario con Wayland, utile come fallback su X11.</p>
+</li>
+<li>
+<p><code>bluez</code> + <code>bluez-utils</code>: stack Bluetooth. Il modulo Intel 8087:0a2a è supportato nativamente.</p>
+</li>
+<li>
+<p><code>networkmanager</code>: gestione connessioni di rete. Probabilmente già installato da Calamares.</p>
+</li>
+</ul>
+<h3>Abilitare i servizi</h3>
+<p>Il flag <code>--now</code> avvia il servizio immediatamente, oltre ad abilitarlo per i boot futuri:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>thermald
+
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>tlp
+
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>NetworkManager
+
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>bluetooth
+</code></pre></div>
+
+<h3>Aggiornare il microcode Intel</h3>
+<p>Il microcode viene caricato dal bootloader all'avvio. Dopo aver installato <code>intel-ucode</code>, il bootloader va informato. Prima verificare quale bootloader ha installato Calamares:</p>
+<div class="codehilite"><pre><span></span><code>ls<span class="w"> </span>/boot/grub<span class="w">   </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\&amp;\&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;→ GRUB installato&quot;</span>
+
+ls<span class="w"> </span>/boot/loader<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="se">\&amp;\&amp;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;→ systemd-boot installato&quot;</span>
+</code></pre></div>
+
+<p>Se GRUB:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>grub-mkconfig<span class="w"> </span>-o<span class="w"> </span>/boot/grub/grub.cfg
+</code></pre></div>
+
+<p>Se systemd-boot:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>bootctl<span class="w"> </span>update
+</code></pre></div>
+
+<p>Riavviare, poi verificare che il microcode sia stato caricato:</p>
+<div class="codehilite"><pre><span></span><code>grep<span class="w"> </span>-m1<span class="w"> </span><span class="s2">&quot;microcode&quot;</span><span class="w"> </span>/proc/cpuinfo
+</code></pre></div>
+
+<p>L'output deve contenere un numero di revisione del microcode dopo la parola "microcode". Se la riga è vuota, il bootloader non è stato configurato correttamente — ripetere il comando corretto e riavviare.</p>
+<hr />
+<h2>5. Ottimizzazione CPU e risparmio energetico</h2>
+<h3>Configurare TLP</h3>
+<p>Il file di configurazione di TLP è <code>/etc/tlp.conf</code>. Aprirlo con <code>nano</code>:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/tlp.conf
+</code></pre></div>
+
+<p>In <code>nano</code>: navigare con le frecce, salvare con <code>Ctrl+O</code> poi <code>Invio</code>, uscire con <code>Ctrl+X</code>. Cercare le righe esistenti (alcune saranno commentate con <code>#</code>) o aggiungere in fondo al file:</p>
+<div class="codehilite"><pre><span></span><code>CPU\_SCALING\_GOVERNOR\_ON\_AC=performance
+
+CPU\_SCALING\_GOVERNOR\_ON\_BAT=powersave
+
+CPU\_ENERGY\_PERF\_POLICY\_ON\_AC=performance
+
+CPU\_ENERGY\_PERF\_POLICY\_ON\_BAT=balance\_power
+
+CPU\_MIN\_PERF\_ON\_AC=0
+
+CPU\_MAX\_PERF\_ON\_AC=100
+
+CPU\_MIN\_PERF\_ON\_BAT=0
+
+CPU\_MAX\_PERF\_ON\_BAT=60
+
+SCHED\_POWERSAVE\_ON\_BAT=1
+
+NMI\_WATCHDOG=0
+
+PLATFORM\_PROFILE\_ON\_AC=performance
+
+PLATFORM\_PROFILE\_ON\_BAT=low-power
+
+DISK\_APM\_LEVEL\_ON\_AC=192
+
+DISK\_APM\_LEVEL\_ON\_BAT=128
+</code></pre></div>
+
+<ul>
+<li>
+<p><code>CPU\_SCALING\_GOVERNOR</code>: controlla come il kernel gestisce la frequenza della CPU. <code>performance</code> mantiene frequenza alta su corrente, <code>powersave</code> la abbassa su batteria.</p>
+</li>
+<li>
+<p><code>CPU\_ENERGY\_PERF\_POLICY</code>: affina la preferenza tramite l'interfaccia EPP del processore, disponibile su Broadwell.</p>
+</li>
+<li>
+<p><code>CPU\_MAX\_PERF\_ON\_BAT=60</code>: limita il turbo boost al 60% su batteria. Riduce consumi e calore senza impatto sulla fluidità quotidiana.</p>
+</li>
+<li>
+<p><code>SCHED\_POWERSAVE\_ON\_BAT=1</code>: suggerisce al kernel di concentrare i task su meno core quando possibile su batteria.</p>
+</li>
+<li>
+<p><code>NMI\_WATCHDOG=0</code>: disabilita il watchdog NMI, un meccanismo di controllo del kernel che consuma cicli CPU inutilmente su un laptop personale.</p>
+</li>
+<li>
+<p><code>DISK\_APM\_LEVEL</code>: livello di risparmio energetico dell'SSD. 192 è conservativo su corrente, 128 più aggressivo su batteria.</p>
+</li>
+</ul>
+<p>Dopo aver salvato, applicare le modifiche senza riavviare:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>tlp<span class="w"> </span>start
+</code></pre></div>
+
+<h3>Parametri kernel per l'i7-5500U</h3>
+<p>Aprire il file di configurazione di GRUB:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/default/grub
+</code></pre></div>
+
+<p>Trovare la riga <code>GRUB\_CMDLINE\_LINUX\_DEFAULT</code>. Avrà un contenuto simile a <code>"quiet splash"</code>. Aggiungere i parametri all'interno delle virgolette, separati da spazi, senza andare a capo:</p>
+<div class="codehilite"><pre><span></span><code>GRUB\_CMDLINE\_LINUX\_DEFAULT=&quot;quiet splash intel\_idle.max\_cstate=4 intel\_pstate=active i915.enable\_fbc=1 i915.enable\_psr=1 i915.enable\_rc6=1 nowatchdog nmi\_watchdog=0&quot;
+</code></pre></div>
+
+<ul>
+<li>
+<p><code>intel\_idle.max\_cstate=4</code>: limita gli stati di idle della CPU al C4, evitando stati profondi che su Broadwell possono causare latenze di risveglio elevate.</p>
+</li>
+<li>
+<p><code>intel\_pstate=active</code>: attiva la gestione della frequenza tramite il driver Intel P-state, più efficiente del driver generico <code>acpi-cpufreq</code> su Broadwell.</p>
+</li>
+<li>
+<p><code>i915.enable\_fbc=1</code>: abilita la Framebuffer Compression dell'iGPU. Riduce i consumi quando il contenuto dello schermo non cambia.</p>
+</li>
+<li>
+<p><code>i915.enable\_psr=1</code>: Panel Self Refresh — il display si aggiorna autonomamente senza coinvolgere la GPU quando il frame non cambia.</p>
+</li>
+<li>
+<p><code>i915.enable\_rc6=1</code>: mette la GPU in stati di basso consumo quando non è utilizzata.</p>
+</li>
+<li>
+<p><code>nowatchdog</code> + <code>nmi\_watchdog=0</code>: disabilita i watchdog del kernel, applicato prima che TLP parta.</p>
+</li>
+</ul>
+<p>Dopo aver salvato, rigenerare la configurazione GRUB:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>grub-mkconfig<span class="w"> </span>-o<span class="w"> </span>/boot/grub/grub.cfg
+</code></pre></div>
+
+<p>Questo comando legge <code>/etc/default/grub</code> e scrive la configurazione finale in <code>/boot/grub/grub.cfg</code>. Le modifiche saranno attive al prossimo riavvio.</p>
+<blockquote>
+<p><strong>Nota su <code>mitigations=off</code>:</strong> aggiungere questo parametro disabilita le patch software per Spectre e Meltdown, vulnerabilità che affliggono l'i7-5500U. Il guadagno in performance è reale (circa 10–15%) ma aumenta il rischio di sicurezza. Sconsigliato se il laptop si connette a reti WiFi pubbliche o non fidate.</p>
+</blockquote>
+<h3>Monitoraggio temperature</h3>
+<p>Il sistema espone già i sensori <code>thinkpad-isa-0000</code> e <code>coretemp</code>. Installare gli strumenti:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>s-tui<span class="w"> </span>stress<span class="w"> </span>lm<span class="se">\_</span>sensors
+
+sudo<span class="w"> </span>sensors-detect<span class="w"> </span>--auto
+</code></pre></div>
+
+<p><code>sensors-detect</code> rileva i sensori hardware e li configura. Il flag <code>--auto</code> risponde "sì" a tutte le domande senza input manuale. Dopo l'esecuzione, <code>sensors</code> mostra le temperature. <code>s-tui</code> è un'interfaccia interattiva che mostra frequenze, temperature e utilizzo CPU in tempo reale in un unico pannello.</p>
+<hr />
+<h2>6. GPU: Intel HD 5500 + NVIDIA 940M (Optimus)</h2>
+<p>Questo è il passaggio più delicato. Il T450 ha due GPU: Intel HD Graphics 5500 (iGPU, integrata nella CPU) e NVIDIA GeForce 940M — chip GM108M, architettura Maxwell — (dGPU). Questa configurazione si chiama NVIDIA Optimus: l'iGPU gestisce il display e il rendering quotidiano, la dGPU viene attivata per i carichi grafici intensi.</p>
+<p>Non installare <code>bumblebee</code>: è un progetto abbandonato, incompatibile con i kernel recenti e con Wayland.</p>
+<h3>Passo obbligatorio: verificare quale driver ha installato CachyOS</h3>
+<p>Dal maggio 2025, CachyOS tenta di rilevare automaticamente la GPU e installare il driver corretto. Tuttavia, per le schede Maxwell in configurazione Optimus è documentato un bug per cui lo strumento <code>chwd</code> installa <code>nvidia-open-dkms</code> (driver 590xx, per GPU Turing e successive) invece del corretto <code>nvidia-580xx-dkms</code>. Il 590xx non supporta Maxwell: se viene installato, il sistema può avviarsi con schermo nero.</p>
+<p>Verificare subito dopo il primo avvio, <strong>prima di qualsiasi altra configurazione GPU</strong>:</p>
+<div class="codehilite"><pre><span></span><code>pacman<span class="w"> </span>-Q<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-i<span class="w"> </span>nvidia
+</code></pre></div>
+
+<p>Leggere l'output:</p>
+<ul>
+<li>
+<p>Compare <code>nvidia-580xx-dkms</code>: corretto, CachyOS ha rilevato correttamente la Maxwell. Passare direttamente alla sezione "Configurazione Optimus".</p>
+</li>
+<li>
+<p>Compare <code>nvidia-open-dkms</code> oppure <code>nvidia-dkms</code> senza il suffisso <code>580xx</code>: sbagliato, va sostituito.</p>
+</li>
+<li>
+<p>Non compare nulla: nessun driver installato, va installato manualmente.</p>
+</li>
+</ul>
+<h3>Correggere il driver sbagliato</h3>
+<p>Rimuovere il driver incompatibile. I comandi usano <code>2&gt;/dev/null</code> per sopprimere i messaggi di errore se qualche pacchetto non è presente:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-Rns<span class="w"> </span>nvidia-open-dkms<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+
+sudo<span class="w"> </span>pacman<span class="w"> </span>-Rns<span class="w"> </span>nvidia-dkms<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+
+sudo<span class="w"> </span>pacman<span class="w"> </span>-Rns<span class="w"> </span>nvidia-utils<span class="w"> </span>lib32-nvidia-utils<span class="w"> </span><span class="m">2</span>&gt;/dev/null
+</code></pre></div>
+
+<p>Installare il driver Maxwell corretto dai repository CachyOS:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>nvidia-580xx-dkms<span class="w"> </span>nvidia-580xx-utils<span class="w"> </span>lib32-nvidia-580xx-utils
+</code></pre></div>
+
+<p>Se <code>pacman</code> risponde "target not found", il pacchetto non è nei repo ufficiali in quel momento. Installarlo dall'AUR. Prima installare <code>yay</code> se non è già presente:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>--needed<span class="w"> </span>base-devel<span class="w"> </span>git
+
+git<span class="w"> </span>clone<span class="w"> </span>https://aur.archlinux.org/yay.git
+
+<span class="nb">cd</span><span class="w"> </span>yay
+
+makepkg<span class="w"> </span>-si
+</code></pre></div>
+
+<p>Poi installare il driver:</p>
+<div class="codehilite"><pre><span></span><code>yay<span class="w"> </span>-S<span class="w"> </span>nvidia-580xx-dkms<span class="w"> </span>nvidia-580xx-utils<span class="w"> </span>lib32-nvidia-580xx-utils
+</code></pre></div>
+
+<p>Il pacchetto AUR è mantenuto da <em>ventureo</em> del team CachyOS — è la fonte di riferimento ufficiale per Maxwell e Pascal su Arch.</p>
+<p>Rigenerare gli initramfs e riavviare:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>mkinitcpio<span class="w"> </span>-P
+
+sudo<span class="w"> </span>reboot
+</code></pre></div>
+
+<p><code>mkinitcpio -P</code> rigenera tutte le immagini di avvio iniziale del kernel, includendo il nuovo modulo NVIDIA. Senza questo passaggio il modulo potrebbe non caricarsi correttamente al boot.</p>
+<h3>Recupero da schermo nero o TTY</h3>
+<p>Se all'avvio il sistema non mostra l'ambiente grafico, accedere alla TTY con <code>Ctrl+Alt+F2</code> (o F3, F4). Inserire nome utente e password. Da lì si opera normalmente da riga di comando.</p>
+<p>Opzione 1 — disabilitare l'avvio grafico temporaneamente, installare il driver corretto, poi ripristinare:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>set-default<span class="w"> </span>multi-user.target
+
+<span class="se">\#</span><span class="w"> </span>installare<span class="w"> </span>il<span class="w"> </span>driver<span class="w"> </span>corretto<span class="w"> </span>come<span class="w"> </span>sopra
+
+sudo<span class="w"> </span>systemctl<span class="w"> </span>set-default<span class="w"> </span>graphical.target
+
+sudo<span class="w"> </span>reboot
+</code></pre></div>
+
+<p>Opzione 2 — usare <code>nomodeset</code> da GRUB. Al menu GRUB, premere <strong><code>e</code></strong> sulla voce di avvio. Trovare la riga che inizia con <code>linux</code> e aggiungere <code>nomodeset</code> alla fine prima di <code>--</code>. Premere <code>Ctrl+X</code> per avviare. Una volta nel sistema, installare il driver corretto, poi aprire <code>/etc/default/grub</code>, rimuovere <code>nomodeset</code> e rigenerare GRUB.</p>
+<h3>Configurazione Optimus: Opzione A — nvidia-prime (consigliata)</h3>
+<p>Con nvidia-prime, l'iGPU Intel gestisce sempre il display. La 940M si attiva solo esplicitamente tramite il prefisso <code>prime-run</code>. È la configurazione con il miglior equilibrio tra prestazioni e autonomia.</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>nvidia-580xx-dkms<span class="w"> </span>nvidia-580xx-utils<span class="w"> </span>lib32-nvidia-580xx-utils<span class="w"> </span><span class="se">\\</span>
+
+<span class="p">&amp;</span><span class="c1">#x20; nvidia-prime mesa lib32-mesa \\</span>
+
+<span class="p">&amp;</span><span class="c1">#x20; vulkan-intel lib32-vulkan-intel \\</span>
+
+<span class="p">&amp;</span><span class="c1">#x20; intel-media-driver libva-intel-driver</span>
+</code></pre></div>
+
+<p>Verificare che il modulo sia caricato:</p>
+<div class="codehilite"><pre><span></span><code>lsmod<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>nvidia
+</code></pre></div>
+
+<p>L'output deve mostrare <code>nvidia</code>, <code>nvidia\_drm</code>, <code>nvidia\_modeset</code>. Per usare la 940M su un'applicazione specifica:</p>
+<div class="codehilite"><pre><span></span><code>prime-run<span class="w"> </span>nome-applicazione
+
+<span class="se">\#</span><span class="w"> </span>esempi<span class="w"> </span>concreti:
+
+prime-run<span class="w"> </span>glxgears
+
+prime-run<span class="w"> </span>blender
+
+prime-run<span class="w"> </span>steam
+</code></pre></div>
+
+<h3>Configurazione Optimus: Opzione B — optimus-manager</h3>
+<p>Permette di cambiare la GPU attiva in modo persistente, senza <code>prime-run</code> per ogni applicazione. Richiede il riavvio del display manager a ogni switch — salvare il lavoro prima di usarlo.</p>
+<div class="codehilite"><pre><span></span><code>yay<span class="w"> </span>-S<span class="w"> </span>optimus-manager<span class="w"> </span>optimus-manager-qt
+
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>optimus-manager
+</code></pre></div>
+
+<p><code>optimus-manager-qt</code> aggiunge un'icona nel system tray per cambiare GPU graficamente. Da terminale:</p>
+<div class="codehilite"><pre><span></span><code>optimus-manager<span class="w"> </span>--switch<span class="w"> </span>intel<span class="w">    </span><span class="c1"># usa solo l&#39;iGPU Intel (massima autonomia)</span>
+
+optimus-manager<span class="w"> </span>--switch<span class="w"> </span>nvidia<span class="w">   </span><span class="c1"># usa solo la dGPU 940M (massima performance)</span>
+
+optimus-manager<span class="w"> </span>--switch<span class="w"> </span>hybrid<span class="w">   </span><span class="c1"># Optimus automatico</span>
+</code></pre></div>
+
+<h3>Risparmio energetico: spegnere la 940M quando non è in uso</h3>
+<p>Anche con nvidia-prime, la 940M può rimanere alimentata in idle consumando 3–5W. Per abilitare il runtime power management, aggiungere in <code>/etc/tlp.conf</code>:</p>
+<div class="codehilite"><pre><span></span><code>RUNTIME\_PM\_ON\_AC=auto
+
+RUNTIME\_PM\_ON\_BAT=auto
+</code></pre></div>
+
+<p>Con questa impostazione TLP istruisce il kernel a spegnere i dispositivi PCI inattivi, inclusa la 940M. Si riaccenderà automaticamente quando si usa <code>prime-run</code>.</p>
+<h3>Configurazione iGPU Intel per X11</h3>
+<p>Su X11 (non Wayland), creare il file di configurazione:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/X11/xorg.conf.d/20-intel.conf
+</code></pre></div>
+
+<p>Inserire:</p>
+<div class="codehilite"><pre><span></span><code>Section &quot;Device&quot;
+
+&amp;#x20; Identifier &quot;Intel Graphics&quot;
+
+&amp;#x20; Driver &quot;intel&quot;
+
+&amp;#x20; Option &quot;TearFree&quot; &quot;true&quot;
+
+&amp;#x20; Option &quot;AccelMethod&quot; &quot;sna&quot;
+
+&amp;#x20; Option &quot;DRI&quot; &quot;3&quot;
+
+EndSection
+</code></pre></div>
+
+<p><code>TearFree</code> elimina il tearing video. <code>AccelMethod sna</code> è il metodo più stabile per HD 5500. Su Wayland questo file non è necessario.</p>
+<h3>Verificare che tutto funzioni</h3>
+<div class="codehilite"><pre><span></span><code><span class="se">\#</span><span class="w"> </span>Accelerazione<span class="w"> </span>hardware<span class="w"> </span>video<span class="w"> </span>Intel:
+
+vainfo
+
+<span class="se">\#</span><span class="w"> </span>Deve<span class="w"> </span>mostrare<span class="w"> </span>VAEntrypointVLD<span class="w"> </span><span class="o">(</span>decodifica<span class="o">)</span><span class="w"> </span>e<span class="w"> </span>VAEntrypointEncSlice<span class="w"> </span><span class="o">(</span>codifica<span class="o">)</span>
+
+
+
+<span class="se">\#</span><span class="w"> </span>GPU<span class="w"> </span>attiva<span class="w"> </span>di<span class="w"> </span>default:
+
+glxinfo<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;OpenGL renderer&quot;</span>
+
+<span class="se">\#</span><span class="w"> </span>Deve<span class="w"> </span>mostrare<span class="w"> </span><span class="s2">&quot;Intel HD Graphics 5500&quot;</span>
+
+
+
+<span class="se">\#</span><span class="w"> </span>GPU<span class="w"> </span>con<span class="w"> </span>prime-run:
+
+prime-run<span class="w"> </span>glxinfo<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;OpenGL renderer&quot;</span>
+
+<span class="se">\#</span><span class="w"> </span>Deve<span class="w"> </span>mostrare<span class="w"> </span><span class="s2">&quot;GeForce 940M&quot;</span>
+</code></pre></div>
+
+<hr />
+<h2>7. Batteria (doppia)</h2>
+<p>Il T450 supporta due batterie contemporaneamente: BAT0 (interna) e BAT1 (esterna nella bay anteriore). Entrambe rilevate e funzionanti. Stato misurato: BAT0 a 18.21 Wh su 23.2 Wh di design (78.5% di capacità residua), BAT1 a 19.88 Wh su 23.2 Wh (85.7%). TLP gestisce automaticamente l'ordine di scarica. Al momento del rilevamento il drain era 18W a riposo — con le ottimizzazioni descritte dovrebbe scendere a 8–12W, per un'autonomia stimata di 3–4 ore.</p>
+<h3>Soglie di carica</h3>
+<p>Tenere le batterie costantemente al 100% accelera la degradazione chimica. Le soglie di carica limitano il range di carica per preservare la durata nel tempo. Aprire <code>/etc/tlp.conf</code> e aggiungere o modificare:</p>
+<div class="codehilite"><pre><span></span><code>START\_CHARGE\_THRESH\_BAT0=75
+
+STOP\_CHARGE\_THRESH\_BAT0=80
+
+START\_CHARGE\_THRESH\_BAT1=75
+
+STOP\_CHARGE\_THRESH\_BAT1=80
+</code></pre></div>
+
+<p>Con questa configurazione TLP avvia la carica solo quando la batteria scende sotto il 75% e la interrompe all'80%. Funziona perché <code>acpi\_call</code> permette a TLP di comunicare direttamente con il firmware ThinkPad per controllare il circuito di carica — senza <code>acpi\_call</code> installato queste righe non avrebbero effetto.</p>
+<p>Applicare le modifiche:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>tlp<span class="w"> </span>start
+</code></pre></div>
+
+<h3>Powertop — analisi e ottimizzazione dei consumi</h3>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>powertop
+
+
+
+<span class="se">\#</span><span class="w"> </span>Ottimizzazione<span class="w"> </span>automatica<span class="w"> </span>una<span class="w"> </span>tantum:
+
+sudo<span class="w"> </span>powertop<span class="w"> </span>--auto-tune
+
+
+
+<span class="se">\#</span><span class="w"> </span>Analisi<span class="w"> </span>interattiva<span class="w"> </span><span class="k">in</span><span class="w"> </span>tempo<span class="w"> </span>reale:
+
+sudo<span class="w"> </span>powertop
+</code></pre></div>
+
+<p>Nell'interfaccia interattiva, la scheda "Tunables" mostra le impostazioni con stato "Bad" o "Good". Premere <code>Tab</code> per navigare tra le schede, <code>Invio</code> per attivare una voce "Bad". Per rendere l'auto-tune permanente ad ogni avvio, creare un servizio systemd:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/systemd/system/powertop.service
+</code></pre></div>
+
+<p>Inserire:</p>
+<div class="codehilite"><pre><span></span><code><span class="err">\</span><span class="o">[</span><span class="n">Unit</span><span class="o">]</span>
+
+<span class="n">Description</span><span class="o">=</span><span class="n">Powertop</span><span class="w"> </span><span class="n">auto</span><span class="o">-</span><span class="n">tune</span>
+
+<span class="k">After</span><span class="o">=</span><span class="n">multi</span><span class="o">-</span><span class="k">user</span><span class="p">.</span><span class="n">target</span>
+
+
+
+<span class="err">\</span><span class="o">[</span><span class="n">Service</span><span class="o">]</span>
+
+<span class="n">Type</span><span class="o">=</span><span class="n">oneshot</span>
+
+<span class="n">ExecStart</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">powertop</span><span class="w"> </span><span class="c1">--auto-tune</span>
+
+
+
+<span class="err">\</span><span class="o">[</span><span class="n">Install</span><span class="o">]</span>
+
+<span class="n">WantedBy</span><span class="o">=</span><span class="n">multi</span><span class="o">-</span><span class="k">user</span><span class="p">.</span><span class="n">target</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>powertop
+</code></pre></div>
+
+<h3>Verificare lo stato delle batterie</h3>
+<div class="codehilite"><pre><span></span><code><span class="se">\#</span><span class="w"> </span>Riepilogo<span class="w"> </span>completo<span class="w"> </span>con<span class="w"> </span>soglie<span class="w"> </span>di<span class="w"> </span>carica<span class="w"> </span>attive:
+
+tlp-stat<span class="w"> </span>-b
+
+
+
+<span class="se">\#</span><span class="w"> </span>Dettagli<span class="w"> </span>singola<span class="w"> </span>batteria<span class="w"> </span><span class="o">(</span>energia,<span class="w"> </span>capacità,<span class="w"> </span>tasso<span class="w"> </span>di<span class="w"> </span>scarica<span class="o">)</span>:
+
+upower<span class="w"> </span>-i<span class="w"> </span>/org/freedesktop/UPower/devices/battery<span class="se">\_</span>BAT0
+
+upower<span class="w"> </span>-i<span class="w"> </span>/org/freedesktop/UPower/devices/battery<span class="se">\_</span>BAT1
+</code></pre></div>
+
+<hr />
+<h2>8. SSD, filesystem e RAM</h2>
+<h3>TRIM</h3>
+<p>Il TRIM segnala all'SSD quali blocchi non sono più in uso, permettendo al controller di gestirli internamente. Senza TRIM le performance degradano nel tempo. <code>fstrim.timer</code> esegue un TRIM sull'intero filesystem settimanalmente:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>fstrim.timer
+</code></pre></div>
+
+<p>Per verificare che il timer sia attivo e quando verrà eseguito:</p>
+<div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span>status<span class="w"> </span>fstrim.timer
+</code></pre></div>
+
+<h3>noatime nel filesystem</h3>
+<p>Ogni volta che un file viene letto, Linux per default aggiorna il campo "atime" (access time) dei metadati. Su un SSD queste scritture continue consumano cicli di scrittura inutilmente. <code>noatime</code> le disabilita.</p>
+<p>Aprire <code>/etc/fstab</code>:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/fstab
+</code></pre></div>
+
+<p>Trovare la riga che monta la partizione root (<code>/</code>) e aggiungere <code>noatime</code> alle opzioni. Non modificare il valore <code>UUID=xxxx</code>, che è già corretto. Il risultato dipende dal filesystem scelto:</p>
+<div class="codehilite"><pre><span></span><code>\# Per ext4:
+
+UUID=xxxx  /  ext4   defaults,noatime,errors=remount-ro  0 1
+
+
+
+\# Per btrfs (con compressione zstd):
+
+UUID=xxxx  /  btrfs  defaults,noatime,compress=zstd:1,subvol=@  0 0
+</code></pre></div>
+
+<p>Con btrfs, <code>compress=zstd:1</code> attiva la compressione trasparente al livello più veloce. Su file di testo, codice e documenti riduce l'occupazione su disco del 20–40% senza impatto percettibile sulle prestazioni.</p>
+<h3>zRAM</h3>
+<p>CachyOS installa <code>zram-generator</code> di default. zRAM crea un dispositivo di swap in RAM compressa: invece di scrivere su disco, usa RAM compressa che è ordini di grandezza più veloce. Verificare la configurazione:</p>
+<div class="codehilite"><pre><span></span><code>cat<span class="w"> </span>/etc/systemd/zram-generator.conf
+</code></pre></div>
+
+<p>La configurazione ottimale per 16 GB di RAM è:</p>
+<div class="codehilite"><pre><span></span><code><span class="err">\</span><span class="o">[</span><span class="n">zram0</span><span class="o">]</span>
+
+<span class="n">zram</span><span class="o">-</span><span class="k">size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ram</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span>
+
+<span class="n">compression</span><span class="o">-</span><span class="n">algorithm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">zstd</span>
+</code></pre></div>
+
+<p>Se il file non esiste o ha valori diversi, crearlo o modificarlo, poi ricaricare:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>systemctl<span class="w"> </span>daemon-reload
+
+sudo<span class="w"> </span>systemctl<span class="w"> </span>restart<span class="w"> </span>systemd-zram-setup@zram0.service
+</code></pre></div>
+
+<h3>Parametri sysctl</h3>
+<p>Creare un file di configurazione dedicato:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>nano<span class="w"> </span>/etc/sysctl.d/99-performance.conf
+</code></pre></div>
+
+<p>Inserire:</p>
+<div class="codehilite"><pre><span></span><code>vm.swappiness=10
+
+vm.vfs\_cache\_pressure=50
+
+vm.dirty\_ratio=10
+
+vm.dirty\_background\_ratio=5
+
+kernel.nmi\_watchdog=0
+</code></pre></div>
+
+<ul>
+<li>
+<p><code>vm.swappiness=10</code>: usa la swap solo quando la RAM libera scende sotto il 10%. Il valore default è 60, che causa swap prematura. Con 16 GB un valore basso è corretto.</p>
+</li>
+<li>
+<p><code>vm.vfs\_cache\_pressure=50</code>: riduce la tendenza del kernel a liberare la cache del filesystem dalla memoria, migliorando le performance di I/O per file acceduti frequentemente.</p>
+</li>
+<li>
+<p><code>vm.dirty\_ratio=10</code> e <code>vm.dirty\_background\_ratio=5</code>: controllano la soglia di dati "sporchi" (modificati ma non ancora scritti su disco). Valori bassi significano flush più frequenti e prevedibili, riducendo i picchi di latenza.</p>
+</li>
+<li>
+<p><code>kernel.nmi\_watchdog=0</code>: già presente nei parametri kernel di GRUB, qui come garanzia aggiuntiva.</p>
+</li>
+</ul>
+<p>Applicare immediatamente senza riavviare:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>sysctl<span class="w"> </span>--system
+</code></pre></div>
+
+<h3>IRQ balance</h3>
+<p><code>irqbalance</code> distribuisce le interruzioni hardware tra i core della CPU. Senza di esso, tutte le interruzioni vengono gestite dal core 0, creando un collo di bottiglia. Con i 4 thread dell'i7-5500U il beneficio è modesto ma misurabile in scenari di I/O intensivo:</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>irqbalance
+
+sudo<span class="w"> </span>systemctl<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>irqbalance
+</code></pre></div>
+<div id="nextprev"><a href="/synctrain_automazione_ios.it/"><div id="prevart">Precedente:<br>Synctrain - Automazione iOS</div></a></div>
+</article>
+</main>
+
+<footer>
+	<a href="/" class="footer-brand">retrothink.click</a>
+	<div class="footer-icons">
+		<a href="/index.xml" title="Iscriviti via RSS">
+			<img src="/rss.svg" alt="RSS Feed">
+		</a>
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
+			<img src="/youtube.png" alt="YouTube Channel">
+		</a>
+	</div>
+</footer>
+
+<script src="https://unpkg.com/feather-icons" defer></script>
+<script defer>
+  document.addEventListener("DOMContentLoaded", () => feather.replace());
+</script>
+</body>
+</html>
