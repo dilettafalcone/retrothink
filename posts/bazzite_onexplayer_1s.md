@@ -555,7 +555,20 @@ Se risponde "command not found", installalo con Homebrew, che su Bazzite è disp
 brew install rclone
 ```
 
-**3. Collega il tuo account Google.**
+**3. Crea il tuo client id Google.** Il client id condiviso di rclone sta per essere ritirato: Google farà pagare le richieste fatte con quello integrato e rclone lo disattiverà nel corso del 2026 (l'annuncio parla di 90 giorni di preavviso, senza una data certa). Perciò conviene crearne uno proprio fin dall'inizio; è gratuito. I passaggi sotto sono quelli della documentazione rclone: i nomi dei menu nella console Google possono differire un po'.
+
+1. Accedi alla [Google API Console](https://console.cloud.google.com/) con il tuo account Google e crea un progetto (*Select a project* > *New project*).
+2. In *Enable APIs and services* cerca "Drive" e abilita **Google Drive API**.
+3. Apri *Credentials* dal pannello a sinistra. Non usare "Create credentials": apre una procedura guidata. Clicca invece su **Configure consent screen** > **Get started**.
+4. Inserisci un nome per l'applicazione (va bene "rclone") e la tua email di assistenza. In *Audience* scegli **External**, inserisci l'email di contatto, accetta i termini e clicca su **Create**.
+5. In *Data Access* scegli *Add or remove scopes* (o *Manually add scopes*), aggiungi questi scope e salva: `https://www.googleapis.com/auth/docs`, `https://www.googleapis.com/auth/drive` e, facoltativo, `https://www.googleapis.com/auth/drive.metadata.readonly`.
+6. In *Audience* clicca su **+ Add users**, aggiungi il tuo account Google e salva (utente di prova).
+7. In *Overview* clicca su **Create OAuth client**, scegli il tipo di applicazione **Desktop app** e clicca su **Create**. Annota **client ID** e **client secret**.
+8. In *Audience* clicca su **Publish app** e conferma. Se il pulsante è grigio, compila prima *Branding* (pagina iniziale, informativa sulla privacy, dominio autorizzato), salva e torna in *Audience*.
+
+Se lasci l'app in stato "Testing" funziona, ma l'autorizzazione scade dopo circa una settimana e la sincronizzazione automatica si ferma: per questo si pubblica l'app.
+
+**4. Collega il tuo account Google.**
 
 ```bash
 rclone config
@@ -566,7 +579,7 @@ Rispondi così:
 - `n` (nuovo remote);
 - nome: `gdrive`;
 - tipo: `drive`;
-- `client_id` e `client_secret`: lascia vuoto e premi Invio. Se rclone chiede se continuare con il client id condiviso, rispondi `y`: funziona, ma le richieste a Google sono limitate e divise con tutti gli utenti di rclone, quindi con volumi piccoli va bene, mentre in caso di rallentamenti o errori di quota (`rateLimitExceeded`) conviene creare un proprio client id (guida «Making your own client_id» nella documentazione rclone di Google Drive). Se lasci quell'app OAuth in stato «Testing», Google fa scadere l'accesso dopo 7 giorni e la sincronizzazione automatica si ferma: va portata in «In production»;
+- `client_id` e `client_secret`: incolla quelli creati al passo 3;
 - scope: `1` (accesso completo);
 - `service_account_file`: lascia vuoto e premi Invio (serve solo per gli account di servizio);
 - impostazioni avanzate (*Edit advanced config*): `n`. In questo caso non ti verrà chiesto il `root_folder_id`: lo passi più avanti a ogni comando con `--drive-root-folder-id`;
@@ -574,7 +587,14 @@ Rispondi così:
 - shared drive / team drive: `n`;
 - conferma con `y`, poi esci con `q`.
 
-**4. Primo allineamento, cartella per cartella.** Per ogni cartella condivisa (qui `Progetto` è un nome di esempio e `ID_CARTELLA` va sostituito con l'ID vero):
+Se avevi già creato il remote `gdrive` lasciando vuoti `client_id` e `client_secret`, aggiornalo con i tuoi (sostituisci i due valori) e ricollegalo, rispondendo `y` alla richiesta di aggiornare il token: senza questo passo rclone continua a usare il client id condiviso.
+
+```bash
+rclone config update gdrive client_id TUO_CLIENT_ID client_secret TUO_CLIENT_SECRET
+rclone config reconnect gdrive:
+```
+
+**5. Primo allineamento, cartella per cartella.** Per ogni cartella condivisa (qui `Progetto` è un nome di esempio e `ID_CARTELLA` va sostituito con l'ID vero):
 
 ```bash
 mkdir -p ~/GoogleDrive/Progetto
@@ -585,7 +605,7 @@ rclone bisync ~/GoogleDrive/Progetto gdrive: --drive-root-folder-id ID_CARTELLA 
 - Se va bene, ripeti lo stesso comando **senza** `--dry-run`.
 - `--resync` serve **solo** per questo primo giro. Se lo usi sempre, i file cancellati ricompaiono.
 
-**5. Sincronizzazione automatica ogni 15 minuti.** Crea lo script `~/.local/bin/drive-sync.sh`, con una riga `rclone bisync` per ogni cartella:
+**6. Sincronizzazione automatica ogni 15 minuti.** Crea lo script `~/.local/bin/drive-sync.sh`, con una riga `rclone bisync` per ogni cartella:
 
 ```bash
 #!/bin/bash
@@ -635,7 +655,7 @@ Se qualcosa non va, il registro si trova in `~/.cache/drive-sync.log`.
 - `--resilient` e `--recover` evitano di dover rifare `--resync` dopo errori minori o dopo uno spegnimento improvviso.
 - Se lo stesso file viene modificato da entrambe le parti, vince la versione più recente (`--conflict-resolve newer`).
 
-Fonti: [rclone bisync, documentazione](https://git.frostfs.info/satyamisme/rclone/raw/branch/master/docs/content/bisync.md), [rclone Google Drive, documentazione](https://git.frostfs.info/KurlesHS/rclone/raw/commit/cf6d522d2f20bfe0e34f1635e21a1ecaa326a480/docs/content/drive.md), [Bisync of Googledocs on googledrive, forum rclone](https://forum.rclone.org/t/bisync-of-googledocs-on-googledrive/29961), [Syncing all Google Drive folders, owned and shared, forum rclone](https://forum.rclone.org/t/syncing-all-google-drive-folders-owned-and-shared/22661).
+Fonti: [rclone bisync, documentazione](https://git.frostfs.info/satyamisme/rclone/raw/branch/master/docs/content/bisync.md), [rclone Google Drive, documentazione](https://git.frostfs.info/KurlesHS/rclone/raw/commit/cf6d522d2f20bfe0e34f1635e21a1ecaa326a480/docs/content/drive.md), [Bisync of Googledocs on googledrive, forum rclone](https://forum.rclone.org/t/bisync-of-googledocs-on-googledrive/29961), [Syncing all Google Drive folders, owned and shared, forum rclone](https://forum.rclone.org/t/syncing-all-google-drive-folders-owned-and-shared/22661), [annuncio sul ritiro del client id condiviso, forum rclone](https://forum.rclone.org/t/google-drive-and-google-photos-users-action-required/54005).
 
 ---
 

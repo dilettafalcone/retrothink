@@ -503,7 +503,19 @@ systemctl reboot
 <div class="codehilite"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>rclone
 </code></pre></div>
 
-<p><strong>3. Collega il tuo account Google.</strong></p>
+<p><strong>3. Crea il tuo client id Google.</strong> Il client id condiviso di rclone sta per essere ritirato: Google farà pagare le richieste fatte con quello integrato e rclone lo disattiverà nel corso del 2026 (l'annuncio parla di 90 giorni di preavviso, senza una data certa). Perciò conviene crearne uno proprio fin dall'inizio; è gratuito. I passaggi sotto sono quelli della documentazione rclone: i nomi dei menu nella console Google possono differire un po'.</p>
+<ol>
+<li>Accedi alla <a href="https://console.cloud.google.com/">Google API Console</a> con il tuo account Google e crea un progetto (<em>Select a project</em> &gt; <em>New project</em>).</li>
+<li>In <em>Enable APIs and services</em> cerca "Drive" e abilita <strong>Google Drive API</strong>.</li>
+<li>Apri <em>Credentials</em> dal pannello a sinistra. Non usare "Create credentials": apre una procedura guidata. Clicca invece su <strong>Configure consent screen</strong> &gt; <strong>Get started</strong>.</li>
+<li>Inserisci un nome per l'applicazione (va bene "rclone") e la tua email di assistenza. In <em>Audience</em> scegli <strong>External</strong>, inserisci l'email di contatto, accetta i termini e clicca su <strong>Create</strong>.</li>
+<li>In <em>Data Access</em> scegli <em>Add or remove scopes</em> (o <em>Manually add scopes</em>), aggiungi questi scope e salva: <code>https://www.googleapis.com/auth/docs</code>, <code>https://www.googleapis.com/auth/drive</code> e, facoltativo, <code>https://www.googleapis.com/auth/drive.metadata.readonly</code>.</li>
+<li>In <em>Audience</em> clicca su <strong>+ Add users</strong>, aggiungi il tuo account Google e salva (utente di prova).</li>
+<li>In <em>Overview</em> clicca su <strong>Create OAuth client</strong>, scegli il tipo di applicazione <strong>Desktop app</strong> e clicca su <strong>Create</strong>. Annota <strong>client ID</strong> e <strong>client secret</strong>.</li>
+<li>In <em>Audience</em> clicca su <strong>Publish app</strong> e conferma. Se il pulsante è grigio, compila prima <em>Branding</em> (pagina iniziale, informativa sulla privacy, dominio autorizzato), salva e torna in <em>Audience</em>.</li>
+</ol>
+<p>Se lasci l'app in stato "Testing" funziona, ma l'autorizzazione scade dopo circa una settimana e la sincronizzazione automatica si ferma: per questo si pubblica l'app.</p>
+<p><strong>4. Collega il tuo account Google.</strong></p>
 <div class="codehilite"><pre><span></span><code>rclone<span class="w"> </span>config
 </code></pre></div>
 
@@ -512,7 +524,7 @@ systemctl reboot
 <li><code>n</code> (nuovo remote);</li>
 <li>nome: <code>gdrive</code>;</li>
 <li>tipo: <code>drive</code>;</li>
-<li><code>client_id</code> e <code>client_secret</code>: lascia vuoto e premi Invio. Se rclone chiede se continuare con il client id condiviso, rispondi <code>y</code>: funziona, ma le richieste a Google sono limitate e divise con tutti gli utenti di rclone, quindi con volumi piccoli va bene, mentre in caso di rallentamenti o errori di quota (<code>rateLimitExceeded</code>) conviene creare un proprio client id (guida «Making your own client_id» nella documentazione rclone di Google Drive). Se lasci quell'app OAuth in stato «Testing», Google fa scadere l'accesso dopo 7 giorni e la sincronizzazione automatica si ferma: va portata in «In production»;</li>
+<li><code>client_id</code> e <code>client_secret</code>: incolla quelli creati al passo 3;</li>
 <li>scope: <code>1</code> (accesso completo);</li>
 <li><code>service_account_file</code>: lascia vuoto e premi Invio (serve solo per gli account di servizio);</li>
 <li>impostazioni avanzate (<em>Edit advanced config</em>): <code>n</code>. In questo caso non ti verrà chiesto il <code>root_folder_id</code>: lo passi più avanti a ogni comando con <code>--drive-root-folder-id</code>;</li>
@@ -520,7 +532,12 @@ systemctl reboot
 <li>shared drive / team drive: <code>n</code>;</li>
 <li>conferma con <code>y</code>, poi esci con <code>q</code>.</li>
 </ul>
-<p><strong>4. Primo allineamento, cartella per cartella.</strong> Per ogni cartella condivisa (qui <code>Progetto</code> è un nome di esempio e <code>ID_CARTELLA</code> va sostituito con l'ID vero):</p>
+<p>Se avevi già creato il remote <code>gdrive</code> lasciando vuoti <code>client_id</code> e <code>client_secret</code>, aggiornalo con i tuoi (sostituisci i due valori) e ricollegalo, rispondendo <code>y</code> alla richiesta di aggiornare il token: senza questo passo rclone continua a usare il client id condiviso.</p>
+<div class="codehilite"><pre><span></span><code>rclone<span class="w"> </span>config<span class="w"> </span>update<span class="w"> </span>gdrive<span class="w"> </span>client_id<span class="w"> </span>TUO_CLIENT_ID<span class="w"> </span>client_secret<span class="w"> </span>TUO_CLIENT_SECRET
+rclone<span class="w"> </span>config<span class="w"> </span>reconnect<span class="w"> </span>gdrive:
+</code></pre></div>
+
+<p><strong>5. Primo allineamento, cartella per cartella.</strong> Per ogni cartella condivisa (qui <code>Progetto</code> è un nome di esempio e <code>ID_CARTELLA</code> va sostituito con l'ID vero):</p>
 <div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/GoogleDrive/Progetto
 rclone<span class="w"> </span>bisync<span class="w"> </span>~/GoogleDrive/Progetto<span class="w"> </span>gdrive:<span class="w"> </span>--drive-root-folder-id<span class="w"> </span>ID_CARTELLA<span class="w"> </span>--drive-skip-gdocs<span class="w"> </span>--create-empty-src-dirs<span class="w"> </span>--resilient<span class="w"> </span>--recover<span class="w"> </span>--conflict-resolve<span class="w"> </span>newer<span class="w"> </span>--resync<span class="w"> </span>--dry-run<span class="w"> </span>-v
 </code></pre></div>
@@ -530,7 +547,7 @@ rclone<span class="w"> </span>bisync<span class="w"> </span>~/GoogleDrive/Proget
 <li>Se va bene, ripeti lo stesso comando <strong>senza</strong> <code>--dry-run</code>.</li>
 <li><code>--resync</code> serve <strong>solo</strong> per questo primo giro. Se lo usi sempre, i file cancellati ricompaiono.</li>
 </ul>
-<p><strong>5. Sincronizzazione automatica ogni 15 minuti.</strong> Crea lo script <code>~/.local/bin/drive-sync.sh</code>, con una riga <code>rclone bisync</code> per ogni cartella:</p>
+<p><strong>6. Sincronizzazione automatica ogni 15 minuti.</strong> Crea lo script <code>~/.local/bin/drive-sync.sh</code>, con una riga <code>rclone bisync</code> per ogni cartella:</p>
 <div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 <span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/home/linuxbrew/.linuxbrew/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
 <span class="nv">OPTS</span><span class="o">=</span><span class="s2">&quot;--drive-skip-gdocs --create-empty-src-dirs --resilient --recover --conflict-resolve newer --max-lock 2m --log-file </span><span class="nv">$HOME</span><span class="s2">/.cache/drive-sync.log -v&quot;</span>
@@ -571,7 +588,7 @@ systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">
 <li><code>--resilient</code> e <code>--recover</code> evitano di dover rifare <code>--resync</code> dopo errori minori o dopo uno spegnimento improvviso.</li>
 <li>Se lo stesso file viene modificato da entrambe le parti, vince la versione più recente (<code>--conflict-resolve newer</code>).</li>
 </ul>
-<p>Fonti: <a href="https://git.frostfs.info/satyamisme/rclone/raw/branch/master/docs/content/bisync.md">rclone bisync, documentazione</a>, <a href="https://git.frostfs.info/KurlesHS/rclone/raw/commit/cf6d522d2f20bfe0e34f1635e21a1ecaa326a480/docs/content/drive.md">rclone Google Drive, documentazione</a>, <a href="https://forum.rclone.org/t/bisync-of-googledocs-on-googledrive/29961">Bisync of Googledocs on googledrive, forum rclone</a>, <a href="https://forum.rclone.org/t/syncing-all-google-drive-folders-owned-and-shared/22661">Syncing all Google Drive folders, owned and shared, forum rclone</a>.</p>
+<p>Fonti: <a href="https://git.frostfs.info/satyamisme/rclone/raw/branch/master/docs/content/bisync.md">rclone bisync, documentazione</a>, <a href="https://git.frostfs.info/KurlesHS/rclone/raw/commit/cf6d522d2f20bfe0e34f1635e21a1ecaa326a480/docs/content/drive.md">rclone Google Drive, documentazione</a>, <a href="https://forum.rclone.org/t/bisync-of-googledocs-on-googledrive/29961">Bisync of Googledocs on googledrive, forum rclone</a>, <a href="https://forum.rclone.org/t/syncing-all-google-drive-folders-owned-and-shared/22661">Syncing all Google Drive folders, owned and shared, forum rclone</a>, <a href="https://forum.rclone.org/t/google-drive-and-google-photos-users-action-required/54005">annuncio sul ritiro del client id condiviso, forum rclone</a>.</p>
 <hr />
 <h2 id="epic">8. Giochi Epic nella Gaming Mode</h2>
 
