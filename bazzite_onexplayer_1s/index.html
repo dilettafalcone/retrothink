@@ -494,7 +494,11 @@ systemctl reboot
 </ul>
 <p><strong>Perché non l'account Google di GNOME.</strong> Gli <em>Account online</em> di GNOME mostrano Drive solo online, senza una copia locale, quindi non servono a questo scopo.</p>
 </blockquote>
-<p><strong>1. Prepara gli ID delle cartelle.</strong> Per poter rimandare su Drive le tue modifiche devi essere <strong>Editor</strong> delle cartelle condivise. Apri ogni cartella condivisa nel browser: l'ID è l'ultima parte dell'indirizzo, dopo <code>.../folders/</code>. Annotali.</p>
+<p><strong>1. Prepara gli ID delle cartelle.</strong> Per poter rimandare su Drive le tue modifiche devi essere <strong>Editor</strong> delle cartelle condivise. Apri ogni cartella condivisa nel browser su <code>drive.google.com</code> (se è condivisa con te, la trovi in <em>Condivisi con me</em>: entraci con un doppio clic). L'ID è la parte dell'indirizzo dopo <code>/folders/</code>, senza eventuali code come <code>?usp=sharing</code>. Per esempio, in questo indirizzo:</p>
+<div class="codehilite"><pre><span></span><code>https://drive.google.com/drive/folders/1AbCdEfGhIjKlMnOpQrStUvWxYz012345
+</code></pre></div>
+
+<p>l'ID è <code>1AbCdEfGhIjKlMnOpQrStUvWxYz012345</code>. Annotali.</p>
 <p><strong>2. Installa rclone.</strong> Dal Terminale controlla se c'è già:</p>
 <div class="codehilite"><pre><span></span><code>rclone<span class="w"> </span>version
 </code></pre></div>

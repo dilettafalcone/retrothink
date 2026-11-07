@@ -541,7 +541,13 @@ Per avere una copia locale di alcune cartelle di Google Drive (anche condivise),
 
 > **Perché non l'account Google di GNOME.** Gli *Account online* di GNOME mostrano Drive solo online, senza una copia locale, quindi non servono a questo scopo.
 
-**1. Prepara gli ID delle cartelle.** Per poter rimandare su Drive le tue modifiche devi essere **Editor** delle cartelle condivise. Apri ogni cartella condivisa nel browser: l'ID è l'ultima parte dell'indirizzo, dopo `.../folders/`. Annotali.
+**1. Prepara gli ID delle cartelle.** Per poter rimandare su Drive le tue modifiche devi essere **Editor** delle cartelle condivise. Apri ogni cartella condivisa nel browser su `drive.google.com` (se è condivisa con te, la trovi in *Condivisi con me*: entraci con un doppio clic). L'ID è la parte dell'indirizzo dopo `/folders/`, senza eventuali code come `?usp=sharing`. Per esempio, in questo indirizzo:
+
+```
+https://drive.google.com/drive/folders/1AbCdEfGhIjKlMnOpQrStUvWxYz012345
+```
+
+l'ID è `1AbCdEfGhIjKlMnOpQrStUvWxYz012345`. Annotali.
 
 **2. Installa rclone.** Dal Terminale controlla se c'è già:
 
