@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Dominio Route 53 + Cloudflare + GitHub Pages: guida completa con privacy avanzata | Retro Think</title>
+	<meta name="description" content="Dalla registrazione di un dominio su AWS Route 53 alla gestione DNS gratuita su Cloudflare e al collegamento a GitHub Pages, con sezioni facoltative di hardening e privacy (proxy, ECH, header HTTP, email anti-spoofing, DNSSEC, CAA, zero tracking).">
+	<meta name="keywords" content="dns, cloudflare, aws, github, privacy, guida">
+	<meta name="robots" content="index, follow">
+	<link rel="canonical" href="https://retrothink.click/route53_cloudflare_github_pages/">
+	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
+	<link rel="icon" href="/favicon.ico">
+	<meta property="og:type" content="article">
+	<meta property="og:url" content="https://retrothink.click/route53_cloudflare_github_pages/">
+	<meta property="og:title" content="Dominio Route 53 + Cloudflare + GitHub Pages: guida completa con privacy avanzata">
+	<meta property="og:description" content="Dalla registrazione di un dominio su AWS Route 53 alla gestione DNS gratuita su Cloudflare e al collegamento a GitHub Pages, con sezioni facoltative di hardening e privacy (proxy, ECH, header HTTP, email anti-spoofing, DNSSEC, CAA, zero tracking).">
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="site-nav">
+	<div class="nav-inner">
+		<a href="/" class="nav-brand">Retro Think</a>
+		<a href="/index.xml" class="nav-rss" title="Feed RSS">
+			<img src="/rss.svg" alt="RSS">
+		</a>
+	</div>
+</nav>
+
+<main>
+<a href="/" class="back-link">&#8592; tutti gli articoli</a>
+
+<h1>Dominio Route 53 + Cloudflare + GitHub Pages: guida completa con privacy avanzata</h1>
+<div class="article-meta">
+  <span>2026-11-07</span> &middot; <a id="tag_dns" href="https://retrothink.click/tags/dns">Dns</a> <a id="tag_cloudflare" href="https://retrothink.click/tags/cloudflare">Cloudflare</a> <a id="tag_aws" href="https://retrothink.click/tags/aws">Aws</a> <a id="tag_github" href="https://retrothink.click/tags/github">Github</a> <a id="tag_privacy" href="https://retrothink.click/tags/privacy">Privacy</a> <a id="tag_guida" href="https://retrothink.click/tags/guida">Guida</a>
+</div>
+
+<article>
+<p>Procedura passo passo per registrare un dominio su <strong>AWS Route 53</strong>, gestire i DNS gratis su <strong>Cloudflare</strong> (piano Free, 0 €/mese) e collegarlo a una pagina su <strong>GitHub Pages</strong> (hosting e SSL gratuiti), con sezioni facoltative di hardening e privacy avanzata.</p>
+<p>Negli esempi uso <strong><code>tuodominio.click</code></strong> come nome del dominio e <strong><code>tuonome.github.io</code></strong> come indirizzo della pagina GitHub Pages, dove <code>tuonome</code> è il tuo nome utente GitHub. Sostituiscili con i tuoi in ogni comando, record e link.</p>
+<p><strong>In questa guida</strong></p>
+<p><em>Percorso base (configurazione e zero costi)</em></p>
+<ul>
+<li>Fase 0: <a href="#fase-0">Prerequisito: creare il sito su GitHub Pages</a></li>
+<li>Fase 1: <a href="#fase-1">Registrazione del dominio su AWS Route 53</a></li>
+<li>Fase 2: <a href="#fase-2">Aggiunta del dominio su Cloudflare (piano Free)</a></li>
+<li>Fase 3: <a href="#fase-3">Configurazione privacy e blocco dei bot AI</a></li>
+<li>Fase 4: <a href="#fase-4">Inserimento dei record DNS per GitHub Pages</a></li>
+<li>Fase 5: <a href="#fase-5">Verifica DNSSEC e recupero dei Name Server</a></li>
+<li>Fase 6: <a href="#fase-6">Cambio dei Name Server su AWS Route 53</a></li>
+<li>Fase 7: <a href="#fase-7">Collegamento del Custom Domain su GitHub Pages</a></li>
+<li>Fase 8: <a href="#fase-8">Eliminazione della Hosted Zone AWS (zero costi)</a></li>
+</ul>
+<p><em>Sezioni facoltative (privacy avanzata)</em></p>
+<ul>
+<li><a href="#opzionale-a">A. Proxy arancione, SSL Strict ed ECH</a></li>
+<li><a href="#opzionale-b">B. Header HTTP di privacy (zero referrer e permessi)</a></li>
+<li><a href="#opzionale-c">C. Blindatura email (SPF, DMARC, Null MX o alias)</a></li>
+<li><a href="#opzionale-d">D. Privacy su GitHub (email noreply ed EXIF)</a></li>
+<li><a href="#opzionale-e">E. DNSSEC completo e record CAA</a></li>
+<li><a href="#opzionale-f">F. Zero tracking e isolamento delle risorse esterne</a></li>
+</ul>
+<hr />
+<h2 id="fase-0">Fase 0. Prerequisito: creare e pubblicare il sito su GitHub Pages</h2>
+
+<p>Prima di collegare il dominio serve un sito funzionante su GitHub Pages, raggiungibile all'indirizzo gratuito <code>tuonome.github.io</code>. Se lo hai già online, salta alla Fase 1.</p>
+<ol>
+<li>Accedi al tuo account <a href="https://github.com/login">GitHub</a> (o <a href="https://github.com/signup">creane uno</a>). Il nome utente determina l'indirizzo del sito: l'utente <code>tuonome</code> ottiene <code>tuonome.github.io</code>.</li>
+<li>Vai su <a href="https://github.com/new">New repository</a> e imposta:<ul>
+<li><strong>Repository name:</strong> esattamente <code>tuonome.github.io</code> (nome utente + <code>.github.io</code>).</li>
+<li><strong>Visibilità:</strong> <strong>Public</strong> (GitHub Pages gratuito richiede un repository pubblico).</li>
+<li>Spunta <strong>Add a README file</strong> e clicca su <strong>Create repository</strong>.</li>
+</ul>
+</li>
+<li>Nel repository clicca su <strong>Add file</strong> &gt; <strong>Create new file</strong>, chiamalo <code>index.html</code>, incolla il contenuto della tua pagina (o una pagina di prova) e premi <strong>Commit changes</strong>.</li>
+<li>Vai su <strong>Settings</strong> &gt; <strong>Pages</strong> del repository. Sotto <strong>Build and deployment</strong> imposta <strong>Source: Deploy from a branch</strong>, <strong>Branch: main</strong>, cartella <strong>/ (root)</strong> e clicca su <strong>Save</strong>.</li>
+<li>Attendi 1-2 minuti (puoi seguire l'avanzamento nella scheda <strong>Actions</strong>, workflow <em>pages build and deployment</em>) e poi apri <code>https://tuonome.github.io</code>.</li>
+</ol>
+<blockquote>
+<p><strong>Verifica:</strong> in <em>Settings &gt; Pages</em> compare la scritta <em>"Your site is live at https://tuonome.github.io/"</em> e la pagina si apre correttamente nel browser.</p>
+</blockquote>
+<hr />
+<h2 id="fase-1">Fase 1. Registrazione del dominio su AWS Route 53</h2>
+
+<p>Quando acquisti un dominio su AWS Route 53, paghi solo il costo annuale del nome a dominio (TLD, per esempio <code>.click</code>). Tuttavia, AWS crea in automatico anche una <strong>Hosted Zone</strong> che costa <strong>0,50 $/mese</strong>. L'obiettivo della guida è mantenere la registrazione su AWS ma spostare i DNS gratis su Cloudflare.</p>
+<ol>
+<li>Accedi alla <a href="https://console.aws.amazon.com/">AWS Management Console</a> e apri il servizio <a href="https://console.aws.amazon.com/route53/home">Route 53</a>.</li>
+<li>Nel menu laterale sinistro, sotto la voce <strong>Domains</strong>, clicca su <a href="https://console.aws.amazon.com/route53/domains/home">Registered domains</a> e premi il pulsante <strong>Register domains</strong>.</li>
+<li>Cerca il dominio desiderato (per esempio <code>tuodominio.click</code>), verifica la disponibilità e procedi al checkout.</li>
+<li>Nella schermata dei dati di contatto del registrante, assicurati di <strong>attivare la Privacy Protection</strong> (<em>Enable privacy protection</em>) per oscurare gratuitamente i tuoi dati personali (nome, indirizzo, email, telefono) nei database pubblici WHOIS.</li>
+<li>Completa l'ordine e attendi l'email di verifica ICANN per confermare l'indirizzo email del proprietario.</li>
+</ol>
+<blockquote>
+<p><strong>Verifica:</strong> il dominio <code>tuodominio.click</code> compare nell'elenco <a href="https://console.aws.amazon.com/route53/domains/home">Route 53 &gt; Registered domains</a> con <em>Privacy protection: Enabled</em>.</p>
+</blockquote>
+<hr />
+<h2 id="fase-2">Fase 2. Aggiunta del dominio su Cloudflare (piano Free)</h2>
+
+<p>Ora configuriamo Cloudflare per gestire gratuitamente i record DNS senza trasferire la proprietà del dominio.</p>
+<ol>
+<li>Accedi alla <a href="https://dash.cloudflare.com/">dashboard di Cloudflare</a> e clicca su <strong>Aggiungi un sito</strong> (<em>Add a site</em>).</li>
+<li>Tra le tre opzioni proposte (<em>Connetti un dominio</em>, <em>Trasferisci un dominio</em>, <em>Acquista un dominio</em>), scegli <strong>Connetti un dominio</strong>.</li>
+<li>Nel campo <strong>Nome dominio</strong>, inserisci esattamente <code>tuodominio.click</code> (senza <code>www</code> né <code>https://</code>).</li>
+<li>Sotto la sezione <strong>Importa record DNS</strong>, lascia selezionata l'opzione <strong>Automatico</strong> (<em>Importa i record DNS automaticamente</em>).</li>
+</ol>
+<hr />
+<h2 id="fase-3">Fase 3. Configurazione privacy stringente e blocco dei bot AI</h2>
+
+<p>Nella stessa schermata di inserimento del dominio su Cloudflare (sotto <em>Configurazione aggiuntiva</em>), applica le impostazioni di privacy più restrittive prima di continuare:</p>
+<ul>
+<li><strong>Monetizzo le pagine con annunci:</strong> lascia <strong>Disattivato</strong>.</li>
+<li><strong>Ricerca (motori di ricerca):</strong> imposta su <strong>Consenti</strong> se vuoi che il sito sia trovabile su Google/Bing, oppure su <strong>Blocca</strong> se desideri che il sito non venga indicizzato.</li>
+<li><strong>Addestramento (crawler AI):</strong> imposta su <strong>Blocca</strong> (impedisce lo scraping del tuo sito per l'addestramento di modelli LLM).</li>
+<li><strong>Agenti e agenti personali:</strong> imposta su <strong>Blocca</strong> sia la policy generale sia i singoli agenti (<em>Claude Duet</em>, <em>dots</em>, <em>Gemini Spark</em>, <em>Muse</em>, <em>Instinct</em>).</li>
+<li><strong>Enable Bot Preference Sync:</strong> lascia <strong>Disattivato</strong> per evitare che Cloudflare modifichi automaticamente il file <code>robots.txt</code>.</li>
+</ul>
+<p>Poi:</p>
+<ol>
+<li>Clicca su <strong>Continua</strong> in fondo alla pagina.</li>
+<li>Nella schermata di selezione del piano tariffario, scorri fino in fondo, seleziona il piano <strong>Free (0 $/mese)</strong> e clicca su <strong>Continua</strong>.</li>
+</ol>
+<hr />
+<h2 id="fase-4">Fase 4. Inserimento dei record DNS per GitHub Pages</h2>
+
+<p>Nella schermata <strong>Rivedi i record DNS</strong> (dove la scansione iniziale mostra <code>Record trovati: 0</code>), clicca sul pulsante <strong>+ Aggiungi record</strong> per inserire i 4 indirizzi IP ufficiali di GitHub Pages e il sottodominio <code>www</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Tipo</th>
+<th>Nome</th>
+<th>Contenuto / Destinazione</th>
+<th>Stato Proxy</th>
+<th>TTL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>A</code></td>
+<td><code>@</code> (tuodominio.click)</td>
+<td><code>185.199.108.153</code></td>
+<td>Solo DNS (grigio)</td>
+<td><code>1</code> (Auto)</td>
+</tr>
+<tr>
+<td><code>A</code></td>
+<td><code>@</code> (tuodominio.click)</td>
+<td><code>185.199.109.153</code></td>
+<td>Solo DNS (grigio)</td>
+<td><code>1</code> (Auto)</td>
+</tr>
+<tr>
+<td><code>A</code></td>
+<td><code>@</code> (tuodominio.click)</td>
+<td><code>185.199.110.153</code></td>
+<td>Solo DNS (grigio)</td>
+<td><code>1</code> (Auto)</td>
+</tr>
+<tr>
+<td><code>A</code></td>
+<td><code>@</code> (tuodominio.click)</td>
+<td><code>185.199.111.153</code></td>
+<td>Solo DNS (grigio)</td>
+<td><code>1</code> (Auto)</td>
+</tr>
+<tr>
+<td><code>CNAME</code></td>
+<td><code>www</code></td>
+<td><code>tuonome.github.io</code></td>
+<td>Solo DNS (grigio)</td>
+<td><code>1</code> (Auto)</td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>Una volta inseriti i 5 record nella tabella, clicca sul pulsante blu <strong>Continua</strong> in fondo alla pagina.</li>
+<li>Compare il popup di avviso <em>"tuodominio.click non è completamente protetto (Tutti i record DNS sono impostati sullo stato proxy Solo DNS)"</em>: clicca su <strong>Lo farò più tardi</strong>.</li>
+</ol>
+<hr />
+<h2 id="fase-5">Fase 5. Verifica DNSSEC e recupero dei Name Server Cloudflare</h2>
+
+<ol>
+<li><strong>Avviso DNSSEC:</strong> su AWS Route 53 il DNSSEC per i nuovi domini è <strong>disattivato di default</strong>.</li>
+<li>Nella stessa pagina di Cloudflare, individua i <strong>2 Name Server</strong> assegnati al tuo account (per esempio <code>xxx.ns.cloudflare.com</code> e <code>yyy.ns.cloudflare.com</code>) e copiali.</li>
+</ol>
+<hr />
+<h2 id="fase-6">Fase 6. Aggiornamento dei Name Server su AWS Route 53</h2>
+
+<ol>
+<li>Nella console di <a href="https://console.aws.amazon.com/route53/home">AWS Route 53</a>, vai su <a href="https://console.aws.amazon.com/route53/domains/home">Registered domains</a> &gt; <code>tuodominio.click</code>.</li>
+<li>Clicca su <strong>Actions</strong> &gt; <strong>Edit name servers</strong>.</li>
+<li>Cancella i 4 server di AWS e incolla i <strong>2 Name Server di Cloudflare</strong>.</li>
+<li>Clicca su <strong>Save</strong> e poi su Cloudflare premi <strong>Fine, controlla i server dei nomi</strong>.</li>
+</ol>
+<hr />
+<h2 id="fase-7">Fase 7. Collegamento del Custom Domain su GitHub Pages</h2>
+
+<ol>
+<li>Su GitHub entra nel repository <code>tuonome.github.io</code> &gt; <strong>Settings</strong> &gt; <strong>Pages</strong>.</li>
+<li>Sotto <strong>Custom domain</strong>, inserisci <code>tuodominio.click</code> (senza <code>www</code>) e clicca su <strong>Save</strong>.</li>
+<li>GitHub aggiunge da solo al repository un file chiamato <code>CNAME</code> con il tuo dominio: <strong>non eliminarlo</strong>. Se lavori con Git in locale, esegui <code>git pull</code> prima del prossimo <code>git push</code>.</li>
+<li>Attendi la scritta verde <em>DNS check successful</em>. Può richiedere da pochi minuti a qualche ora, finché i Name Server della Fase 6 non si sono propagati.</li>
+<li>Spunta la casella <strong>Enforce HTTPS</strong>. Se è grigia e non selezionabile, GitHub sta ancora emettendo il certificato: riprova dopo 15-60 minuti.</li>
+<li>Apri <code>https://tuodominio.click</code> e <code>https://www.tuodominio.click</code>: entrambi devono mostrare il tuo sito (<code>www</code> viene reindirizzato in automatico al dominio principale).</li>
+</ol>
+<blockquote>
+<p><strong>Importante: tieni la nuvola grigia fino alla fine.</strong> Finché il <em>DNS check</em> non è riuscito e <em>Enforce HTTPS</em> non è attivo, lascia i record su Cloudflare in modalità <strong>Solo DNS</strong> (nuvola grigia). Il proxy arancione (Opzionale A) va attivato solo dopo, altrimenti GitHub non riesce a verificare il dominio.</p>
+<p><strong>Consigliato: verifica il dominio su GitHub.</strong> Da <a href="https://github.com/settings/pages_verified_domains">Settings &gt; Pages &gt; Add a domain</a> del tuo profilo puoi verificare <code>tuodominio.click</code> con un record <code>TXT</code> su Cloudflare. Impedisce ad altri utenti GitHub di rivendicare il tuo dominio (domain takeover) se un giorno i record DNS restassero orfani.</p>
+<p><strong>Verifica:</strong> <code>https://tuodominio.click</code> si apre con il lucchetto e <em>Settings &gt; Pages</em> mostra <em>"Your site is published at https://tuodominio.click/"</em>.</p>
+</blockquote>
+<hr />
+<h2 id="fase-8">Fase 8. Eliminazione della Hosted Zone su AWS (azzeramento costi)</h2>
+
+<ol>
+<li>Solo dopo che il sito è attivo su Cloudflare, apri <a href="https://console.aws.amazon.com/route53/home">AWS Route 53</a> &gt; <a href="https://console.aws.amazon.com/route53/v2/hostedzones">Hosted zones</a>.</li>
+<li>Elimina eventuali record personalizzati interni a <code>tuodominio.click</code> (eccetto NS e SOA).</li>
+<li>Seleziona la zona <code>tuodominio.click</code>, clicca su <strong>Delete zone</strong> e conferma digitando <code>delete</code>.</li>
+</ol>
+<hr />
+<h2>Sezioni facoltative: hardening e privacy avanzata</h2>
+<p>Le sei sezioni che seguono sono indipendenti tra loro. Si fanno <strong>dopo</strong> la Fase 8, a sito funzionante.</p>
+<h3 id="opzionale-a">Opzionale A. Proxy Cloudflare, SSL Full (Strict) ed ECH (Encrypted Client Hello)</h3>
+
+<p>Una volta che GitHub Pages ha emesso il certificato HTTPS e il sito funziona, puoi attivare il proxy di Cloudflare (<strong>Con proxy / nuvola arancione</strong>) per sbloccare le funzioni di crittografia avanzata e proteggere la privacy dei visitatori dagli ISP.</p>
+<ol>
+<li><strong>Prima imposta SSL/TLS su Full (Strict).</strong> Nel menu di Cloudflare vai su <strong>SSL/TLS</strong> &gt; <strong>Panoramica (Overview)</strong> e seleziona <strong>Completa (rigida) / Full (Strict)</strong>. <em>Importante: se lasci "Flessibile", si crea un loop di reindirizzamento infinito con GitHub Pages.</em></li>
+<li><strong>Attiva la nuvola arancione.</strong> Vai su <strong>DNS</strong> &gt; <strong>Record</strong> e commuta lo switch da <em>Solo DNS</em> a <strong>Con proxy</strong> su tutti i 4 record <code>A</code> e sul record <code>CNAME</code>.</li>
+<li><strong>Attiva HSTS e TLS 1.3.</strong> Vai su <strong>SSL/TLS</strong> &gt; <strong>Certificati Edge (Edge Certificates)</strong>:<ul>
+<li>Attiva <strong>Usa sempre HTTPS (Always Use HTTPS)</strong>.</li>
+<li>Imposta <strong>Versione TLS minima</strong> su <code>TLS 1.2</code>.</li>
+<li>Attiva <strong>TLS 1.3</strong>.</li>
+</ul>
+</li>
+<li><strong>Encrypted Client Hello (ECH).</strong> Sempre in <em>Certificati Edge</em> (o nella sezione <em>Rete / Network</em>), assicurati che <strong>Encrypted Client Hello (ECH)</strong> sia attivo. Questa funzione cifra il campo SNI durante la connessione TLS, impedendo al provider Internet (ISP) del visitatore di leggere il nome specifico del dominio visitato dietro la rete Cloudflare.</li>
+</ol>
+<h3 id="opzionale-b">Opzionale B. HTTP Response Headers per la privacy (zero referrer e blocco API del browser)</h3>
+
+<p>Anche su un sito statico su GitHub Pages (che non permette di configurare file <code>.htaccess</code>), il piano gratuito di Cloudflare permette di iniettare header HTTP di sicurezza e privacy tramite le <strong>Transform Rules</strong>. Richiede la nuvola arancione attiva.</p>
+<ol>
+<li>Su Cloudflare, apri il tuo dominio e vai su <strong>Regole (Rules)</strong> &gt; <strong>Impostazioni / Transform Rules</strong> &gt; scheda <strong>Modifica intestazione di risposta (Modify Response Header)</strong>.</li>
+<li>Clicca su <strong>Crea regola</strong>, chiamala <code>Privacy Hardening Headers</code> e seleziona <strong>Tutte le richieste in arrivo (All incoming requests)</strong>.</li>
+<li>Aggiungi le seguenti operazioni di tipo <strong>Set static</strong> (Imposta statico):</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Nome intestazione (Header Name)</th>
+<th>Valore (Value)</th>
+<th>Scopo per la privacy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Referrer-Policy</code></td>
+<td><code>no-referrer</code></td>
+<td>Impedisce al browser di comunicare ai siti esterni che l'utente proviene dal tuo dominio.</td>
+</tr>
+<tr>
+<td><code>Permissions-Policy</code></td>
+<td><code>geolocation=(), camera=(), microphone=(), interest-cohort=(), browsing-topics=()</code></td>
+<td>Disattiva geolocalizzazione, sensori e blocca il tracciamento pubblicitario (Google Topics API / FLoC).</td>
+</tr>
+<tr>
+<td><code>X-Content-Type-Options</code></td>
+<td><code>nosniff</code></td>
+<td>Impedisce il MIME-sniffing dei file scaricati o visualizzati.</td>
+</tr>
+<tr>
+<td><code>X-Frame-Options</code></td>
+<td><code>DENY</code></td>
+<td>Impedisce a siti terzi di incorporare il tuo sito dentro un <code>&lt;iframe&gt;</code> (anti-clickjacking).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="opzionale-c">Opzionale C. Blindatura email del dominio (anti-spoofing o Email Routing anonimo)</h3>
+
+<p>Un dominio senza record di posta permette a chiunque di inviare email di phishing fingendo di scrivere da <code>@tuodominio.click</code>. Hai due scenari possibili.</p>
+<p><strong>Scenario 1: non usi l'email sul dominio (blocco totale anti-spoofing).</strong> Aggiungi questi 3 record su Cloudflare &gt; DNS &gt; Record, per dichiarare a tutti i server del mondo che nessuna email legittima parte o arriva su <code>tuodominio.click</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Tipo</th>
+<th>Nome</th>
+<th>Contenuto</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TXT</code></td>
+<td><code>@</code></td>
+<td><code>"v=spf1 -all"</code></td>
+<td>SPF rigoroso: nessun server è autorizzato a inviare email.</td>
+</tr>
+<tr>
+<td><code>TXT</code></td>
+<td><code>_dmarc</code></td>
+<td><code>"v=DMARC1; p=reject; sp=reject; adkim=s; aspf=s;"</code></td>
+<td>DMARC: ordina di cestinare subito qualsiasi email contraffatta.</td>
+</tr>
+<tr>
+<td><code>MX</code></td>
+<td><code>@</code></td>
+<td>Server: <code>.</code> · Priorità: <code>0</code></td>
+<td>Record Null MX (RFC 7505): indica che il dominio non accetta posta.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Scenario 2: vuoi ricevere email senza esporre il tuo indirizzo personale.</strong> Se vuoi pubblicare un contatto sul sito (per esempio <code>info@tuodominio.click</code>) senza rivelare la tua casella personale, vai su Cloudflare in <strong>Email</strong> &gt; <strong>Email Routing</strong>: Cloudflare inoltra gratuitamente i messaggi ricevuti su <code>info@tuodominio.click</code> alla tua casella privata, mantenendola nascosta.</p>
+<h3 id="opzionale-d">Opzionale D. Privacy del proprietario su GitHub (email nei commit e metadati EXIF)</h3>
+
+<blockquote>
+<p><strong>Attenzione: i repository GitHub Pages gratuiti sono pubblici.</strong> Chiunque può ispezionare la cronologia dei commit di <code>tuonome.github.io</code>. Se fai commit con la tua email personale, questa resta visibile pubblicamente nel log di Git (<code>git log</code>).</p>
+</blockquote>
+<ol>
+<li><strong>Attiva l'email privata su GitHub.</strong> Vai su GitHub &gt; <strong>Settings</strong> (del tuo profilo) &gt; <strong>Emails</strong>.</li>
+<li>Spunta la casella <strong>Keep my email addresses private</strong> e spunta anche <strong>Block command line pushes that expose my personal email</strong>.</li>
+<li>
+<p>Copia l'indirizzo generato da GitHub nelle <a href="https://github.com/settings/emails">impostazioni email</a> (formato <code>12345678+tuonome@users.noreply.github.com</code>) e configuralo nel tuo terminale locale con <code>git config --global user.email "12345678+tuonome@users.noreply.github.com"</code>.</p>
+</li>
+<li>
+<p><strong>Rimozione dei metadati EXIF dalle immagini.</strong> Prima di caricare foto JPG/PNG nel repository del sito, rimuovi sempre i metadati EXIF (che possono contenere le coordinate GPS esatte di casa o ufficio e il modello del telefono) usando strumenti come <a href="https://exiftool.org/">exiftool</a>: <code>exiftool -all= immagine.jpg</code>.</p>
+</li>
+</ol>
+<h3 id="opzionale-e">Opzionale E. Riattivazione DNSSEC (Cloudflare + Route 53) e record CAA</h3>
+
+<p>Per impedire attacchi di <em>DNS Spoofing / Cache Poisoning</em> e limitare chi può generare certificati SSL per il tuo dominio:</p>
+<ol>
+<li><strong>Attiva DNSSEC su Cloudflare.</strong> Vai su <strong>DNS</strong> &gt; <strong>Impostazioni (Settings)</strong> e clicca su <strong>Abilita DNSSEC (Enable DNSSEC)</strong>. Cloudflare ti mostra i parametri del record <code>DS</code> (Key Tag, Algorithm, Digest Type, Digest).</li>
+<li><strong>Registra la chiave DS su AWS Route 53.</strong> Vai su <a href="https://console.aws.amazon.com/route53/home">Route 53</a> &gt; <a href="https://console.aws.amazon.com/route53/domains/home">Registered domains</a> &gt; <code>tuodominio.click</code> &gt; sezione <strong>DNSSEC status</strong> &gt; <strong>Manage keys</strong> e inserisci i dati mostrati da Cloudflare.</li>
+<li><strong>Aggiungi i record CAA su Cloudflare.</strong> In <strong>DNS &gt; Record</strong>, aggiungi due record di tipo <code>CAA</code> su <code>@</code> con flag <code>0</code> e tag <code>issue</code>: uno per <a href="https://letsencrypt.org/"><code>letsencrypt.org</code></a> (usato da GitHub Pages) e uno per <code>pki.goog</code> / <code>ssl.com</code> (usati da Cloudflare Universal SSL). In questo modo nessun'altra Certification Authority al mondo potrà emettere certificati per <code>tuodominio.click</code>.</li>
+</ol>
+<h3 id="opzionale-f">Opzionale F. Zero tracking sul sito e isolamento delle risorse di terze parti (niente cookie banner)</h3>
+
+<p>Per rendere <code>tuodominio.click</code> conforme al GDPR senza banner dei cookie e senza cedere a terzi i dati dei visitatori:</p>
+<ul>
+<li><strong>Niente Google Fonts da CDN esterno.</strong> Non caricare mai font da <code>fonts.googleapis.com</code> o <code>fonts.gstatic.com</code> (trasmettono l'indirizzo IP di ogni visitatore a Google). Scarica i file <code>.woff2</code> e ospitali direttamente in una cartella <code>/fonts</code> dentro il tuo repository GitHub.</li>
+<li><strong>Niente librerie JS da CDN esterni.</strong> Evita link a <code>cdnjs</code>, <code>unpkg</code> o <code>jsdelivr</code>; salva gli script localmente nel repository.</li>
+<li><strong>Statistiche senza tracciamento.</strong> Se vuoi sapere quante visite riceve il sito senza usare Google Analytics, ti basta consultare le statistiche aggregate lato rete già incluse gratuitamente nella dashboard di Cloudflare (sezione <strong>Analytics &amp; Logs &gt; Traffic</strong>), che non installano alcun cookie né script nel browser dell'utente.</li>
+</ul>
+<hr />
+<p><em>Guida tecnica (edizione privacy avanzata): AWS Route 53 + Cloudflare + GitHub Pages.</em></p>
+<div id="nextprev"><a href="/bazzite_onexplayer_1s/"><div id="nextart">Prossimo:<br>Installare Bazzite sul OneXPlayer 1S: guida passo passo</div></a><a href="/cachy_os_t450_guida/"><div id="prevart">Precedente:<br>CachyOS su ThinkPad T450: guida completa all'installazione e configurazione</div></a></div>
+</article>
+</main>
+
+<footer>
+	<a href="/" class="footer-brand">retrothink.click</a>
+	<div class="footer-icons">
+		<a href="/index.xml" title="Iscriviti via RSS">
+			<img src="/rss.svg" alt="RSS Feed">
+		</a>
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
+			<img src="/youtube.png" alt="YouTube Channel">
+		</a>
+	</div>
+</footer>
+
+<script src="https://unpkg.com/feather-icons" defer></script>
+<script defer>
+  document.addEventListener("DOMContentLoaded", () => feather.replace());
+</script>
+</body>
+</html>
