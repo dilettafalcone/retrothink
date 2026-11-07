@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Installare Bazzite sul OneXPlayer 1S: guida passo passo | Retro Think</title>
+	<meta name="description" content="Guida passo passo per installare Bazzite sul OneXPlayer 1S (8.4&quot;, i7-1195G7, Iris Xe), con la correzione dello schermo nero, il passaggio al desktop, i giochi Epic con Heroic e i rollback.">
+	<meta name="keywords" content="bazzite, linux, handheld, onexplayer, gaming, installazione, guida">
+	<meta name="robots" content="index, follow">
+	<link rel="canonical" href="https://retrothink.click/bazzite_onexplayer_1s/">
+	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
+	<link rel="icon" href="/favicon.ico">
+	<meta property="og:type" content="article">
+	<meta property="og:url" content="https://retrothink.click/bazzite_onexplayer_1s/">
+	<meta property="og:title" content="Installare Bazzite sul OneXPlayer 1S: guida passo passo">
+	<meta property="og:description" content="Guida passo passo per installare Bazzite sul OneXPlayer 1S (8.4&quot;, i7-1195G7, Iris Xe), con la correzione dello schermo nero, il passaggio al desktop, i giochi Epic con Heroic e i rollback.">
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="site-nav">
+	<div class="nav-inner">
+		<a href="/" class="nav-brand">Retro Think</a>
+		<a href="/index.xml" class="nav-rss" title="Feed RSS">
+			<img src="/rss.svg" alt="RSS">
+		</a>
+	</div>
+</nav>
+
+<main>
+<a href="/" class="back-link">&#8592; tutti gli articoli</a>
+
+<h1>Installare Bazzite sul OneXPlayer 1S: guida passo passo</h1>
+<div class="article-meta">
+  <span>2026-11-07</span> &middot; <a id="tag_bazzite" href="https://retrothink.click/tags/bazzite">Bazzite</a> <a id="tag_linux" href="https://retrothink.click/tags/linux">Linux</a> <a id="tag_handheld" href="https://retrothink.click/tags/handheld">Handheld</a> <a id="tag_onexplayer" href="https://retrothink.click/tags/onexplayer">Onexplayer</a> <a id="tag_gaming" href="https://retrothink.click/tags/gaming">Gaming</a> <a id="tag_installazione" href="https://retrothink.click/tags/installazione">Installazione</a> <a id="tag_guida" href="https://retrothink.click/tags/guida">Guida</a>
+</div>
+
+<article>
+<p>Guida passo passo, aggiornata al 7 novembre 2026 dopo un'installazione reale: dalla preparazione di Windows fino ai giochi Epic nella Steam Gaming Mode.</p>
+<table>
+<thead>
+<tr>
+<th>Modello</th>
+<th>CPU / GPU</th>
+<th>RAM</th>
+<th>Disco</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OneXPlayer 1S, 8.4" IPS</td>
+<td>i7-1195G7 / Iris Xe</td>
+<td>16 GB</td>
+<td>1 TB NVMe</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Da sapere prima.</strong> Bazzite si installa su questo dispositivo, ma <strong>senza supporto ufficiale</strong>.</p>
+<ul>
+<li>La pagina ufficiale sui OneXPlayer documenta solo il modello X1.</li>
+<li>La grafica Iris Xe non è tra le GPU indicate per la Steam Gaming Mode (sono indicate GPU AMD moderne e Intel Arc).</li>
+<li>Al primo avvio la Gaming Mode parte con lo schermo nero. Si risolve con una correzione manuale dalla console, descritta ai passaggi 6.2 e 6.3, verificata su questo dispositivo.</li>
+<li>Anche il passaggio al desktop dal menu di Steam non funziona subito: la soluzione è al passaggio 6.6.</li>
+</ul>
+<p>Fonti: <a href="https://docs.bazzite.gg/Handheld_and_HTPC_edition/Handheld_Wiki/OneXPlayer_Handhelds/">OneXPlayer Handhelds</a>, <a href="https://docs.bazzite.gg/Gaming/Hardware_compatibility_for_gaming/">Hardware Compatibility for Gaming</a>, <a href="https://github.com/ublue-os/bazzite/issues/6240">issue #6240</a>.</p>
+</blockquote>
+<p>Accanto a ogni passaggio trovi l'indicazione di quanto è affidabile: <strong>Verificato</strong> (provato su questo dispositivo o confermato dalla documentazione ufficiale), <strong>Non verificato</strong> o <strong>Facoltativo</strong>.</p>
+<hr />
+<h2>1. Verifica i requisiti</h2>
+<p>Prima di toccare il dispositivo, controlla che l'hardware soddisfi i requisiti ufficiali.</p>
+<h3>1.1 Confronta l'hardware con i requisiti minimi</h3>
+<p><em>Verificato.</em></p>
+<p>Requisiti ufficiali di Bazzite e situazione del tuo dispositivo:</p>
+<ul>
+<li><strong>Firmware UEFI.</strong> Il boot CSM/Legacy non è supportato.</li>
+<li><strong>CPU quad-core da 2 GHz e 8 GB di RAM.</strong> Il i7-1195G7 e i 16 GB li superano.</li>
+<li><strong>GPU con Vulkan 1.3 o superiore.</strong> Intel indica Vulkan 1.3 per la Iris Xe, ma con i driver Windows. Su Linux lo controllerai al passaggio 6.4.</li>
+<li><strong>Almeno 50 GB liberi su SSD interno</strong> (consigliati 120 GB).</li>
+<li><strong>Disco in formato GPT.</strong> L'installazione su un disco MBR fallisce.</li>
+</ul>
+<p>Fonti: <a href="https://docs.bazzite.gg/Gaming/Hardware_compatibility_for_gaming/">Hardware Compatibility for Gaming</a>, Intel, articolo di supporto 000005524 "Supported APIs for Intel Graphics", <a href="https://onexplayer.bg/en/onexplayer_1s_spec">specifiche OneXPlayer 1S</a>.</p>
+<hr />
+<h2>2. Prepara Windows e il materiale</h2>
+<p>Questi passaggi si fanno ancora in Windows. Anche se poi sostituisci Windows, servono a non perdere dati e licenza.</p>
+<h3>2.1 Fai il backup dei dati</h3>
+<p><em>Verificato.</em></p>
+<p>Copia su un disco esterno o nel cloud tutto ciò che vuoi tenere: documenti, salvataggi dei giochi non sincronizzati, foto. La guida ufficiale lo chiede prima di procedere.</p>
+<p>Fonte: <a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a>.</p>
+<h3>2.2 Metti al sicuro licenza Windows e driver</h3>
+<p><em>Non documentato da Bazzite.</em></p>
+<ul>
+<li>Collega la licenza Windows al tuo account Microsoft e annota il product key. Di solito su questi dispositivi la licenza è legata all'hardware, ma per il tuo modello non l'ho verificato.</li>
+<li>Se un giorno vorrai tornare a Windows, DROIX distribuisce i driver del OneXPlayer 1S estratti da un'unità di serie.</li>
+<li>In Bazzite non servono driver aggiuntivi: sono integrati nel kernel che arriva con l'immagine.</li>
+</ul>
+<p>Fonti: <a href="https://droix.net/blogs/onexplayer-downloads-drivers-faq/">DROIX, driver OneXPlayer</a>, <a href="https://docs.bazzite.gg/General/FAQ/">FAQ Bazzite</a>.</p>
+<h3>2.3 Disattiva BitLocker</h3>
+<p><em>Verificato.</em></p>
+<p>In Windows apri <em>Impostazioni → Privacy e sicurezza → Crittografia dispositivo</em> (o <em>Gestione BitLocker</em> dal Pannello di controllo) e disattiva la crittografia. Prima annota la chiave di ripristino.</p>
+<p>Fonte: <a href="https://docs.bazzite.gg/General/Installation_Guide/Installing_Bazzite_for_Handheld_PCs/">guida handheld ufficiale</a>.</p>
+<h3>2.4 Disattiva l'Avvio rapido di Windows</h3>
+<p><em>Verificato.</em></p>
+<ol>
+<li>Apri <em>Pannello di controllo → Opzioni risparmio energia → Specifica comportamento pulsanti di alimentazione</em>.</li>
+<li>Clicca <em>Modifica le impostazioni attualmente non disponibili</em> e togli la spunta da <em>Attiva avvio rapido</em>.</li>
+<li>Spegni il dispositivo con un normale arresto, non con l'ibernazione.</li>
+</ol>
+<p>Bazzite avverte che l'Avvio rapido può bloccare alcuni componenti, come il Wi-Fi.</p>
+<p>Fonte: <a href="https://docs.bazzite.gg/General/issues_and_resolutions/">Common Issues &amp; Resolutions</a>.</p>
+<h3>2.5 Procura il materiale</h3>
+<p><em>Verificato.</em></p>
+<ul>
+<li><strong>Chiavetta USB da almeno 16 GB</strong>, meglio USB 3.0 per evitare che si surriscaldi.</li>
+<li><strong>Tastiera USB fisica.</strong> Serve per digitare la password della chiave Secure Boot e, se attivi la cifratura, a ogni avvio.</li>
+<li><strong>Hub o adattatore USB-C</strong>, per collegare insieme chiavetta e tastiera.</li>
+</ul>
+<p>Fonti: <a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a>, <a href="https://docs.bazzite.gg/General/Installation_Guide/troubleshoot_guide/">Troubleshooting Guide</a>.</p>
+<hr />
+<h2>3. Scarica l'immagine e crea la chiavetta</h2>
+<h3>3.1 Scegli l'immagine giusta</h3>
+<p><em>Scelta consigliata.</em></p>
+<p>Sul sito ufficiale scegli <strong>Device: Handheld</strong> e poi <strong>Desktop: GNOME</strong>. Per gli handheld il sito non chiede la GPU: la scelta "Handheld" porta già a un'immagine con Steam Gaming Mode. Nella scheda <em>New Users</em> compare il pulsante <strong>Download bazzite-deck-gnome</strong>: è quello da usare.</p>
+<blockquote>
+<p><strong>Usa l'installer normale.</strong> Sotto il pulsante principale c'è anche il "Legacy installer". Il sito avverte che verrà dismesso presto e consiglia l'installer normale.</p>
+</blockquote>
+<p>Per riferimento, le immagini disponibili:</p>
+<table>
+<thead>
+<tr>
+<th>Immagine</th>
+<th>Cosa offre</th>
+<th>Per te</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bazzite-deck-gnome</code></td>
+<td>Steam Gaming Mode + desktop GNOME</td>
+<td><strong>Consigliata.</strong> È l'unica con Gaming Mode funzionante documentata su un OneXPlayer Intel Tiger Lake.</td>
+</tr>
+<tr>
+<td><code>bazzite-deck</code></td>
+<td>Steam Gaming Mode + desktop KDE</td>
+<td>Plausibile con la stessa correzione, non verificata.</td>
+</tr>
+<tr>
+<td><code>bazzite</code></td>
+<td>Solo desktop KDE</td>
+<td>Ripiego se la Gaming Mode non funziona: Steam si avvia in Big Picture.</td>
+</tr>
+<tr>
+<td><code>bazzite-gnome</code></td>
+<td>Solo desktop GNOME</td>
+<td>Ripiego alternativo.</td>
+</tr>
+</tbody>
+</table>
+<p>Puoi cambiare immagine anche dopo, con un rebase (vedi la sezione «Problemi noti e rollback» in fondo alla guida).</p>
+<p>Fonti: <a href="https://bazzite.gg/">bazzite.gg</a>, <a href="https://docs.bazzite.gg/General/FAQ/">FAQ Bazzite</a>, <a href="https://github.com/ublue-os/bazzite/issues/6240">issue #6240</a>.</p>
+<h3>3.2 Scarica la ISO e verifica il checksum</h3>
+<p><em>Verificato.</em></p>
+<p>Scarica la ISO con il pulsante <strong>Download bazzite-deck-gnome</strong>. Accanto al pulsante ci sono le icone per la verifica del file: da lì ottieni lo SHA256 pubblicato. Poi confrontalo con quello del file scaricato, da PowerShell (sostituisci il nome con quello del file scaricato):</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Get-FileHash</span> <span class="p">.\</span><span class="n">nome-del</span><span class="o">-file</span><span class="p">.</span><span class="n">iso</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
+</code></pre></div>
+
+<p>Fonte: <a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a>.</p>
+<h3>3.3 Scrivi la chiavetta con Rufus</h3>
+<p><em>Strumento ufficiale.</em></p>
+<p>Rufus è tra gli strumenti indicati dalla guida ufficiale di Bazzite, ma la documentazione non dice quali impostazioni usare. Quelle qui sotto derivano dai requisiti di Bazzite e dalle indicazioni dell'autore di Rufus. Tra parentesi trovi l'etichetta inglese, se Rufus è in inglese.</p>
+<ol>
+<li>Scarica Rufus dal sito ufficiale <a href="https://rufus.ie/">rufus.ie</a> e avvialo. Collega la chiavetta: il suo contenuto verrà cancellato.</li>
+<li><strong>Dispositivo</strong> (<em>Device</em>): seleziona la chiavetta. Controlla bene di non scegliere un disco esterno con dati.</li>
+<li><strong>Selezione boot</strong> (<em>Boot selection</em>): "Disco o immagine ISO", poi <strong>SELEZIONA</strong> e scegli il file <code>bazzite-deck-gnome</code> scaricato.</li>
+<li><strong>Schema partizione e sistema destinazione</strong>: se sono modificabili, scegli <strong>GPT</strong> e <strong>UEFI (non CSM)</strong>, perché Bazzite non supporta l'avvio Legacy/CSM. Se sono grigi, lasciali così (vedi la nota qui sotto).</li>
+<li><strong>Etichetta volume, file system e dimensione cluster</strong>: lascia i valori proposti da Rufus.</li>
+<li>Premi <strong>AVVIA</strong> (<em>START</em>). Se Rufus chiede in che modalità scrivere l'immagine, scegli la <strong>modalità immagine ISO</strong> (<em>ISO Image mode</em>), quella consigliata da Rufus.</li>
+<li>Conferma l'avviso di cancellazione e attendi la fine. Poi espelli la chiavetta in modo sicuro.</li>
+</ol>
+<blockquote>
+<p><strong>Opzioni grigie? È normale.</strong> Con la ISO di Bazzite Rufus 4.15 blocca schema partizione, sistema destinazione, file system ed etichetta (mostrando MBR, BIOS o UEFI CSM, FAT32). Significa che scriverà l'immagine in modalità DD, come copia esatta della ISO: la chiavetta riceve la partizione di avvio UEFI già presente nella ISO e i valori mostrati non vengono applicati. Lascia tutto così e premi AVVIA. Dopo la scrittura Windows potrebbe proporti di formattare la chiavetta: non farlo.</p>
+<p><strong>Se la chiavetta non si avvia.</strong> Riscrivila scegliendo la <strong>modalità immagine DD</strong> (<em>DD Image mode</em>), che copia la ISO byte per byte. L'autore di Rufus consiglia di provare prima la modalità ISO e passare alla DD solo in caso di problemi. Un utente Bazzite riporta di aver installato con la modalità DD. In modalità DD le opzioni di schema partizione vengono ignorate, ed è normale.</p>
+<p><strong>Evita Ventoy.</strong> La guida attuale lo ammette con passaggi extra per il Secure Boot, mentre le guide precedenti lo sconsigliavano del tutto. L'alternativa consigliata dalla guida ufficiale è Fedora Media Writer.</p>
+</blockquote>
+<p>Fonti: <a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a>, <a href="https://github.com/pbatard/rufus/issues/843">autore di Rufus su ISO e DD mode</a>, <a href="https://www.answeroverflow.com/m/1427413230900351016">utente Bazzite con DD mode</a>.</p>
+<hr />
+<h2>4. BIOS e avvio da USB</h2>
+<p>Collega hub, chiavetta e tastiera al OneXPlayer prima di accenderlo.</p>
+<h3>4.1 Entra nel BIOS</h3>
+<p><em>Non ufficiale per l'8.4".</em></p>
+<p>Nessun manuale ufficiale copre l'8.4" 1S. Prova queste combinazioni, con la tastiera USB collegata:</p>
+<ul>
+<li>Premi ripetutamente <kbd>ESC</kbd> sulla tastiera all'accensione (FAQ ufficiale OneXPlayer, scritta per il Mini Intel 1195G7).</li>
+<li>Tieni premuti il <strong>pulsante arancione sinistro</strong> e <kbd>Volume +</kbd> mentre accendi (wiki della community).</li>
+</ul>
+<p>Fonti: <a href="https://onexplayerstore.com/pages/faqs">FAQ OneXPlayer</a>, <a href="https://onexplayer.fandom.com/wiki/Linux">OneXPlayer wiki</a>.</p>
+<h3>4.2 Controlla le impostazioni del BIOS</h3>
+<p><em>Da controllare.</em></p>
+<ul>
+<li><strong>CSM / Legacy:</strong> deve restare disattivato. Il nuovo installer potrebbe non avviarsi in modalità Legacy.</li>
+<li><strong>Secure Boot:</strong> puoi lasciarlo attivo. Registrerai la chiave di Bazzite al passaggio 6.1.</li>
+<li><strong>Intel VMD / RST:</strong> non ho trovato fonti che dicano se il 1S lo ha attivo di fabbrica. Se all'installazione l'SSD da 1 TB non compare, cerca qui un'opzione VMD o RST e disattivala.</li>
+<li><strong>Fast Boot del BIOS:</strong> la documentazione Bazzite non ne parla. Disattivarlo rende più facile entrare nei menu, ma non è un requisito.</li>
+</ul>
+<blockquote>
+<p><strong>Attenzione al dual boot.</strong> Se Windows è installato con VMD attivo, disattivare VMD può impedire a Windows di avviarsi.</p>
+</blockquote>
+<p>Fonti: <a href="https://docs.bazzite.gg/General/Installation_Guide/troubleshoot_guide/">Troubleshooting Guide</a>, <a href="https://docs.bazzite.gg/General/Installation_Guide/secure_boot/">Secure Boot</a>, <a href="https://www.intel.com/content/www/us/en/support/articles/000088580/memory-and-storage/client-ssds.html">Intel, VMD</a>.</p>
+<h3>4.3 Avvia dalla chiavetta</h3>
+<p><em>Fonte DROIX.</em></p>
+<ol>
+<li>Accendi il dispositivo.</li>
+<li>Quando compare il logo, premi insieme <kbd>DESKTOP</kbd> + <kbd>Volume +</kbd>.</li>
+<li>Nel menu di avvio scegli la chiavetta con il D-Pad e conferma con <kbd>START</kbd>. L'SSD interno compare come "UEFI OS (One-netbook PCI-E 1TB SSD)": non è quello.</li>
+</ol>
+<p>Fonte: <a href="https://droix.net/blogs/onexplayer-downloads-drivers-faq/">DROIX, guida OneXPlayer 1165G7/1185G7/1195G7</a>.</p>
+<hr />
+<h2>5. Installa Bazzite</h2>
+<p>Non serve la connessione a Internet per installare.</p>
+<h3>5.1 Prova la sessione live</h3>
+<p><em>Facoltativo.</em></p>
+<p>La sessione live permette di vedere se schermo, touch e Wi-Fi rispondono prima di installare. Non usarla per giocare: usa un kernel diverso da quello installato.</p>
+<p>Già da qui puoi leggere il nome del modello, utile più avanti:</p>
+<div class="codehilite"><pre><span></span><code>cat<span class="w"> </span>/sys/class/dmi/id/product_name
+</code></pre></div>
+
+<p>Fonte: <a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a>.</p>
+<h3>5.2 Imposta lingua, regione e tastiera</h3>
+<p>Apri l'installer e scegli italiano per lingua, fuso orario e layout di tastiera.</p>
+<h3>5.3 Scegli il disco e il partizionamento</h3>
+<p><em>Verificato.</em></p>
+<p><strong>Solo Bazzite.</strong> Seleziona l'SSD interno da 1 TB e usa il <strong>partizionamento automatico</strong>.</p>
+<blockquote>
+<p><strong>Cancella tutto.</strong> Questa scelta cancella tutti i dati sul disco selezionato, Windows compreso.</p>
+</blockquote>
+<p><strong>Dual boot con Windows.</strong></p>
+<ol>
+<li>Prima, in Windows, riduci la partizione di Windows con <em>Gestione disco</em> per liberare almeno 50 GB (consigliati 120 GB o più).</li>
+<li>Nell'installer seleziona l'SSD e usa il <strong>partizionamento automatico</strong>, l'unica opzione disponibile nella ISO live: userà lo spazio libero.</li>
+<li>Dopo l'installazione aggiungerai Windows al menu di avvio (passaggio 6.7).</li>
+</ol>
+<blockquote>
+<p><strong>Bug noto dell'installer.</strong> Il pulsante "format as efi" dice che formatterà la partizione EFI di Windows, ma in realtà vi si aggiunge.</p>
+<p><strong>Alternativa più isolata.</strong> La vecchia guida raccomandava una partizione EFI separata, così gli aggiornamenti di Windows non toccano Bazzite. Oggi richiede la <a href="https://docs.bazzite.gg/General/Installation_Guide/legacy-install/">ISO legacy</a> con partizionamento manuale, che il sito dichiara in via di dismissione. Il OneXPlayer ha un solo slot M.2: un'altra strada è Windows-to-Go su disco esterno, creato con Rufus.</p>
+</blockquote>
+<p>Non condividere la libreria giochi su una partizione NTFS o exFAT: Bazzite non le supporta per giocare.</p>
+<p>Fonti: <a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a>, <a href="https://deepwiki.com/bazzite-org/docs.bazzite.gg/4.3-dual-boot-and-advanced-partitioning">Dual boot</a>, <a href="https://docs.bazzite.gg/Gaming/Hardware_compatibility_for_gaming/">Hardware Compatibility</a>.</p>
+<h3>5.4 Crea l'utente e decidi sulla cifratura</h3>
+<ul>
+<li>Crea utente e password. La guida sconsiglia di attivare l'account root.</li>
+<li><strong>Cifratura (facoltativa):</strong> richiede la tastiera fisica a ogni avvio, e se perdi la password i dati non si recuperano.</li>
+</ul>
+<p>Fonte: <a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a>.</p>
+<h3>5.5 Avvia l'installazione e riavvia</h3>
+<p>Avvia l'installazione. Al termine riavvia e rimuovi la chiavetta. Tieni collegata la tastiera: servirà per la chiave Secure Boot e per la console del passaggio 6.2.</p>
+<hr />
+<h2>6. Primo avvio</h2>
+<h3>6.1 Registra la chiave Secure Boot (MOK)</h3>
+<p><em>Verificato.</em></p>
+<p>Al riavvio compare una schermata blu, MokManager:</p>
+<ol>
+<li>Scegli <strong>Enroll MOK</strong>, poi <strong>Continue</strong>.</li>
+<li>Inserisci la password <code>universalblue</code>.</li>
+<li>Conferma e riavvia.</li>
+</ol>
+<blockquote>
+<p><strong>Due trappole.</strong> La schermata usa sempre il layout inglese QWERTY, e i caratteri digitati non vengono mostrati.</p>
+</blockquote>
+<p><strong>Se la schermata non compare</strong> o vedi l'errore "bad shim signature", segui il metodo alternativo:</p>
+<ol>
+<li>Disattiva Secure Boot nel BIOS e avvia Bazzite.</li>
+<li>Apri un terminale ed esegui il comando qui sotto, inserendo <code>universalblue</code>.</li>
+<li>Riavvia nel BIOS con <code>ujust bios</code>, riattiva Secure Boot.</li>
+<li>Al riavvio completa <strong>Enroll MOK</strong> con la stessa password.</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>ujust<span class="w"> </span>enroll-secure-boot-key
+</code></pre></div>
+
+<p>Un aggiornamento del BIOS può riattivare Secure Boot: in quel caso ripeti il metodo alternativo.</p>
+<p>Fonte: <a href="https://docs.bazzite.gg/General/Installation_Guide/secure_boot/">Secure Boot</a>.</p>
+<h3>6.2 Se lo schermo resta nero, apri la console</h3>
+<p><em>Verificato su questo dispositivo.</em></p>
+<p>Dopo il logo di Bazzite parte la Gaming Mode. Su questo modello lo schermo interno resta nero, anche se si sentono i suoni dell'interfaccia di Steam. Su questo dispositivo anche uno schermo esterno via USB-C è rimasto nero. Per applicare la correzione serve quindi la console testuale:</p>
+<ol>
+<li>Con la tastiera USB collegata, premi <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F3</kbd>. Se non succede nulla, prova <kbd>F2</kbd> o <kbd>F4</kbd>. Su una tastiera compatta può servire anche <kbd>Fn</kbd>.</li>
+<li>Accedi con il nome utente e la password creati durante l'installazione. Mentre digiti la password non compare nulla: è normale.</li>
+</ol>
+<blockquote>
+<p><strong>Com'è fatta la console.</strong></p>
+<ul>
+<li>Il testo appare ruotato, perché il pannello è montato in verticale: tieni il dispositivo in verticale per leggerlo. I comandi di rotazione della console non hanno effetto.</li>
+<li>Non si può scorrere all'indietro. Per leggere un output lungo aggiungi <code>| less</code> in fondo al comando: scorri con le frecce ed esci con <kbd>q</kbd>.</li>
+<li>Per uscire scrivi <code>exit</code>. Per tornare alla schermata grafica premi <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F1</kbd> (o <kbd>F2</kbd>).</li>
+</ul>
+</blockquote>
+<p>Fonti: <a href="https://github.com/ublue-os/bazzite/issues/6240">issue #6240</a>, <a href="https://universal-blue.discourse.group/t/gaming-mode-black-screen/1963">forum Universal Blue</a>, <a href="https://www.phoronix.com/news/Linux-5.9-Drops-Soft-Scrollback">Phoronix, scorrimento console</a>.</p>
+<h3>6.3 Applica la correzione dello schermo nero</h3>
+<p><em>Verificato su questo dispositivo.</em></p>
+<p>Su Tiger Lake il display engine non riesce a ruotare di 90° le immagini compresse, e il pannello del OneXPlayer è montato in verticale. Nella console esegui, premendo Invio dopo ogni riga:</p>
+<div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.config/environment.d
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;INTEL_DEBUG=norbc&quot;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.config/environment.d/10-gamescope-session.conf
+cat<span class="w"> </span>~/.config/environment.d/10-gamescope-session.conf
+</code></pre></div>
+
+<p>L'ultimo comando deve mostrare la riga <code>INTEL_DEBUG=norbc</code>. Poi riavvia:</p>
+<div class="codehilite"><pre><span></span><code>systemctl<span class="w"> </span>reboot
+</code></pre></div>
+
+<p>Al riavvio la Gaming Mode compare sullo schermo interno, nel verso giusto.</p>
+<blockquote>
+<p><strong>Se non basta.</strong> Su un altro Tiger Lake (GPD Win 3) ha funzionato aggiungere <code>--force-composition-rotation</code> al comando di gamescope (<a href="https://github.com/ublue-os/bazzite/issues/6156">issue #6156</a>). Non è verificato sul OneXPlayer.</p>
+</blockquote>
+<p>Fonte: <a href="https://github.com/ublue-os/bazzite/issues/6240">issue #6240</a>.</p>
+<h3>6.4 Controlla nome del modello e versione Vulkan</h3>
+<p><em>Facoltativo.</em></p>
+<p>Puoi farlo nella stessa console, prima di riavviare.</p>
+<div class="codehilite"><pre><span></span><code>cat<span class="w"> </span>/sys/class/dmi/id/product_name
+</code></pre></div>
+
+<p>Su questo dispositivo risponde <code>ONE XPLAYER</code>: lo stesso nome del modello dell'issue #6240.</p>
+<div class="codehilite"><pre><span></span><code>vulkaninfo<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;Instance Version&#39;</span>
+</code></pre></div>
+
+<p>Su questo dispositivo risponde <code>1.4.350</code>, sopra il requisito di 1.3. Le righe WARNING che compaiono prima si possono ignorare.</p>
+<p>Fonti: <a href="https://github.com/hhd-dev/bazzite-dc/blob/master/device-quirks">device-quirks</a>, <a href="https://docs.bazzite.gg/Gaming/Hardware_compatibility_for_gaming/">Hardware Compatibility</a>.</p>
+<h3>6.5 Accedi a Steam</h3>
+<p>Con lo schermo funzionante, accedi con il tuo account Steam e riavvia dal menu di accensione di Steam.</p>
+<p>Fonte: <a href="https://docs.bazzite.gg/General/Installation_Guide/Installing_Bazzite_for_Handheld_PCs/">guida handheld ufficiale</a>.</p>
+<h3>6.6 Fai funzionare il passaggio al desktop</h3>
+<p><em>Verificato su questo dispositivo.</em></p>
+<p>Su questo dispositivo <em>Passa al desktop</em> dal menu di Steam fa diventare nero lo schermo e riporta alla Gaming Mode. È un problema noto, segnalato su altri handheld con la stessa sessione di gioco (<code>gamescope-session-ogui-steam</code>). Si risolve dalla console (<kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>F3</kbd>):</p>
+<ol>
+<li>
+<p>Indica a Steam quale desktop avviare. Se non sei sicuro del nome, controllalo con <code>ls /usr/share/wayland-sessions/</code>.</p>
+<div class="codehilite"><pre><span></span><code>steamosctl set-default-desktop-session gnome.desktop
+</code></pre></div>
+
+</li>
+<li>
+<p>Imposta il desktop come modalità di avvio e riavvia:</p>
+<div class="codehilite"><pre><span></span><code>steamosctl set-default-login-mode desktop
+systemctl reboot
+</code></pre></div>
+
+</li>
+</ol>
+<blockquote>
+<p><strong>Non riavviare solo SDDM.</strong> Un workaround segnalato online suggerisce <code>sudo systemctl restart sddm</code> al posto del riavvio. Su questo dispositivo ha bloccato la console. Se succede, tieni premuto il pulsante di accensione per circa 10 secondi e riaccendi: al riavvio parte il desktop.</p>
+</blockquote>
+<p><strong>Per tornare alla Gaming Mode</strong> (le modalità ammesse sono solo <code>game</code> e <code>desktop</code>):</p>
+<div class="codehilite"><pre><span></span><code>steamosctl<span class="w"> </span>switch-to-game-mode
+</code></pre></div>
+
+<p>Passa subito alla Gaming Mode, senza cambiare la modalità di avvio.</p>
+<div class="codehilite"><pre><span></span><code>steamosctl<span class="w"> </span>set-default-login-mode<span class="w"> </span>game
+</code></pre></div>
+
+<p>Rimette la Gaming Mode come modalità di avvio. Si applica al riavvio successivo.</p>
+<p>Con <code>steamosctl get-default-login-mode</code> vedi quale modalità è impostata. Attento a scrivere bene <code>steamosctl</code>: un errore di battitura dà "command not found".</p>
+<p>Fonti: <a href="https://github.com/ublue-os/bazzite/issues/6199">issue #6199</a>, <a href="https://github.com/ublue-os/bazzite/issues/6039">issue #6039</a>, <a href="https://deepwiki.com/ublue-os/bazzite/9.2-audio-configuration-and-virtual-channels">DeepWiki, selezione sessione</a>.</p>
+<h3>6.7 Aggiungi Windows al menu di avvio (solo dual boot)</h3>
+<p><em>Solo dual boot.</em></p>
+<div class="codehilite"><pre><span></span><code>ujust<span class="w"> </span>regenerate-grub
+</code></pre></div>
+
+<p>Aggiunge Windows al menu GRUB.</p>
+<div class="codehilite"><pre><span></span><code>ujust<span class="w"> </span>setup-boot-windows-steam
+</code></pre></div>
+
+<p>Facoltativo: crea in Steam una voce che riavvia in Windows.</p>
+<p>Fonte: <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/ujust/">comandi ujust</a>.</p>
+<hr />
+<h2>7. Configura l'handheld</h2>
+<h3>7.1 Sistema orientamento e scala nel desktop</h3>
+<p>Se al primo avvio il desktop GNOME ha orientamento o scala sbagliati, correggili in <em>Impostazioni → Schermi</em>. Su un OneXPlayer Intel GNOME risulta già nel verso giusto. In alternativa, dal Terminale:</p>
+<div class="codehilite"><pre><span></span><code>gdctl<span class="w"> </span>show
+</code></pre></div>
+
+<p>Mostra il nome dello schermo interno, di solito <code>eDP-1</code>.</p>
+<div class="codehilite"><pre><span></span><code>gdctl<span class="w"> </span><span class="nb">set</span><span class="w"> </span>--logical-monitor<span class="w"> </span>--primary<span class="w"> </span>--monitor<span class="w"> </span>eDP-1<span class="w"> </span>--transform<span class="w"> </span><span class="m">90</span>
+</code></pre></div>
+
+<p>Se l'immagine è capovolta usa <code>270</code>. Aggiungi <code>--persistent</code> dopo <code>set</code> per mantenerla. Scollega prima gli schermi esterni.</p>
+<p>Per duplicare lo schermo su un monitor esterno premi <kbd>Super</kbd> + <kbd>P</kbd> più volte finché compare il mirror.</p>
+<p>Fonti: <a href="https://docs.bazzite.gg/General/Installation_Guide/Installing_Bazzite_for_Handheld_PCs/">guida handheld</a>, <a href="https://www.mankier.com/1/gdctl">gdctl</a>, <a href="https://gitlab.gnome.org/GNOME/gnome-control-center/-/issues/1748">GNOME, Super+P</a>.</p>
+<h3>7.2 Prova i controlli integrati</h3>
+<p><em>Da provare.</em></p>
+<p>Bazzite gestisce i controlli degli handheld con InputPlumber, che ha un profilo per i OneXPlayer Intel. Le sue regole riconoscono il nome "ONE XPLAYER", che è quello riportato da questo dispositivo, quindi i controlli dovrebbero essere riconosciuti. Che funzionino tutti non è ancora verificato.</p>
+<ul>
+<li><strong>Menu rapido (QAM):</strong> pulsante <kbd>Turbo</kbd>. Sui modelli più vecchi potrebbe non funzionare: usa <kbd>Guide</kbd> + <kbd>B</kbd>, che funziona sempre. Da tastiera: <kbd>Ctrl</kbd> + <kbd>2</kbd>.</li>
+<li><strong>Overlay di OpenGamepadUI:</strong> tieni premuto <kbd>Guide</kbd> e premi QAM.</li>
+<li><strong>Giroscopio:</strong> se non va, in OpenGamepadUI imposta l'emulazione <code>deck-uhid</code>.</li>
+<li><strong>Desktop Mode:</strong> il controller si usa come mouse da <em>Steam → Impostazioni → Controller → Layout desktop</em>.</li>
+</ul>
+<p>Se i controlli non vanno, apri una segnalazione su <a href="https://github.com/ublue-os/bazzite/issues">GitHub</a> citando l'issue #6240.</p>
+<p>Fonti: <a href="https://docs.bazzite.gg/Handheld_and_HTPC_edition/Handheld_Wiki/">Handheld Wiki</a>, <a href="https://shadowblip.github.io/InputPlumber/usage/">InputPlumber</a>, <a href="https://github.com/ChimeraOS/chimeraos/wiki/Release-Notes">note ChimeraOS</a>.</p>
+<h3>7.3 Scegli un solo metodo per il TDP</h3>
+<p><em>Non verificato sul 1S.</em></p>
+<p>Le strade possibili sono tre. Usane una sola alla volta, come raccomanda la documentazione:</p>
+<ol>
+<li>menu rapido di Steam, icona fulmine, sezione TDP (solo se il dispositivo è gestito da SteamOS Manager);</li>
+<li>OpenGamepadUI / PowerStation;</li>
+<li>un plugin Decky, come SimpleDeckyTDP.</li>
+</ol>
+<p>Non ho trovato conferme che il TDP del 1S Intel sia regolabile in Bazzite.</p>
+<p>Fonte: <a href="https://docs.bazzite.gg/Handheld_and_HTPC_edition/Handheld_Wiki/">Handheld Wiki</a>.</p>
+<h3>7.4 Installa Decky Loader</h3>
+<p><em>Facoltativo.</em></p>
+<div class="codehilite"><pre><span></span><code>ujust<span class="w"> </span>setup-decky
+</code></pre></div>
+
+<p>Decky si apre dal menu rapido. Può rompersi o disinstallarsi dopo un aggiornamento: in quel caso ripeti il comando.</p>
+<p>Fonte: <a href="https://docs.bazzite.gg/Handheld_and_HTPC_edition/Handheld_Wiki/">Handheld Wiki</a>.</p>
+<h3>7.5 Aggiorna e blocca la versione funzionante</h3>
+<p><em>Verificato.</em></p>
+<p>Sulle immagini Deck gli aggiornamenti automatici sono spenti. Aggiorna con l'app Bazzite Updater (usabile col controller) oppure:</p>
+<div class="codehilite"><pre><span></span><code>ujust<span class="w"> </span>update
+</code></pre></div>
+
+<p>Aggiorna sistema, app Flatpak e container. Serve almeno il 3% di spazio libero.</p>
+<p>Quando tutto funziona, blocca questa versione: la trovi al passaggio 9.2. Le app si installano da <strong>Bazaar</strong>. Con <code>ujust --choose</code> vedi tutti i comandi di configurazione. Evita <code>rpm-ostree install</code>: può bloccare gli aggiornamenti.</p>
+<p>Fonti: <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/updating_guide/">Update Guide</a>, <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/rpm-ostree/">rpm-ostree</a>.</p>
+<h3>7.6 Installa Mullvad VPN</h3>
+<p><em>Facoltativo.</em></p>
+<p>Mullvad non ha una versione Flatpak ufficiale, quindi va aggiunto al sistema con <code>rpm-ostree</code>. La documentazione di Bazzite sconsiglia questo metodo perché può bloccare gli aggiornamenti: per questo il primo passo è bloccare la versione attuale. Esegui i comandi dal Terminale del desktop.</p>
+<ol>
+<li>
+<p>Blocca la versione del sistema in uso, così puoi tornare indietro (vedi 9.2):</p>
+<div class="codehilite"><pre><span></span><code>sudo ostree admin pin 0
+</code></pre></div>
+
+</li>
+<li>
+<p>Aggiungi il repository ufficiale di Mullvad. Prima controlla che l'indirizzo corrisponda a quello indicato per Fedora nelle istruzioni ufficiali di Mullvad sul sito mullvad.net:</p>
+<div class="codehilite"><pre><span></span><code>curl -fsSL https://repository.mullvad.net/rpm/stable/mullvad.repo | sudo tee /etc/yum.repos.d/mullvad.repo
+</code></pre></div>
+
+</li>
+<li>
+<p>Installa l'app e riavvia:</p>
+<div class="codehilite"><pre><span></span><code>rpm-ostree install mullvad-vpn
+systemctl reboot
+</code></pre></div>
+
+</li>
+<li>
+<p>Attiva il servizio di Mullvad, che dopo l'installazione resta spento:</p>
+<div class="codehilite"><pre><span></span><code>sudo systemctl enable --now mullvad-daemon.service
+</code></pre></div>
+
+</li>
+<li>
+<p>Apri l'app <strong>Mullvad VPN</strong> dal menu delle applicazioni e inserisci il numero di account. Se vuoi che si connetta da sola, attiva la connessione automatica nelle impostazioni dell'app.</p>
+</li>
+</ol>
+<blockquote>
+<p><strong>Da sapere.</strong> La VPN gira come servizio di sistema, quindi dovrebbe restare attiva anche in Gaming Mode. L'app grafica si apre solo dal desktop. Se un aggiornamento di Bazzite fallisce per colpa del pacchetto aggiunto, disinstallalo con <code>rpm-ostree uninstall mullvad-vpn</code> e riavvia.</p>
+</blockquote>
+<p>Fonti: <a href="https://zegnat.bearblog.dev/adding-mullvad-to-bazzite/">Adding Mullvad to Bazzite</a>, <a href="https://discussion.fedoraproject.org/t/howto-install-mullvadvpn-browser-on-fedora-atomic-desktops/125749">Fedora Discussion</a>, <a href="https://github.com/mullvad/mullvadvpn-app/issues/5639">Mullvad issue #5639</a>, <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/rpm-ostree/">rpm-ostree</a>.</p>
+<hr />
+<h2>8. Giochi Epic nella Gaming Mode</h2>
+<p>Bazzite non integra Epic direttamente. La documentazione consiglia Heroic Games Launcher per i giochi Epic, GOG e Amazon. Tutto questo richiede che la Gaming Mode funzioni (passaggio 6.3).</p>
+<h3>8.1 Installa Heroic da Bazaar</h3>
+<p><em>Verificato.</em></p>
+<p>Heroic non è preinstallato. Passa al Desktop Mode, apri Bazaar, cerca <strong>Heroic Games Launcher</strong> e installalo. È lo stesso pacchetto pubblicato su <a href="https://flathub.org/apps/com.heroicgameslauncher.hgl">Flathub</a>.</p>
+<p>Fonti: <a href="https://docs.bazzite.gg/Gaming/gaming-intro/">Introduction to Gaming</a>, <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/software-intro/">Installing Software</a>, <a href="https://universal-blue.discourse.group/t/is-bazzite-good-for-epic-games/4132">forum Universal Blue</a>.</p>
+<h3>8.2 Accedi a Epic e scarica un gioco</h3>
+<p>In Heroic scegli <em>Login → Epic Games</em>, accedi con il tuo account e installa un gioco dalla libreria.</p>
+<p>Fonte: <a href="https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher">Heroic Games Launcher</a>.</p>
+<h3>8.3 Avvialo una prima volta nel Desktop Mode</h3>
+<p>Molti giochi Epic installano dei prerequisiti al primo avvio, di solito un Visual C++ redistributable o un launcher proprio. Lascia che finiscano prima di tornare alla Gaming Mode.</p>
+<p>Fonte: <a href="https://heldgames.com/guides/epic-games-steam-deck-heroic">heldgames</a>.</p>
+<h3>8.4 Porta i giochi nella Gaming Mode</h3>
+<p>Hai due possibilità, anche combinabili:</p>
+<ul>
+<li><strong>Un gioco alla volta.</strong> In Heroic apri la pagina del gioco e usa <em>Add to Steam</em>.</li>
+<li><strong>Heroic intero.</strong> In Steam (Desktop Mode) scegli <em>Aggiungi un gioco → Aggiungi un gioco non di Steam</em> e seleziona Heroic. Alcuni giochi partono solo da Heroic e non dalle scorciatoie, quindi conviene averlo comunque. Dalla versione 2.21 Heroic ha una modalità console a schermo intero, comoda col controller.</li>
+</ul>
+<p>Torna alla Gaming Mode: trovi tutto in <em>Libreria → Non di Steam</em>.</p>
+<p>Fonti: <a href="https://colematoyicu.s3.amazonaws.com/how-to-install-and-play-epic-games-on-a-steam-deck.html">guida Epic su Steam Deck</a>, <a href="https://www.gamingonlinux.com/2026/04/heroic-games-launcher-gets-a-slick-full-screen-console-like-mode/comment_id=293287">GamingOnLinux</a>.</p>
+<h3>8.5 Imposta i controlli e controlla l'anti-cheat</h3>
+<ul>
+<li>I giochi non di Steam non hanno un layout ufficiale: nelle impostazioni controller di Steam scegline uno tra quelli della community.</li>
+<li>I giochi con anti-cheat possono non avviarsi su Linux. Controlla prima su <a href="https://www.protondb.com/">ProtonDB</a> e <a href="https://areweanticheatyet.com/">areweanticheatyet.com</a>.</li>
+<li>Con la Iris Xe i titoli più pesanti potrebbero girare male: non ho trovato test con questo hardware.</li>
+</ul>
+<hr />
+<h2>9. Previeni i problemi futuri</h2>
+<p>Gli aggiornamenti di Bazzite, del BIOS e di Windows sono i momenti in cui qualcosa può rompersi. Questi passaggi ti lasciano sempre una strada per tornare indietro.</p>
+<h3>9.1 Prepara un kit di emergenza</h3>
+<p><em>Consiglio.</em></p>
+<ul>
+<li><strong>Tieni la chiavetta di installazione</strong> e non riusarla per altro. Se Bazzite non si avvia più, puoi avviare la sessione live da lì. Un utente del forum Universal Blue riporta che la ISO live include anche uno strumento per ripristinare il bootloader.</li>
+<li><strong>Copia su un disco esterno o nel cloud</strong> il file con la correzione dello schermo. Il file sta nella tua cartella personale, che aggiornamenti e rollback non toccano:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code>cat<span class="w"> </span>~/.config/environment.d/10-gamescope-session.conf
+</code></pre></div>
+
+<ul>
+<li><strong>Annota</strong> il nome del modello letto al passaggio 6.4, l'immagine installata e la combinazione di tasti che funziona per BIOS e menu di avvio.</li>
+</ul>
+<p>Fonti: <a href="https://universal-blue.discourse.group/t/dual-boot-broken-after-bios-update/12193">forum Universal Blue</a>, <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/rolling_back_system_updates/">Rollbacks</a>.</p>
+<h3>9.2 Blocca la versione che funziona</h3>
+<p><em>Verificato.</em></p>
+<p>Bazzite conserva solo 2 versioni del sistema: a ogni aggiornamento cancella la più vecchia. Se ne blocchi una con il pin, non viene mai cancellata.</p>
+<ol>
+<li>
+<p>Controlla l'indice della versione in uso (gli indici cambiano dopo ogni aggiornamento):</p>
+<div class="codehilite"><pre><span></span><code>rpm-ostree status -v
+</code></pre></div>
+
+</li>
+<li>
+<p>Blocca la versione corrente (indice 0):</p>
+<div class="codehilite"><pre><span></span><code>sudo ostree admin pin 0
+</code></pre></div>
+
+</li>
+</ol>
+<p>Quando una versione più nuova ha funzionato bene per un po', puoi sbloccare quella vecchia con <code>sudo ostree admin pin -u</code> seguito dal suo indice, così liberi spazio.</p>
+<p>Fonte: <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/rolling_back_system_updates/">Rolling back system updates</a>.</p>
+<h3>9.3 Segui una routine per ogni aggiornamento</h3>
+<p><em>Verificato.</em></p>
+<p>Sulle immagini Deck gli aggiornamenti automatici sono spenti, quindi decidi tu quando aggiornare. Ogni volta:</p>
+<ol>
+<li>Controlla di avere almeno il 3% di spazio libero sul disco.</li>
+<li>Aggiorna da Steam (<em>Impostazioni → Sistema → Controlla aggiornamenti</em>), da Bazzite Updater o con <code>ujust update</code>.</li>
+<li>
+<p>Prima di riavviare, guarda cosa cambia. Il comando mostra le differenze di pacchetti tra la versione attuale e quella in attesa:</p>
+<div class="codehilite"><pre><span></span><code>rpm-ostree db diff
+</code></pre></div>
+
+</li>
+<li>
+<p>Riavvia: l'aggiornamento di sistema si applica solo al riavvio.</p>
+</li>
+<li>Prova subito Gaming Mode, controlli e un gioco. Se qualcosa non va, torna indietro (vedi la sezione «Problemi noti e rollback» in fondo alla guida).</li>
+<li>Se tutto va bene per qualche giorno, blocca la nuova versione (passaggio 9.2).</li>
+</ol>
+<p>Fonte: <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/updating_guide/">Update Guide</a>.</p>
+<h3>9.4 Tieni il sistema pulito</h3>
+<p><em>Verificato.</em></p>
+<ul>
+<li>Installa le app solo da Bazaar. Evita <code>rpm-ostree install</code>, salvo i casi senza alternativa come Mullvad (7.6): la documentazione avverte che può bloccare gli aggiornamenti.</li>
+<li>Usa un solo strumento per il TDP alla volta.</li>
+<li>Dopo un aggiornamento, se Decky sparisce, reinstallalo con <code>ujust setup-decky</code>.</li>
+<li>Non tenere la libreria giochi su partizioni NTFS o exFAT.</li>
+</ul>
+<p>Fonti: <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/rpm-ostree/">rpm-ostree</a>, <a href="https://docs.bazzite.gg/Handheld_and_HTPC_edition/Handheld_Wiki/">Handheld Wiki</a>, <a href="https://docs.bazzite.gg/Gaming/Hardware_compatibility_for_gaming/">Hardware Compatibility</a>.</p>
+<h3>9.5 Dopo un aggiornamento del BIOS, controlla Secure Boot</h3>
+<p><em>Da ricordare.</em></p>
+<p>Un aggiornamento del BIOS può riattivare Secure Boot o ripristinare le impostazioni, e Bazzite può non avviarsi più. Per controllare che la chiave di Bazzite sia ancora registrata (elenca le chiavi MOK registrate):</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>mokutil<span class="w"> </span>-l
+</code></pre></div>
+
+<p>Se Bazzite non parte più, disattiva Secure Boot nel BIOS, avvia Bazzite e registra di nuovo la chiave con il metodo alternativo del passaggio 6.1. Un utente del forum ha risolto proprio così un blocco dopo un aggiornamento del BIOS.</p>
+<p>Fonti: <a href="https://docs.bazzite.gg/General/Installation_Guide/secure_boot/">Secure Boot</a>, <a href="https://universal-blue.discourse.group/t/dual-boot-preliminary-setup-and-post-setup-guide/2743">guida dual boot del forum</a>, <a href="https://universal-blue.discourse.group/t/dual-boot-broken-after-bios-update/12193">segnalazione sul forum</a>.</p>
+<h3>9.6 Dopo un aggiornamento di Windows, controlla l'avvio (solo dual boot)</h3>
+<p><em>Solo dual boot.</em></p>
+<ul>
+<li>Se il dispositivo avvia direttamente Windows, nel BIOS rimetti Bazzite davanti a Windows Boot Manager nell'ordine di avvio.</li>
+<li>Se la voce di Windows sparisce dal menu GRUB, rigenerala:</li>
+</ul>
+<div class="codehilite"><pre><span></span><code>ujust<span class="w"> </span>regenerate-grub
+</code></pre></div>
+
+<p>Un utente del forum segnala che un aggiornamento di Windows con Secure Boot attivo può impedire l'avvio di versioni vecchie di GRUB. Tenere Bazzite aggiornato riduce il rischio.</p>
+<p>Fonte: <a href="https://universal-blue.discourse.group/t/dual-boot-preliminary-setup-and-post-setup-guide/2743">guida dual boot del forum Universal Blue</a>.</p>
+<h3>9.7 Segui la segnalazione sullo schermo nero</h3>
+<p><em>Consiglio.</em></p>
+<p>Apri l'<a href="https://github.com/ublue-os/bazzite/issues/6240">issue #6240</a> e, con un account GitHub, usa <em>Subscribe</em> per ricevere notifiche. Saprai quando la correzione viene integrata nell'immagine o se gli sviluppatori propongono un'altra soluzione.</p>
+<hr />
+<h2>Problemi noti e rollback</h2>
+<h3>Problemi noti</h3>
+<ul>
+<li><strong>Gaming Mode nera su Tiger Lake:</strong> correzione al passaggio 6.3. L'issue è ancora aperta e la correzione non è integrata nell'immagine.</li>
+<li><strong>"Passa al desktop" riporta alla Gaming Mode:</strong> soluzione al passaggio 6.6. Le segnalazioni sono ancora aperte.</li>
+<li><strong>Crash della Iris Xe in alcuni giochi</strong> (<code>VK_ERROR_DEVICE_LOST</code>, segnalato in CS2): prova l'opzione di avvio Steam <code>INTEL_DEBUG=stall %command%</code>. La causa non è confermata (<a href="https://github.com/ublue-os/bazzite/issues/6110">issue #6110</a>).</li>
+<li><strong>Ventola:</strong> il driver del kernel non supporta le schede OneXPlayer Intel. Aspettati la gestione automatica, senza curve personalizzate (<a href="https://www.kernel.org/doc/html//v6.11/hwmon/oxp-sensors.html">oxp-sensors</a>, <a href="https://docs.bazzite.gg/Handheld_and_HTPC_edition/quirks/">Quirks</a>).</li>
+</ul>
+<h3>Tornare alla versione precedente</h3>
+<ul>
+<li>Sugli handheld il menu GRUB è nascosto: premi <kbd>Esc</kbd> all'avvio per mostrarlo, poi scegli la voce <code>ostree:1</code>.</li>
+<li>Avviare la versione precedente da GRUB vale solo per quell'avvio. Per renderla quella predefinita, una volta dentro esegui uno dei comandi qui sotto.</li>
+<li>Dopo 3 avvii falliti, sugli handheld Bazzite torna da solo alla versione precedente.</li>
+<li>Il rollback non tocca i tuoi file personali.</li>
+</ul>
+<div class="codehilite"><pre><span></span><code>rpm-ostree<span class="w"> </span>rollback
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code>brh<span class="w"> </span>rollback
+</code></pre></div>
+
+<p>Il secondo comando usa Bazzite Rollback Helper: <code>brh list</code> mostra le immagini degli ultimi 90 giorni.</p>
+<p><strong>Cambiare immagine</strong> (per esempio da Deck a Desktop): usa <code>brh rebase</code> o il Bazzite Portal. Non passare a un ambiente desktop diverso da quello in uso.</p>
+<p>Fonti: <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/rolling_back_system_updates/">Rollbacks</a>, <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/bazzite_rollback_helper/">Rollback Helper</a>, <a href="https://docs.bazzite.gg/General/SteamOS_Comparison/">SteamOS Comparison</a>.</p>
+<hr />
+<h2>Cosa non è verificato</h2>
+<ul>
+<li>Il supporto ufficiale per il OneXPlayer 1S / 8.4" Intel: non compare in nessuna pagina ufficiale.</li>
+<li>Il funzionamento completo dei controlli integrati.</li>
+<li>TDP, giroscopio, audio, Wi-Fi, sospensione, sensore di luminosità e tasti funzione: nessuna segnalazione trovata.</li>
+<li>Combinazioni per BIOS e menu di avvio, impostazione di fabbrica di Secure Boot e presenza di VMD sul 1S.</li>
+<li>Prestazioni reali della Iris Xe in Gaming Mode e con i giochi Epic.</li>
+<li>La documentazione Bazzite si contraddice su Ventoy, sul partizionamento per il dual boot e sulla dimensione minima della chiavetta. Questa guida segue la versione più recente.</li>
+</ul>
+<hr />
+<h2>Fonti principali</h2>
+<ul>
+<li><a href="https://bazzite.gg/">bazzite.gg, sito e configuratore</a></li>
+<li><a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a></li>
+<li><a href="https://docs.bazzite.gg/General/Installation_Guide/Installing_Bazzite_for_Handheld_PCs/">Guida handheld</a></li>
+<li><a href="https://docs.bazzite.gg/General/Installation_Guide/secure_boot/">Secure Boot</a></li>
+<li><a href="https://docs.bazzite.gg/General/Installation_Guide/troubleshoot_guide/">Troubleshooting Guide</a></li>
+<li><a href="https://docs.bazzite.gg/General/Installation_Guide/legacy-install/">Legacy ISO</a></li>
+<li><a href="https://docs.bazzite.gg/General/FAQ/">FAQ</a></li>
+<li><a href="https://docs.bazzite.gg/General/issues_and_resolutions/">Common Issues &amp; Resolutions</a></li>
+<li><a href="https://docs.bazzite.gg/Gaming/Hardware_compatibility_for_gaming/">Hardware Compatibility for Gaming</a></li>
+<li><a href="https://docs.bazzite.gg/Gaming/gaming-intro/">Introduction to Gaming</a></li>
+<li><a href="https://docs.bazzite.gg/Handheld_and_HTPC_edition/Handheld_Wiki/">Handheld Wiki</a></li>
+<li><a href="https://docs.bazzite.gg/Handheld_and_HTPC_edition/Handheld_Wiki/OneXPlayer_Handhelds/">OneXPlayer Handhelds</a></li>
+<li><a href="https://docs.bazzite.gg/Installing_and_Managing_Software/ujust/">Comandi ujust</a></li>
+<li><a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/updating_guide/">Update Guide</a></li>
+<li><a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/rolling_back_system_updates/">Rolling back system updates</a></li>
+<li><a href="https://universal-blue.discourse.group/t/dual-boot-preliminary-setup-and-post-setup-guide/2743">Forum Universal Blue, guida dual boot</a></li>
+<li><a href="https://universal-blue.discourse.group/t/dual-boot-broken-after-bios-update/12193">Forum Universal Blue, avvio dopo aggiornamento BIOS</a></li>
+<li><a href="https://rufus.ie/">Rufus, sito ufficiale</a></li>
+<li><a href="https://github.com/pbatard/rufus/issues/843">Rufus, ISO mode e DD mode</a></li>
+<li><a href="https://github.com/ublue-os/bazzite/issues/6240">GitHub issue #6240</a></li>
+<li><a href="https://github.com/ublue-os/bazzite/issues/6199">GitHub issue #6199</a></li>
+<li><a href="https://github.com/ublue-os/bazzite/issues/6110">GitHub issue #6110</a></li>
+<li><a href="https://github.com/ublue-os/bazzite/issues/6156">GitHub issue #6156</a></li>
+<li><a href="https://shadowblip.github.io/InputPlumber/usage/">InputPlumber</a></li>
+<li><a href="https://www.kernel.org/doc/html//v6.11/hwmon/oxp-sensors.html">Driver oxp-sensors</a></li>
+<li><a href="https://droix.net/blogs/onexplayer-downloads-drivers-faq/">DROIX, driver e FAQ OneXPlayer</a></li>
+<li><a href="https://onexplayerstore.com/pages/faqs">FAQ OneXPlayer</a></li>
+<li><a href="https://github.com/Heroic-Games-Launcher/HeroicGamesLauncher">Heroic Games Launcher</a></li>
+<li><a href="https://universal-blue.discourse.group/t/is-bazzite-good-for-epic-games/4132">Forum Universal Blue, Epic su Bazzite</a></li>
+</ul>
+<p><em>Guida basata sulla documentazione disponibile al 7 novembre 2026: verifica sempre le pagine ufficiali prima di procedere.</em></p>
+<div id="nextprev"><a href="/cachy_os_t450_guida/"><div id="prevart">Precedente:<br>CachyOS su ThinkPad T450: guida completa all'installazione e configurazione</div></a></div>
+</article>
+</main>
+
+<footer>
+	<a href="/" class="footer-brand">retrothink.click</a>
+	<div class="footer-icons">
+		<a href="/index.xml" title="Iscriviti via RSS">
+			<img src="/rss.svg" alt="RSS Feed">
+		</a>
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
+			<img src="/youtube.png" alt="YouTube Channel">
+		</a>
+	</div>
+</footer>
+
+<script src="https://unpkg.com/feather-icons" defer></script>
+<script defer>
+  document.addEventListener("DOMContentLoaded", () => feather.replace());
+</script>
+</body>
+</html>
