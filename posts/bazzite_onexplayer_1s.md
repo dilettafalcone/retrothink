@@ -578,7 +578,7 @@ Rispondi così:
 
 - `n` (nuovo remote);
 - nome: `gdrive`;
-- tipo: `drive`;
+- `Storage` (il tipo di servizio): scrivi `drive` (Google Drive) oppure il numero accanto a «Google Drive» nell'elenco;
 - `client_id` e `client_secret`: incolla quelli creati al passo 3;
 - scope: `1` (accesso completo);
 - `service_account_file`: lascia vuoto e premi Invio (serve solo per gli account di servizio);
