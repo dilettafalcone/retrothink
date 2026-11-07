@@ -41,6 +41,21 @@
 
 <article>
 <p>Guida passo passo, aggiornata al 7 novembre 2026 dopo un'installazione reale: dalla preparazione di Windows fino ai giochi Epic nella Steam Gaming Mode.</p>
+<p><strong>In questa guida</strong></p>
+<ol>
+<li><a href="#requisiti">Verifica i requisiti</a> (1.1)</li>
+<li><a href="#preparazione">Prepara Windows e il materiale</a> (2.1–2.5)</li>
+<li><a href="#chiavetta">Scarica l'immagine e crea la chiavetta</a> (3.1–3.3)</li>
+<li><a href="#bios">BIOS e avvio da USB</a> (4.1–4.3)</li>
+<li><a href="#installazione">Installa Bazzite</a> (5.1–5.5)</li>
+<li><a href="#primo-avvio">Primo avvio</a> (6.1–6.7, compresa la correzione dello schermo nero)</li>
+<li><a href="#handheld">Configura l'handheld</a> (7.1–7.6)</li>
+<li><a href="#epic">Giochi Epic nella Gaming Mode</a> (8.1–8.5)</li>
+<li><a href="#prevenzione">Previeni i problemi futuri</a> (9.1–9.7)</li>
+<li><a href="#problemi-noti-e-rollback">Problemi noti e rollback</a></li>
+<li><a href="#non-verificato">Cosa non è verificato</a></li>
+<li><a href="#fonti">Fonti principali</a></li>
+</ol>
 <table>
 <thead>
 <tr>
@@ -71,7 +86,8 @@
 </blockquote>
 <p>Accanto a ogni passaggio trovi l'indicazione di quanto è affidabile: <strong>Verificato</strong> (provato su questo dispositivo o confermato dalla documentazione ufficiale), <strong>Non verificato</strong> o <strong>Facoltativo</strong>.</p>
 <hr />
-<h2>1. Verifica i requisiti</h2>
+<h2 id="requisiti">1. Verifica i requisiti</h2>
+
 <p>Prima di toccare il dispositivo, controlla che l'hardware soddisfi i requisiti ufficiali.</p>
 <h3>1.1 Confronta l'hardware con i requisiti minimi</h3>
 <p><em>Verificato.</em></p>
@@ -85,7 +101,8 @@
 </ul>
 <p>Fonti: <a href="https://docs.bazzite.gg/Gaming/Hardware_compatibility_for_gaming/">Hardware Compatibility for Gaming</a>, Intel, articolo di supporto 000005524 "Supported APIs for Intel Graphics", <a href="https://onexplayer.bg/en/onexplayer_1s_spec">specifiche OneXPlayer 1S</a>.</p>
 <hr />
-<h2>2. Prepara Windows e il materiale</h2>
+<h2 id="preparazione">2. Prepara Windows e il materiale</h2>
+
 <p>Questi passaggi si fanno ancora in Windows. Anche se poi sostituisci Windows, servono a non perdere dati e licenza.</p>
 <h3>2.1 Fai il backup dei dati</h3>
 <p><em>Verificato.</em></p>
@@ -121,7 +138,8 @@
 </ul>
 <p>Fonti: <a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a>, <a href="https://docs.bazzite.gg/General/Installation_Guide/troubleshoot_guide/">Troubleshooting Guide</a>.</p>
 <hr />
-<h2>3. Scarica l'immagine e crea la chiavetta</h2>
+<h2 id="chiavetta">3. Scarica l'immagine e crea la chiavetta</h2>
+
 <h3>3.1 Scegli l'immagine giusta</h3>
 <p><em>Scelta consigliata.</em></p>
 <p>Sul sito ufficiale scegli <strong>Device: Handheld</strong> e poi <strong>Desktop: GNOME</strong>. Per gli handheld il sito non chiede la GPU: la scelta "Handheld" porta già a un'immagine con Steam Gaming Mode. Nella scheda <em>New Users</em> compare il pulsante <strong>Download bazzite-deck-gnome</strong>: è quello da usare.</p>
@@ -160,7 +178,7 @@
 </tr>
 </tbody>
 </table>
-<p>Puoi cambiare immagine anche dopo, con un rebase (vedi la sezione «Problemi noti e rollback» in fondo alla guida).</p>
+<p>Puoi cambiare immagine anche dopo, con un rebase (vedi <a href="#problemi-noti-e-rollback">Problemi noti e rollback</a>).</p>
 <p>Fonti: <a href="https://bazzite.gg/">bazzite.gg</a>, <a href="https://docs.bazzite.gg/General/FAQ/">FAQ Bazzite</a>, <a href="https://github.com/ublue-os/bazzite/issues/6240">issue #6240</a>.</p>
 <h3>3.2 Scarica la ISO e verifica il checksum</h3>
 <p><em>Verificato.</em></p>
@@ -188,7 +206,8 @@
 </blockquote>
 <p>Fonti: <a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a>, <a href="https://github.com/pbatard/rufus/issues/843">autore di Rufus su ISO e DD mode</a>, <a href="https://www.answeroverflow.com/m/1427413230900351016">utente Bazzite con DD mode</a>.</p>
 <hr />
-<h2>4. BIOS e avvio da USB</h2>
+<h2 id="bios">4. BIOS e avvio da USB</h2>
+
 <p>Collega hub, chiavetta e tastiera al OneXPlayer prima di accenderlo.</p>
 <h3>4.1 Entra nel BIOS</h3>
 <p><em>Non ufficiale per l'8.4".</em></p>
@@ -219,7 +238,8 @@
 </ol>
 <p>Fonte: <a href="https://droix.net/blogs/onexplayer-downloads-drivers-faq/">DROIX, guida OneXPlayer 1165G7/1185G7/1195G7</a>.</p>
 <hr />
-<h2>5. Installa Bazzite</h2>
+<h2 id="installazione">5. Installa Bazzite</h2>
+
 <p>Non serve la connessione a Internet per installare.</p>
 <h3>5.1 Prova la sessione live</h3>
 <p><em>Facoltativo.</em></p>
@@ -258,7 +278,8 @@
 <h3>5.5 Avvia l'installazione e riavvia</h3>
 <p>Avvia l'installazione. Al termine riavvia e rimuovi la chiavetta. Tieni collegata la tastiera: servirà per la chiave Secure Boot e per la console del passaggio 6.2.</p>
 <hr />
-<h2>6. Primo avvio</h2>
+<h2 id="primo-avvio">6. Primo avvio</h2>
+
 <h3>6.1 Registra la chiave Secure Boot (MOK)</h3>
 <p><em>Verificato.</em></p>
 <p>Al riavvio compare una schermata blu, MokManager:</p>
@@ -374,7 +395,8 @@ systemctl reboot
 <p>Facoltativo: crea in Steam una voce che riavvia in Windows.</p>
 <p>Fonte: <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/ujust/">comandi ujust</a>.</p>
 <hr />
-<h2>7. Configura l'handheld</h2>
+<h2 id="handheld">7. Configura l'handheld</h2>
+
 <h3>7.1 Sistema orientamento e scala nel desktop</h3>
 <p>Se al primo avvio il desktop GNOME ha orientamento o scala sbagliati, correggili in <em>Impostazioni → Schermi</em>. Su un OneXPlayer Intel GNOME risulta già nel verso giusto. In alternativa, dal Terminale:</p>
 <div class="codehilite"><pre><span></span><code>gdctl<span class="w"> </span>show
@@ -462,7 +484,8 @@ systemctl reboot
 </blockquote>
 <p>Fonti: <a href="https://zegnat.bearblog.dev/adding-mullvad-to-bazzite/">Adding Mullvad to Bazzite</a>, <a href="https://discussion.fedoraproject.org/t/howto-install-mullvadvpn-browser-on-fedora-atomic-desktops/125749">Fedora Discussion</a>, <a href="https://github.com/mullvad/mullvadvpn-app/issues/5639">Mullvad issue #5639</a>, <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/rpm-ostree/">rpm-ostree</a>.</p>
 <hr />
-<h2>8. Giochi Epic nella Gaming Mode</h2>
+<h2 id="epic">8. Giochi Epic nella Gaming Mode</h2>
+
 <p>Bazzite non integra Epic direttamente. La documentazione consiglia Heroic Games Launcher per i giochi Epic, GOG e Amazon. Tutto questo richiede che la Gaming Mode funzioni (passaggio 6.3).</p>
 <h3>8.1 Installa Heroic da Bazaar</h3>
 <p><em>Verificato.</em></p>
@@ -489,7 +512,8 @@ systemctl reboot
 <li>Con la Iris Xe i titoli più pesanti potrebbero girare male: non ho trovato test con questo hardware.</li>
 </ul>
 <hr />
-<h2>9. Previeni i problemi futuri</h2>
+<h2 id="prevenzione">9. Previeni i problemi futuri</h2>
+
 <p>Gli aggiornamenti di Bazzite, del BIOS e di Windows sono i momenti in cui qualcosa può rompersi. Questi passaggi ti lasciano sempre una strada per tornare indietro.</p>
 <h3>9.1 Prepara un kit di emergenza</h3>
 <p><em>Consiglio.</em></p>
@@ -538,7 +562,7 @@ systemctl reboot
 <li>
 <p>Riavvia: l'aggiornamento di sistema si applica solo al riavvio.</p>
 </li>
-<li>Prova subito Gaming Mode, controlli e un gioco. Se qualcosa non va, torna indietro (vedi la sezione «Problemi noti e rollback» in fondo alla guida).</li>
+<li>Prova subito Gaming Mode, controlli e un gioco. Se qualcosa non va, torna indietro (vedi <a href="#problemi-noti-e-rollback">Problemi noti e rollback</a>).</li>
 <li>Se tutto va bene per qualche giorno, blocca la nuova versione (passaggio 9.2).</li>
 </ol>
 <p>Fonte: <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/updating_guide/">Update Guide</a>.</p>
@@ -574,7 +598,8 @@ systemctl reboot
 <p><em>Consiglio.</em></p>
 <p>Apri l'<a href="https://github.com/ublue-os/bazzite/issues/6240">issue #6240</a> e, con un account GitHub, usa <em>Subscribe</em> per ricevere notifiche. Saprai quando la correzione viene integrata nell'immagine o se gli sviluppatori propongono un'altra soluzione.</p>
 <hr />
-<h2>Problemi noti e rollback</h2>
+<h2 id="problemi-noti-e-rollback">Problemi noti e rollback</h2>
+
 <h3>Problemi noti</h3>
 <ul>
 <li><strong>Gaming Mode nera su Tiger Lake:</strong> correzione al passaggio 6.3. L'issue è ancora aperta e la correzione non è integrata nell'immagine.</li>
@@ -599,7 +624,8 @@ systemctl reboot
 <p><strong>Cambiare immagine</strong> (per esempio da Deck a Desktop): usa <code>brh rebase</code> o il Bazzite Portal. Non passare a un ambiente desktop diverso da quello in uso.</p>
 <p>Fonti: <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/rolling_back_system_updates/">Rollbacks</a>, <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/Updates_Rollbacks_and_Rebasing/bazzite_rollback_helper/">Rollback Helper</a>, <a href="https://docs.bazzite.gg/General/SteamOS_Comparison/">SteamOS Comparison</a>.</p>
 <hr />
-<h2>Cosa non è verificato</h2>
+<h2 id="non-verificato">Cosa non è verificato</h2>
+
 <ul>
 <li>Il supporto ufficiale per il OneXPlayer 1S / 8.4" Intel: non compare in nessuna pagina ufficiale.</li>
 <li>Il funzionamento completo dei controlli integrati.</li>
@@ -609,7 +635,8 @@ systemctl reboot
 <li>La documentazione Bazzite si contraddice su Ventoy, sul partizionamento per il dual boot e sulla dimensione minima della chiavetta. Questa guida segue la versione più recente.</li>
 </ul>
 <hr />
-<h2>Fonti principali</h2>
+<h2 id="fonti">Fonti principali</h2>
+
 <ul>
 <li><a href="https://bazzite.gg/">bazzite.gg, sito e configuratore</a></li>
 <li><a href="https://docs.bazzite.gg/General/Installation_Guide/install-guide/">Installation Guide</a></li>
