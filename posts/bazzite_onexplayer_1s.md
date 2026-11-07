@@ -528,11 +528,11 @@ Mullvad non ha una versione Flatpak ufficiale, quindi va aggiunto al sistema con
 
 Fonti: [Adding Mullvad to Bazzite](https://zegnat.bearblog.dev/adding-mullvad-to-bazzite/), [Fedora Discussion](https://discussion.fedoraproject.org/t/howto-install-mullvadvpn-browser-on-fedora-atomic-desktops/125749), [Mullvad issue #5639](https://github.com/mullvad/mullvadvpn-app/issues/5639), [rpm-ostree](https://docs.bazzite.gg/Installing_and_Managing_Software/rpm-ostree/).
 
-### 7.7 Sincronizza cartelle di Google Drive con rclone
+### 7.7 Sincronizza Google Drive con rclone
 
 *Facoltativo. Non verificato su questo dispositivo.*
 
-Per avere una copia locale di alcune cartelle di Google Drive (anche condivise), modificabile in entrambe le direzioni, la soluzione adatta è **rclone** con la funzione **bisync**: tiene allineata una cartella locale con una cartella di Drive in entrambi i sensi e può girare in automatico a intervalli regolari. Va bene per quantità di dati contenute (qui meno di 10 GB) e con un account Google gratuito.
+Per avere una copia locale di Google Drive (tutto «Il mio Drive» e, se vuoi, anche cartelle condivise con te), modificabile in entrambe le direzioni, la soluzione adatta è **rclone** con la funzione **bisync**: tiene allineata una cartella locale con una cartella di Drive in entrambi i sensi e può girare in automatico a intervalli regolari. Va bene per quantità di dati contenute (qui meno di 10 GB) e con un account Google gratuito.
 
 > **Due avvertenze.**
 >
@@ -541,7 +541,7 @@ Per avere una copia locale di alcune cartelle di Google Drive (anche condivise),
 
 > **Perché non l'account Google di GNOME.** Gli *Account online* di GNOME mostrano Drive solo online, senza una copia locale, quindi non servono a questo scopo.
 
-**1. Prepara gli ID delle cartelle.** Per poter rimandare su Drive le tue modifiche devi essere **Editor** delle cartelle condivise. Apri ogni cartella condivisa nel browser su `drive.google.com` (se è condivisa con te, la trovi in *Condivisi con me*: entraci con un doppio clic). L'ID è la parte dell'indirizzo dopo `/folders/`, senza eventuali code come `?usp=sharing`. Per esempio, in questo indirizzo:
+**1. Solo per le cartelle condivise con te: prepara gli ID.** Tutto «Il mio Drive» si sincronizza senza ID. Servono solo per le cartelle che altri hanno condiviso con te, perché non fanno parte di «Il mio Drive». Per poter rimandare su Drive le tue modifiche devi essere **Editor** di queste cartelle. Se non ne hai, salta questo passo. Apri ogni cartella condivisa nel browser su `drive.google.com` (se è condivisa con te, la trovi in *Condivisi con me*: entraci con un doppio clic). L'ID è la parte dell'indirizzo dopo `/folders/`, senza eventuali code come `?usp=sharing`. Per esempio, in questo indirizzo:
 
 ```
 https://drive.google.com/drive/folders/1AbCdEfGhIjKlMnOpQrStUvWxYz012345
@@ -600,31 +600,50 @@ rclone config update gdrive client_id TUO_CLIENT_ID client_secret TUO_CLIENT_SEC
 rclone config reconnect gdrive:
 ```
 
-**5. Primo allineamento, cartella per cartella.** Per ogni cartella condivisa (qui `Progetto` è un nome di esempio e `ID_CARTELLA` va sostituito con l'ID vero):
+**5. Primo allineamento.** Prima controlla quanto pesa il tuo Drive (esclusi i documenti nativi di Google) e che sul disco ci sia abbastanza spazio:
 
 ```bash
-mkdir -p ~/GoogleDrive/Progetto
-rclone bisync ~/GoogleDrive/Progetto gdrive: --drive-root-folder-id ID_CARTELLA --drive-skip-gdocs --create-empty-src-dirs --resilient --recover --conflict-resolve newer --resync --dry-run -v
+rclone size gdrive: --drive-skip-gdocs
+```
+
+Poi, per tutto «Il mio Drive»:
+
+```bash
+mkdir -p ~/GoogleDrive
+rclone bisync ~/GoogleDrive gdrive: --drive-skip-gdocs --create-empty-src-dirs --resilient --recover --conflict-resolve newer --resync --dry-run -v
 ```
 
 - Leggi il risultato: deve elencare i file da copiare **verso** la cartella locale.
 - Se va bene, ripeti lo stesso comando **senza** `--dry-run`.
 - `--resync` serve **solo** per questo primo giro. Se lo usi sempre, i file cancellati ricompaiono.
 
-**6. Sincronizzazione automatica ogni 15 minuti.** Crea lo script `~/.local/bin/drive-sync.sh`, con una riga `rclone bisync` per ogni cartella:
+**Cartelle condivise con te (facoltativo).** Non stanno in «Il mio Drive», quindi si sincronizzano a parte, con l'ID del passo 1 e con una cartella locale **fuori** da `~/GoogleDrive`, per non far sovrapporre le due sincronizzazioni (qui `Progetto` è un nome di esempio e `ID_CARTELLA` va sostituito con l'ID vero):
+
+```bash
+mkdir -p ~/GoogleDrive-condivise/Progetto
+rclone bisync ~/GoogleDrive-condivise/Progetto gdrive: --drive-root-folder-id ID_CARTELLA --drive-skip-gdocs --create-empty-src-dirs --resilient --recover --conflict-resolve newer --resync --dry-run -v
+```
+
+Anche qui: leggi il risultato, poi ripeti il comando senza `--dry-run`.
+
+> **Cosa non viene sincronizzato.** Con `--drive-skip-gdocs` restano fuori i documenti nativi di Google (Documenti, Fogli, Presentazioni): se nel tuo Drive sono tanti, non li avrai in locale. I file normali (PDF, Word, immagini e simili) sì.
+
+**6. Sincronizzazione automatica ogni 15 minuti.** Crea lo script `~/.local/bin/drive-sync.sh`, con una riga `rclone bisync` per «Il mio Drive» e, se le usi, una per ogni cartella condivisa:
 
 ```bash
 #!/bin/bash
 export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
 OPTS="--drive-skip-gdocs --create-empty-src-dirs --resilient --recover --conflict-resolve newer --max-lock 2m --log-file $HOME/.cache/drive-sync.log -v"
-rclone bisync "$HOME/GoogleDrive/Progetto" gdrive: --drive-root-folder-id ID_CARTELLA $OPTS
+rclone bisync "$HOME/GoogleDrive" gdrive: $OPTS
+# Facoltativo, una riga per ogni cartella condivisa con te (togli il # all'inizio):
+# rclone bisync "$HOME/GoogleDrive-condivise/Progetto" gdrive: --drive-root-folder-id ID_CARTELLA $OPTS
 ```
 
 Crea il file `~/.config/systemd/user/drive-sync.service`:
 
 ```ini
 [Unit]
-Description=Sincronizza cartelle Google Drive
+Description=Sincronizza Google Drive
 
 [Service]
 Type=oneshot
