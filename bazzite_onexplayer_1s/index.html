@@ -512,7 +512,7 @@ systemctl reboot
 <li><code>n</code> (nuovo remote);</li>
 <li>nome: <code>gdrive</code>;</li>
 <li>tipo: <code>drive</code>;</li>
-<li><code>client_id</code> e <code>client_secret</code>: lascia vuoto e premi Invio;</li>
+<li><code>client_id</code> e <code>client_secret</code>: lascia vuoto e premi Invio. Se rclone chiede se continuare con il client id condiviso, rispondi <code>y</code>: funziona, ma le richieste a Google sono limitate e divise con tutti gli utenti di rclone, quindi con volumi piccoli va bene, mentre in caso di rallentamenti o errori di quota (<code>rateLimitExceeded</code>) conviene creare un proprio client id (guida «Making your own client_id» nella documentazione rclone di Google Drive). Se lasci quell'app OAuth in stato «Testing», Google fa scadere l'accesso dopo 7 giorni e la sincronizzazione automatica si ferma: va portata in «In production»;</li>
 <li>scope: <code>1</code> (accesso completo);</li>
 <li><code>service_account_file</code>: lascia vuoto e premi Invio (serve solo per gli account di servizio);</li>
 <li>impostazioni avanzate (<em>Edit advanced config</em>): <code>n</code>. In questo caso non ti verrà chiesto il <code>root_folder_id</code>: lo passi più avanti a ogni comando con <code>--drive-root-folder-id</code>;</li>
