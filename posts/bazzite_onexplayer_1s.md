@@ -739,6 +739,8 @@ Per un gioco fatto con Ren'Py, il modo più semplice è usare la **versione Linu
 
         chmod +x NomeGioco.sh
 
+    Non aprire il file con un doppio clic: il gestore file di GNOME non esegue gli script e mostra «non risulta installata alcuna applicazione per i file script shell». Per provarlo, apri il terminale nella cartella del gioco (clic destro in uno spazio vuoto, *Apri nel Terminale*) e lancia `./NomeGioco.sh`.
+
 3. **Aggiungilo a Steam.** Passa al Desktop Mode e in Steam scegli *Giochi → Aggiungi un gioco non di Steam alla mia libreria → Sfoglia*. Cambia il filtro in «Tutti i file» e seleziona `NomeGioco.sh`.
 4. **Torna alla Gaming Mode.** Il gioco compare in *Libreria → Non di Steam* e parte a schermo intero.
 
