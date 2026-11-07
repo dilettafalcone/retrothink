@@ -568,8 +568,8 @@ Rispondi così:
 - tipo: `drive`;
 - `client_id` e `client_secret`: lascia vuoto e premi Invio;
 - scope: `1` (accesso completo);
-- `root_folder_id` e `service_account_file`: lascia vuoto;
-- impostazioni avanzate: `n`;
+- `service_account_file`: lascia vuoto e premi Invio (serve solo per gli account di servizio);
+- impostazioni avanzate (*Edit advanced config*): `n`. In questo caso non ti verrà chiesto il `root_folder_id`: lo passi più avanti a ogni comando con `--drive-root-folder-id`;
 - auto config: `y`. Si apre il browser: accedi e autorizza rclone;
 - shared drive / team drive: `n`;
 - conferma con `y`, poi esci con `q`.
