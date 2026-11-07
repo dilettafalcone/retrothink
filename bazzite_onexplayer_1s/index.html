@@ -49,7 +49,7 @@
 <li><a href="#bios">BIOS e avvio da USB</a> (4.1–4.3)</li>
 <li><a href="#installazione">Installa Bazzite</a> (5.1–5.5)</li>
 <li><a href="#primo-avvio">Primo avvio</a> (6.1–6.7, compresa la correzione dello schermo nero)</li>
-<li><a href="#handheld">Configura l'handheld</a> (7.1–7.6)</li>
+<li><a href="#handheld">Configura l'handheld</a> (7.1–7.7, compresa la sincronizzazione di Google Drive)</li>
 <li><a href="#epic">Giochi Epic nella Gaming Mode</a> (8.1–8.5)</li>
 <li><a href="#prevenzione">Previeni i problemi futuri</a> (9.1–9.7)</li>
 <li><a href="#problemi-noti-e-rollback">Problemi noti e rollback</a></li>
@@ -483,6 +483,95 @@ systemctl reboot
 <p><strong>Da sapere.</strong> La VPN gira come servizio di sistema, quindi dovrebbe restare attiva anche in Gaming Mode. L'app grafica si apre solo dal desktop. Se un aggiornamento di Bazzite fallisce per colpa del pacchetto aggiunto, disinstallalo con <code>rpm-ostree uninstall mullvad-vpn</code> e riavvia.</p>
 </blockquote>
 <p>Fonti: <a href="https://zegnat.bearblog.dev/adding-mullvad-to-bazzite/">Adding Mullvad to Bazzite</a>, <a href="https://discussion.fedoraproject.org/t/howto-install-mullvadvpn-browser-on-fedora-atomic-desktops/125749">Fedora Discussion</a>, <a href="https://github.com/mullvad/mullvadvpn-app/issues/5639">Mullvad issue #5639</a>, <a href="https://docs.bazzite.gg/Installing_and_Managing_Software/rpm-ostree/">rpm-ostree</a>.</p>
+<h3>7.7 Sincronizza cartelle di Google Drive con rclone</h3>
+<p><em>Facoltativo. Non verificato su questo dispositivo.</em></p>
+<p>Per avere una copia locale di alcune cartelle di Google Drive (anche condivise), modificabile in entrambe le direzioni, la soluzione adatta è <strong>rclone</strong> con la funzione <strong>bisync</strong>: tiene allineata una cartella locale con una cartella di Drive in entrambi i sensi e può girare in automatico a intervalli regolari. Va bene per quantità di dati contenute (qui meno di 10 GB) e con un account Google gratuito.</p>
+<blockquote>
+<p><strong>Due avvertenze.</strong></p>
+<ul>
+<li><strong>bisync è ancora in beta.</strong> La documentazione la definisce una funzione avanzata da usare con cautela. Per questo il primo giro si fa in prova, con <code>--dry-run</code>.</li>
+<li><strong>I documenti nativi di Google</strong> (Documenti, Fogli, Presentazioni) <strong>non si sincronizzano bene:</strong> hanno dimensione −1 e nessun checksum, quindi si escludono con <code>--drive-skip-gdocs</code>. I file normali (PDF, Word, immagini e simili) si sincronizzano senza problemi.</li>
+</ul>
+<p><strong>Perché non l'account Google di GNOME.</strong> Gli <em>Account online</em> di GNOME mostrano Drive solo online, senza una copia locale, quindi non servono a questo scopo.</p>
+</blockquote>
+<p><strong>1. Prepara gli ID delle cartelle.</strong> Per poter rimandare su Drive le tue modifiche devi essere <strong>Editor</strong> delle cartelle condivise. Apri ogni cartella condivisa nel browser: l'ID è l'ultima parte dell'indirizzo, dopo <code>.../folders/</code>. Annotali.</p>
+<p><strong>2. Installa rclone.</strong> Dal Terminale controlla se c'è già:</p>
+<div class="codehilite"><pre><span></span><code>rclone<span class="w"> </span>version
+</code></pre></div>
+
+<p>Se risponde "command not found", installalo con Homebrew, che su Bazzite è disponibile (meglio di <code>rpm-ostree install</code>, che può bloccare gli aggiornamenti):</p>
+<div class="codehilite"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>rclone
+</code></pre></div>
+
+<p><strong>3. Collega il tuo account Google.</strong></p>
+<div class="codehilite"><pre><span></span><code>rclone<span class="w"> </span>config
+</code></pre></div>
+
+<p>Rispondi così:</p>
+<ul>
+<li><code>n</code> (nuovo remote);</li>
+<li>nome: <code>gdrive</code>;</li>
+<li>tipo: <code>drive</code>;</li>
+<li><code>client_id</code> e <code>client_secret</code>: lascia vuoto e premi Invio;</li>
+<li>scope: <code>1</code> (accesso completo);</li>
+<li><code>root_folder_id</code> e <code>service_account_file</code>: lascia vuoto;</li>
+<li>impostazioni avanzate: <code>n</code>;</li>
+<li>auto config: <code>y</code>. Si apre il browser: accedi e autorizza rclone;</li>
+<li>shared drive / team drive: <code>n</code>;</li>
+<li>conferma con <code>y</code>, poi esci con <code>q</code>.</li>
+</ul>
+<p><strong>4. Primo allineamento, cartella per cartella.</strong> Per ogni cartella condivisa (qui <code>Progetto</code> è un nome di esempio e <code>ID_CARTELLA</code> va sostituito con l'ID vero):</p>
+<div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/GoogleDrive/Progetto
+rclone<span class="w"> </span>bisync<span class="w"> </span>~/GoogleDrive/Progetto<span class="w"> </span>gdrive:<span class="w"> </span>--drive-root-folder-id<span class="w"> </span>ID_CARTELLA<span class="w"> </span>--drive-skip-gdocs<span class="w"> </span>--create-empty-src-dirs<span class="w"> </span>--resilient<span class="w"> </span>--recover<span class="w"> </span>--conflict-resolve<span class="w"> </span>newer<span class="w"> </span>--resync<span class="w"> </span>--dry-run<span class="w"> </span>-v
+</code></pre></div>
+
+<ul>
+<li>Leggi il risultato: deve elencare i file da copiare <strong>verso</strong> la cartella locale.</li>
+<li>Se va bene, ripeti lo stesso comando <strong>senza</strong> <code>--dry-run</code>.</li>
+<li><code>--resync</code> serve <strong>solo</strong> per questo primo giro. Se lo usi sempre, i file cancellati ricompaiono.</li>
+</ul>
+<p><strong>5. Sincronizzazione automatica ogni 15 minuti.</strong> Crea lo script <code>~/.local/bin/drive-sync.sh</code>, con una riga <code>rclone bisync</code> per ogni cartella:</p>
+<div class="codehilite"><pre><span></span><code><span class="ch">#!/bin/bash</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">&quot;/home/linuxbrew/.linuxbrew/bin:</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+<span class="nv">OPTS</span><span class="o">=</span><span class="s2">&quot;--drive-skip-gdocs --create-empty-src-dirs --resilient --recover --conflict-resolve newer --max-lock 2m --log-file </span><span class="nv">$HOME</span><span class="s2">/.cache/drive-sync.log -v&quot;</span>
+rclone<span class="w"> </span>bisync<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/GoogleDrive/Progetto&quot;</span><span class="w"> </span>gdrive:<span class="w"> </span>--drive-root-folder-id<span class="w"> </span>ID_CARTELLA<span class="w"> </span><span class="nv">$OPTS</span>
+</code></pre></div>
+
+<p>Crea il file <code>~/.config/systemd/user/drive-sync.service</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">Sincronizza cartelle Google Drive</span>
+
+<span class="k">[Service]</span>
+<span class="na">Type</span><span class="o">=</span><span class="s">oneshot</span>
+<span class="na">ExecStart</span><span class="o">=</span><span class="s">%h/.local/bin/drive-sync.sh</span>
+</code></pre></div>
+
+<p>E il file <code>~/.config/systemd/user/drive-sync.timer</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">[Unit]</span>
+<span class="na">Description</span><span class="o">=</span><span class="s">Sincronizza Google Drive ogni 15 minuti</span>
+
+<span class="k">[Timer]</span>
+<span class="na">OnBootSec</span><span class="o">=</span><span class="s">2min</span>
+<span class="na">OnUnitActiveSec</span><span class="o">=</span><span class="s">15min</span>
+
+<span class="k">[Install]</span>
+<span class="na">WantedBy</span><span class="o">=</span><span class="s">timers.target</span>
+</code></pre></div>
+
+<p>Poi rendi eseguibile lo script e attiva il timer:</p>
+<div class="codehilite"><pre><span></span><code>chmod<span class="w"> </span>+x<span class="w"> </span>~/.local/bin/drive-sync.sh
+systemctl<span class="w"> </span>--user<span class="w"> </span>daemon-reload
+systemctl<span class="w"> </span>--user<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>--now<span class="w"> </span>drive-sync.timer
+</code></pre></div>
+
+<p>Se qualcosa non va, il registro si trova in <code>~/.cache/drive-sync.log</code>.</p>
+<p><strong>Sicurezze già incluse</strong></p>
+<ul>
+<li>Se in un giro risulta cancellato più del 50% dei file, bisync si ferma senza toccare nulla: è il comportamento predefinito.</li>
+<li><code>--resilient</code> e <code>--recover</code> evitano di dover rifare <code>--resync</code> dopo errori minori o dopo uno spegnimento improvviso.</li>
+<li>Se lo stesso file viene modificato da entrambe le parti, vince la versione più recente (<code>--conflict-resolve newer</code>).</li>
+</ul>
+<p>Fonti: <a href="https://git.frostfs.info/satyamisme/rclone/raw/branch/master/docs/content/bisync.md">rclone bisync, documentazione</a>, <a href="https://git.frostfs.info/KurlesHS/rclone/raw/commit/cf6d522d2f20bfe0e34f1635e21a1ecaa326a480/docs/content/drive.md">rclone Google Drive, documentazione</a>, <a href="https://forum.rclone.org/t/bisync-of-googledocs-on-googledrive/29961">Bisync of Googledocs on googledrive, forum rclone</a>, <a href="https://forum.rclone.org/t/syncing-all-google-drive-folders-owned-and-shared/22661">Syncing all Google Drive folders, owned and shared, forum rclone</a>.</p>
 <hr />
 <h2 id="epic">8. Giochi Epic nella Gaming Mode</h2>
 

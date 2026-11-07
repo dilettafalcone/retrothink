@@ -15,7 +15,7 @@ Guida passo passo, aggiornata al 7 novembre 2026 dopo un'installazione reale: da
 4. [BIOS e avvio da USB](#bios) (4.1–4.3)
 5. [Installa Bazzite](#installazione) (5.1–5.5)
 6. [Primo avvio](#primo-avvio) (6.1–6.7, compresa la correzione dello schermo nero)
-7. [Configura l'handheld](#handheld) (7.1–7.6)
+7. [Configura l'handheld](#handheld) (7.1–7.7, compresa la sincronizzazione di Google Drive)
 8. [Giochi Epic nella Gaming Mode](#epic) (8.1–8.5)
 9. [Previeni i problemi futuri](#prevenzione) (9.1–9.7)
 10. [Problemi noti e rollback](#problemi-noti-e-rollback)
@@ -527,6 +527,115 @@ Mullvad non ha una versione Flatpak ufficiale, quindi va aggiunto al sistema con
 > **Da sapere.** La VPN gira come servizio di sistema, quindi dovrebbe restare attiva anche in Gaming Mode. L'app grafica si apre solo dal desktop. Se un aggiornamento di Bazzite fallisce per colpa del pacchetto aggiunto, disinstallalo con `rpm-ostree uninstall mullvad-vpn` e riavvia.
 
 Fonti: [Adding Mullvad to Bazzite](https://zegnat.bearblog.dev/adding-mullvad-to-bazzite/), [Fedora Discussion](https://discussion.fedoraproject.org/t/howto-install-mullvadvpn-browser-on-fedora-atomic-desktops/125749), [Mullvad issue #5639](https://github.com/mullvad/mullvadvpn-app/issues/5639), [rpm-ostree](https://docs.bazzite.gg/Installing_and_Managing_Software/rpm-ostree/).
+
+### 7.7 Sincronizza cartelle di Google Drive con rclone
+
+*Facoltativo. Non verificato su questo dispositivo.*
+
+Per avere una copia locale di alcune cartelle di Google Drive (anche condivise), modificabile in entrambe le direzioni, la soluzione adatta è **rclone** con la funzione **bisync**: tiene allineata una cartella locale con una cartella di Drive in entrambi i sensi e può girare in automatico a intervalli regolari. Va bene per quantità di dati contenute (qui meno di 10 GB) e con un account Google gratuito.
+
+> **Due avvertenze.**
+>
+> - **bisync è ancora in beta.** La documentazione la definisce una funzione avanzata da usare con cautela. Per questo il primo giro si fa in prova, con `--dry-run`.
+> - **I documenti nativi di Google** (Documenti, Fogli, Presentazioni) **non si sincronizzano bene:** hanno dimensione −1 e nessun checksum, quindi si escludono con `--drive-skip-gdocs`. I file normali (PDF, Word, immagini e simili) si sincronizzano senza problemi.
+
+> **Perché non l'account Google di GNOME.** Gli *Account online* di GNOME mostrano Drive solo online, senza una copia locale, quindi non servono a questo scopo.
+
+**1. Prepara gli ID delle cartelle.** Per poter rimandare su Drive le tue modifiche devi essere **Editor** delle cartelle condivise. Apri ogni cartella condivisa nel browser: l'ID è l'ultima parte dell'indirizzo, dopo `.../folders/`. Annotali.
+
+**2. Installa rclone.** Dal Terminale controlla se c'è già:
+
+```bash
+rclone version
+```
+
+Se risponde "command not found", installalo con Homebrew, che su Bazzite è disponibile (meglio di `rpm-ostree install`, che può bloccare gli aggiornamenti):
+
+```bash
+brew install rclone
+```
+
+**3. Collega il tuo account Google.**
+
+```bash
+rclone config
+```
+
+Rispondi così:
+
+- `n` (nuovo remote);
+- nome: `gdrive`;
+- tipo: `drive`;
+- `client_id` e `client_secret`: lascia vuoto e premi Invio;
+- scope: `1` (accesso completo);
+- `root_folder_id` e `service_account_file`: lascia vuoto;
+- impostazioni avanzate: `n`;
+- auto config: `y`. Si apre il browser: accedi e autorizza rclone;
+- shared drive / team drive: `n`;
+- conferma con `y`, poi esci con `q`.
+
+**4. Primo allineamento, cartella per cartella.** Per ogni cartella condivisa (qui `Progetto` è un nome di esempio e `ID_CARTELLA` va sostituito con l'ID vero):
+
+```bash
+mkdir -p ~/GoogleDrive/Progetto
+rclone bisync ~/GoogleDrive/Progetto gdrive: --drive-root-folder-id ID_CARTELLA --drive-skip-gdocs --create-empty-src-dirs --resilient --recover --conflict-resolve newer --resync --dry-run -v
+```
+
+- Leggi il risultato: deve elencare i file da copiare **verso** la cartella locale.
+- Se va bene, ripeti lo stesso comando **senza** `--dry-run`.
+- `--resync` serve **solo** per questo primo giro. Se lo usi sempre, i file cancellati ricompaiono.
+
+**5. Sincronizzazione automatica ogni 15 minuti.** Crea lo script `~/.local/bin/drive-sync.sh`, con una riga `rclone bisync` per ogni cartella:
+
+```bash
+#!/bin/bash
+export PATH="/home/linuxbrew/.linuxbrew/bin:$PATH"
+OPTS="--drive-skip-gdocs --create-empty-src-dirs --resilient --recover --conflict-resolve newer --max-lock 2m --log-file $HOME/.cache/drive-sync.log -v"
+rclone bisync "$HOME/GoogleDrive/Progetto" gdrive: --drive-root-folder-id ID_CARTELLA $OPTS
+```
+
+Crea il file `~/.config/systemd/user/drive-sync.service`:
+
+```ini
+[Unit]
+Description=Sincronizza cartelle Google Drive
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/drive-sync.sh
+```
+
+E il file `~/.config/systemd/user/drive-sync.timer`:
+
+```ini
+[Unit]
+Description=Sincronizza Google Drive ogni 15 minuti
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=15min
+
+[Install]
+WantedBy=timers.target
+```
+
+Poi rendi eseguibile lo script e attiva il timer:
+
+```bash
+chmod +x ~/.local/bin/drive-sync.sh
+systemctl --user daemon-reload
+systemctl --user enable --now drive-sync.timer
+```
+
+Se qualcosa non va, il registro si trova in `~/.cache/drive-sync.log`.
+
+**Sicurezze già incluse**
+
+- Se in un giro risulta cancellato più del 50% dei file, bisync si ferma senza toccare nulla: è il comportamento predefinito.
+- `--resilient` e `--recover` evitano di dover rifare `--resync` dopo errori minori o dopo uno spegnimento improvviso.
+- Se lo stesso file viene modificato da entrambe le parti, vince la versione più recente (`--conflict-resolve newer`).
+
+Fonti: [rclone bisync, documentazione](https://git.frostfs.info/satyamisme/rclone/raw/branch/master/docs/content/bisync.md), [rclone Google Drive, documentazione](https://git.frostfs.info/KurlesHS/rclone/raw/commit/cf6d522d2f20bfe0e34f1635e21a1ecaa326a480/docs/content/drive.md), [Bisync of Googledocs on googledrive, forum rclone](https://forum.rclone.org/t/bisync-of-googledocs-on-googledrive/29961), [Syncing all Google Drive folders, owned and shared, forum rclone](https://forum.rclone.org/t/syncing-all-google-drive-folders-owned-and-shared/22661).
 
 ---
 
