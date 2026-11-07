@@ -16,7 +16,7 @@ Guida passo passo, aggiornata al 7 novembre 2026 dopo un'installazione reale: da
 5. [Installa Bazzite](#installazione) (5.1–5.5)
 6. [Primo avvio](#primo-avvio) (6.1–6.7, compresa la correzione dello schermo nero)
 7. [Configura l'handheld](#handheld) (7.1–7.7, compresa la sincronizzazione di Google Drive)
-8. [Giochi Epic nella Gaming Mode](#epic) (8.1–8.5)
+8. [Giochi nella Gaming Mode: Epic e visual novel](#epic) (8.1–8.6)
 9. [Previeni i problemi futuri](#prevenzione) (9.1–9.7)
 10. [Problemi noti e rollback](#problemi-noti-e-rollback)
 11. [Cosa non è verificato](#non-verificato)
@@ -684,7 +684,7 @@ Fonti: [rclone bisync, documentazione](https://git.frostfs.info/satyamisme/rclon
 
 ---
 
-<h2 id="epic">8. Giochi Epic nella Gaming Mode</h2>
+<h2 id="epic">8. Giochi nella Gaming Mode: Epic e visual novel</h2>
 
 Bazzite non integra Epic direttamente. La documentazione consiglia Heroic Games Launcher per i giochi Epic, GOG e Amazon. Tutto questo richiede che la Gaming Mode funzioni (passaggio 6.3).
 
@@ -724,6 +724,31 @@ Fonti: [guida Epic su Steam Deck](https://colematoyicu.s3.amazonaws.com/how-to-i
 - I giochi non di Steam non hanno un layout ufficiale: nelle impostazioni controller di Steam scegline uno tra quelli della community.
 - I giochi con anti-cheat possono non avviarsi su Linux. Controlla prima su [ProtonDB](https://www.protondb.com/) e [areweanticheatyet.com](https://areweanticheatyet.com/).
 - Con la Iris Xe i titoli più pesanti potrebbero girare male: non ho trovato test con questo hardware.
+
+### 8.6 Gioca a una visual novel Ren'Py
+
+*Facoltativo. Non verificato su questo dispositivo.*
+
+Per un gioco fatto con Ren'Py, il modo più semplice è usare la **versione Linux nativa**, aggiunta a Steam come gioco non Steam. Se lo sviluppatore offre solo la versione Windows, si può usare Proton, ma è un ripiego.
+
+1. **Scarica la build Linux** del gioco, di solito un archivio `.tar.bz2` che contiene un file `NomeGioco.sh` e la cartella `lib/`. Estrailo con il gestore file o da terminale:
+
+        tar xjf NomeGioco-linux.tar.bz2
+
+2. **Controlla che sia eseguibile.** Estrarre da un `.zip` con alcuni programmi grafici può far perdere il permesso di esecuzione. In quel caso:
+
+        chmod +x NomeGioco.sh
+
+3. **Aggiungilo a Steam.** Passa al Desktop Mode e in Steam scegli *Giochi → Aggiungi un gioco non di Steam alla mia libreria → Sfoglia*. Cambia il filtro in «Tutti i file» e seleziona `NomeGioco.sh`.
+4. **Torna alla Gaming Mode.** Il gioco compare in *Libreria → Non di Steam* e parte a schermo intero.
+
+**Controlli.** Ren'Py supporta già i controller: croce direzionale per muoversi, A per confermare, B per tornare indietro. Il touch nella Gaming Mode funziona come un mouse, quindi puoi anche toccare lo schermo per avanzare. Se un gioco non risponde bene al controller, in Steam scegli un layout della community, per esempio quello con il trackpad come mouse.
+
+**Da tenere d'occhio**
+
+- **Schermo.** Il pannello del OneXPlayer è montato in verticale, ma gamescope lo ruota (passaggio 6.3). Un gioco in 16:9 occupa solo una fascia dello schermo, senza deformarsi.
+- **Giochi vecchi.** I Ren'Py 7 più datati possono avere librerie a 32 bit che non partono. In quel caso usa la build Windows: in Steam, *Proprietà → Compatibilità → Forza l'uso di uno specifico strumento di compatibilità Steam Play*, e scegli Proton.
+- **Salvataggi.** Con la build nativa stanno in `~/.renpy/NomeGioco/`: ci puoi copiare dentro i salvataggi di un altro computer. Con Proton finiscono invece nel prefisso Proton del gioco.
 
 ---
 
