@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>aria2c: scaricare file da terminale in modo veloce e affidabile (Linux, Bazzite e Windows) | Retro Think</title>
+	<meta name="description" content="Guida a aria2c, il downloader da riga di comando a più connessioni. Installazione su Debian/Ubuntu, Fedora, Arch/CachyOS, openSUSE, Bazzite e Windows, e configurazione ottimale per una normale connessione FTTC/VDSL.">
+	<meta name="keywords" content="aria2, aria2c, download, linux, windows, bazzite, terminale, guida">
+	<meta name="robots" content="index, follow">
+	<link rel="canonical" href="https://retrothink.click/aria2c_guida/">
+	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
+	<link rel="icon" href="/favicon.ico">
+	<meta property="og:type" content="article">
+	<meta property="og:url" content="https://retrothink.click/aria2c_guida/">
+	<meta property="og:title" content="aria2c: scaricare file da terminale in modo veloce e affidabile (Linux, Bazzite e Windows)">
+	<meta property="og:description" content="Guida a aria2c, il downloader da riga di comando a più connessioni. Installazione su Debian/Ubuntu, Fedora, Arch/CachyOS, openSUSE, Bazzite e Windows, e configurazione ottimale per una normale connessione FTTC/VDSL.">
+	<link rel='stylesheet' type='text/css' href='/style.css'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="site-nav">
+	<div class="nav-inner">
+		<a href="/" class="nav-brand">Retro Think</a>
+		<a href="/index.xml" class="nav-rss" title="Feed RSS">
+			<img src="/rss.svg" alt="RSS">
+		</a>
+	</div>
+</nav>
+
+<main>
+<a href="/" class="back-link">&#8592; tutti gli articoli</a>
+
+<h1>aria2c: scaricare file da terminale in modo veloce e affidabile (Linux, Bazzite e Windows)</h1>
+<div class="article-meta">
+  <span>2026-11-08</span> &middot; <a id="tag_aria2" href="https://retrothink.click/tags/aria2">Aria2</a> <a id="tag_aria2c" href="https://retrothink.click/tags/aria2c">Aria2c</a> <a id="tag_download" href="https://retrothink.click/tags/download">Download</a> <a id="tag_linux" href="https://retrothink.click/tags/linux">Linux</a> <a id="tag_windows" href="https://retrothink.click/tags/windows">Windows</a> <a id="tag_bazzite" href="https://retrothink.click/tags/bazzite">Bazzite</a> <a id="tag_terminale" href="https://retrothink.click/tags/terminale">Terminale</a> <a id="tag_guida" href="https://retrothink.click/tags/guida">Guida</a>
+</div>
+
+<article>
+<p><code>aria2c</code> è un downloader da riga di comando, leggero e senza interfaccia grafica, che scarica un file aprendo <strong>più connessioni in parallelo</strong> e ricomponendolo mentre arriva. Supporta HTTP, HTTPS, FTP, SFTP, BitTorrent e Metalink. Questa guida copre quello che serve nella maggior parte dei casi: scaricare un file o un elenco di file, riprenderli se si interrompono e farlo con impostazioni sensate per una connessione di casa normale.</p>
+<p>La versione usata e verificata per scrivere la guida è la <strong>1.37.0</strong>, l'ultima rilasciata dal progetto. Le opzioni descritte sono state controllate con <code>aria2c --help</code> su quella versione.</p>
+<hr />
+<h2>1. Come funziona (e quando serve davvero)</h2>
+<p>Un browser o <code>curl</code> scaricano un file con <strong>una sola connessione</strong>. aria2c divide il file in segmenti e li scarica insieme, anche da più server (mirror) se glieli dai. Questo aiuta in tre casi:</p>
+<ul>
+<li>il server limita la velocità <strong>per singola connessione</strong> (molto comune sui mirror pubblici): con 8 connessioni si sommano gli 8 limiti;</li>
+<li>la tua linea ha una latenza alta verso il server e una sola connessione TCP non riesce a riempire la banda;</li>
+<li>vuoi <strong>riprendere</strong> un download interrotto senza ricominciare da capo, anche dopo ore o dopo un riavvio.</li>
+</ul>
+<p>Non serve, anzi è inutile, quando il server ti dà già tutta la banda con una connessione sola: aria2c non può superare la velocità della tua linea. L'unico modo per saperlo è provare (vedi la sezione 4).</p>
+<h3>I tre parametri da capire</h3>
+<p>Tutta l'ottimizzazione ruota attorno a tre opzioni, che si confondono facilmente:</p>
+<ul>
+<li><code>-x</code> / <code>--max-connection-per-server</code>: quante connessioni apre <strong>verso lo stesso server</strong>. Valori da 1 a 16, <strong>default 1</strong>.</li>
+<li><code>-s</code> / <code>--split</code>: in quante parti dividere il file, cioè quante connessioni totali usare. <strong>Default 5</strong>.</li>
+<li><code>-k</code> / <code>--min-split-size</code>: dimensione minima di un segmento. <strong>Default 20M</strong>. aria2 non divide un intervallo più piccolo di <code>2 × SIZE</code>.</li>
+</ul>
+<p>Con una sola URL il numero reale di connessioni è il <strong>minore tra <code>-x</code> e <code>-s</code></strong>. Per questo i due valori vanno alzati insieme: con <code>-s 16</code> e <code>-x</code> lasciato a 1 si scarica comunque con una connessione sola. E con il <code>-k</code> di default da 20M un file sotto i 40 MiB non viene diviso affatto, quindi conviene abbassarlo.</p>
+<blockquote>
+<p><strong>Attenzione ai server:</strong> molti siti limitano le connessioni per indirizzo IP. Se esageri puoi ricevere errori 403 o 429, oppure un blocco temporaneo. È il motivo per cui nella guida si arriva a 8 connessioni e non a 16 sulla linea di esempio.</p>
+</blockquote>
+<hr />
+<h2>2. Installazione</h2>
+<p>aria2 è nei repository di tutte le distribuzioni principali, quindi si installa con il gestore pacchetti della distro. Dopo l'installazione verifica sempre con:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>--version
+</code></pre></div>
+
+<h3>2.1 Debian, Ubuntu, Linux Mint, Pop!_OS</h3>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>aria2
+</code></pre></div>
+
+<h3>2.2 Fedora</h3>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>aria2
+</code></pre></div>
+
+<h3>2.3 Arch Linux, CachyOS, EndeavourOS, Manjaro</h3>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>aria2
+</code></pre></div>
+
+<h3>2.4 openSUSE</h3>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>zypper<span class="w"> </span>install<span class="w"> </span>aria2
+</code></pre></div>
+
+<h3>2.5 Bazzite (e le altre distro immutabili)</h3>
+<p>Bazzite è un sistema <strong>immutabile</strong>: <code>/usr</code> è di sola lettura e i pacchetti di sistema si aggiungono con <code>rpm-ostree</code>, che richiede un riavvio e può dare noie negli aggiornamenti. Per uno strumento da terminale come aria2 il metodo più pulito è <strong>Homebrew</strong>, che installa tutto nella tua cartella senza toccare il sistema e sopravvive agli aggiornamenti di Bazzite.</p>
+<p>Homebrew è in genere già presente su Bazzite. Controlla:</p>
+<div class="codehilite"><pre><span></span><code>brew<span class="w"> </span>--version
+</code></pre></div>
+
+<p>Se risponde con una versione, installa aria2:</p>
+<div class="codehilite"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>aria2
+aria2c<span class="w"> </span>--version
+</code></pre></div>
+
+<p>Se invece <code>brew</code> non esiste, installalo seguendo le istruzioni ufficiali su <code>https://brew.sh</code> e riapri il terminale.</p>
+<blockquote>
+<p><strong>Alternative, da sapere ma non consigliate:</strong> <code>rpm-ostree install aria2</code> lo integra nel sistema ma obbliga al riavvio; con Distrobox si installa dentro un contenitore Fedora o Arch, ma i download e la configurazione restano legati al contenitore. Per questo uso Homebrew.</p>
+</blockquote>
+<p>La configurazione di aria2 (sezione 5) si mette nella tua cartella personale, quindi funziona uguale con tutti e tre i metodi.</p>
+<h3>2.6 Windows</h3>
+<p>Su Windows 10 e 11 il modo più semplice è <code>winget</code>, già incluso nel sistema. Apri <strong>PowerShell</strong> (non serve come amministratore):</p>
+<div class="codehilite"><pre><span></span><code><span class="n">winget</span> <span class="n">install</span> <span class="n">aria2</span><span class="p">.</span><span class="n">aria2</span>
+</code></pre></div>
+
+<p>Chiudi e riapri il terminale, poi verifica:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">aria2c</span> <span class="p">-</span><span class="n">-version</span>
+</code></pre></div>
+
+<p>Il pacchetto è quello ufficiale del progetto e viene installato come programma portatile, con <code>aria2c</code> già raggiungibile dal PATH. Se preferisci un altro gestore pacchetti:</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># Scoop</span>
+<span class="n">scoop</span> <span class="n">install</span> <span class="n">aria2</span>
+
+<span class="c"># Chocolatey (PowerShell come amministratore)</span>
+<span class="n">choco</span> <span class="n">install</span> <span class="n">aria2</span>
+</code></pre></div>
+
+<p><strong>Installazione manuale:</strong> scarica lo zip <code>aria2-1.37.0-win-64bit-build1.zip</code> dalla pagina delle release su <code>https://github.com/aria2/aria2/releases</code>, estrailo in una cartella fissa (per esempio <code>C:\Tools\aria2</code>) e aggiungi quella cartella al PATH di Windows. Se <code>aria2c</code> non viene riconosciuto dopo l'installazione, quasi sempre basta riaprire il terminale.</p>
+<hr />
+<h2>3. I primi comandi</h2>
+<p>Scaricare un file nella cartella corrente:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>https://example.org/file.iso
+</code></pre></div>
+
+<p>Con connessioni multiple, scelte a mano:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>https://example.org/file.iso
+</code></pre></div>
+
+<p>Scegliere cartella e nome del file:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-d<span class="w"> </span>~/Downloads<span class="w"> </span>-o<span class="w"> </span>ubuntu.iso<span class="w"> </span>https://example.org/file.iso
+</code></pre></div>
+
+<p>Il flag <code>-d</code> indica la cartella di destinazione, <code>-o</code> il nome con cui salvare il file.</p>
+<p>Riprendere un download interrotto (basta rilanciare lo stesso comando con <code>-c</code>):</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-c<span class="w"> </span>https://example.org/file.iso
+</code></pre></div>
+
+<blockquote>
+<p><strong>Virgolette sulle URL:</strong> se l'indirizzo contiene <code>&amp;</code>, <code>?</code> o <code>;</code> mettilo <strong>tra virgolette singole</strong> (<code>'https://...'</code>). Senza, la shell lo interpreta come comando e lo spezza. Vale per bash, zsh e PowerShell. Nel vecchio prompt dei comandi di Windows (<code>cmd</code>) usa le virgolette doppie.</p>
+</blockquote>
+<p>Durante il download aria2c mostra una riga di stato con la percentuale, la velocità, il tempo stimato e il numero di connessioni (<code>CN:8</code>). Con <code>Ctrl+C</code> si interrompe in modo pulito: il download resta riprendibile.</p>
+<hr />
+<h2>4. Quali valori usare in base alla connessione</h2>
+<p>Non esiste un valore universale: dipende dalla banda e dal numero di connessioni che i server accettano. La tabella dà un punto di partenza per tre fasce comuni. La riga <strong>FTTC/VDSL</strong> è quella usata nell'esempio completo della sezione 5.</p>
+<table>
+<thead>
+<tr>
+<th>Parametro</th>
+<th>ADSL, sotto 30 Mbit</th>
+<th>FTTC/VDSL, 30-200 Mbit</th>
+<th>FTTH, 100-1000 Mbit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>max-connection-per-server</code> (<code>-x</code>)</td>
+<td>4</td>
+<td><strong>8</strong></td>
+<td>16</td>
+</tr>
+<tr>
+<td><code>split</code> (<code>-s</code>)</td>
+<td>4</td>
+<td><strong>8</strong></td>
+<td>16</td>
+</tr>
+<tr>
+<td><code>min-split-size</code> (<code>-k</code>)</td>
+<td>10M</td>
+<td><strong>5M</strong></td>
+<td>1M</td>
+</tr>
+<tr>
+<td><code>max-concurrent-downloads</code> (<code>-j</code>)</td>
+<td>2</td>
+<td><strong>3</strong></td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>disk-cache</code></td>
+<td>16M</td>
+<td><strong>32M</strong></td>
+<td>64M</td>
+</tr>
+<tr>
+<td><code>max-tries</code> / <code>retry-wait</code></td>
+<td>10 / 10</td>
+<td><strong>10 / 5</strong></td>
+<td>5 / 3</td>
+</tr>
+<tr>
+<td>Limite globale di banda</td>
+<td>circa 80% della linea</td>
+<td>circa 80% della linea</td>
+<td>nessuno</td>
+</tr>
+</tbody>
+</table>
+<p>Come leggere i valori:</p>
+<ul>
+<li><strong>Connessioni totali.</strong> Il massimo di connessioni aperte è circa <code>-j × -x</code>. Con i valori FTTC sono fino a 24, un numero che la maggior parte dei router di casa gestisce senza problemi. Alzare tutto al massimo su una linea lenta non fa scaricare più veloce: affolla solo il router e lo rende lento anche per navigare.</li>
+<li><strong>Megabit contro megabyte.</strong> Le linee si misurano in <strong>Mbit/s</strong>, aria2 mostra e accetta <strong>byte al secondo</strong>. Dividi per 8: una linea da 100 Mbit/s fa al massimo circa 12,5 MB/s. Per lasciare un 20% libero per il resto della rete, il limite sarebbe <code>--max-overall-download-limit=10M</code>.</li>
+<li><strong><code>-k</code> più basso su linee più veloci.</strong> Un segmento minimo piccolo permette di usare tutte le connessioni anche su file medi. Su una linea lenta segmenti più grandi riducono il lavoro inutile.</li>
+<li><strong><code>-j</code> conta i file, non le connessioni.</strong> Serve solo quando scarichi un elenco (sezione 6).</li>
+<li><strong>Nessun valore oltre 16</strong> per <code>-x</code>: è il massimo consentito da aria2.</li>
+</ul>
+<h3>Come provare quali valori funzionano meglio con il tuo provider</h3>
+<p>Scegli un file grande (almeno qualche centinaio di MB) da un server che usi spesso e confronta:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">1</span><span class="w"> </span>-s<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span>/tmp<span class="w"> </span>--allow-overwrite<span class="o">=</span><span class="nb">true</span><span class="w"> </span>https://example.org/file.iso
+aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>-d<span class="w"> </span>/tmp<span class="w"> </span>--allow-overwrite<span class="o">=</span><span class="nb">true</span><span class="w"> </span>https://example.org/file.iso
+</code></pre></div>
+
+<p>Guarda la velocità media a fine download. Se le due prove sono simili, quel server ti dà già tutta la banda e le connessioni multiple non servono. Se la seconda è nettamente più veloce, il server limita ogni connessione. In quel caso prova anche 12 o 16: se non guadagni altro, resta su 8. Sui due comandi, <code>--allow-overwrite=true</code> evita che il secondo rinomini il file in <code>file.1.iso</code>.</p>
+<hr />
+<h2>5. Il file di configurazione per una linea FTTC/VDSL</h2>
+<p>Invece di scrivere ogni volta tutti i flag, si mettono le impostazioni in un file <code>aria2.conf</code> che aria2c legge da solo a ogni avvio. I flag scritti sulla riga di comando hanno comunque la precedenza.</p>
+<h3>Dove va il file</h3>
+<p>Sulla versione 1.37.0 il percorso di default è questo (verificato con <code>aria2c --help=--conf-path</code>):</p>
+<ul>
+<li><strong>Linux e Bazzite:</strong> <code>~/.config/aria2/aria2.conf</code></li>
+<li><strong>Windows:</strong> <code>C:\Users\NOMEUTENTE\.config\aria2\aria2.conf</code></li>
+</ul>
+<p>Su Linux e Bazzite crea cartella e file così:</p>
+<div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.config/aria2
+nano<span class="w"> </span>~/.config/aria2/aria2.conf
+</code></pre></div>
+
+<p>Su Windows, da PowerShell:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="s2">&quot;$env:USERPROFILE\.config\aria2&quot;</span>
+<span class="n">notepad</span> <span class="s2">&quot;$env:USERPROFILE\.config\aria2\aria2.conf&quot;</span>
+</code></pre></div>
+
+<p>Notepad chiede se creare il file: conferma. Se preferisci un'altra posizione, aria2c si può far partire con <code>--conf-path="percorso\del\file"</code>.</p>
+<h3>Il file completo</h3>
+<div class="codehilite"><pre><span></span><code><span class="c1"># aria2.conf - configurazione per FTTC/VDSL (30-200 Mbit)</span>
+
+<span class="c1"># --- Cartella di destinazione ---</span>
+<span class="c1"># Metti un percorso assoluto: nel file di configurazione non c&#39;è la shell</span>
+<span class="c1"># a espandere la tilde (~) o le variabili d&#39;ambiente.</span>
+<span class="c1"># Linux/Bazzite:</span>
+<span class="n">dir</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">NOMEUTENTE</span><span class="o">/</span><span class="n">Downloads</span>
+<span class="c1"># Windows (barre normali, non rovesciate):</span>
+<span class="c1"># dir=C:/Users/NOMEUTENTE/Downloads</span>
+
+<span class="c1"># --- Connessioni ---</span>
+<span class="nb">max</span><span class="o">-</span><span class="n">connection</span><span class="o">-</span><span class="n">per</span><span class="o">-</span><span class="n">server</span><span class="o">=</span><span class="mi">8</span>
+<span class="n">split</span><span class="o">=</span><span class="mi">8</span>
+<span class="nb">min</span><span class="o">-</span><span class="n">split</span><span class="o">-</span><span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="n">M</span>
+<span class="nb">max</span><span class="o">-</span><span class="n">concurrent</span><span class="o">-</span><span class="n">downloads</span><span class="o">=</span><span class="mi">3</span>
+
+<span class="c1"># --- Ripresa e tentativi ---</span>
+<span class="k">continue</span><span class="o">=</span><span class="bp">true</span>
+<span class="nb">max</span><span class="o">-</span><span class="n">tries</span><span class="o">=</span><span class="mi">10</span>
+<span class="n">retry</span><span class="o">-</span><span class="n">wait</span><span class="o">=</span><span class="mi">5</span>
+<span class="n">connect</span><span class="o">-</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>
+<span class="n">timeout</span><span class="o">=</span><span class="mi">30</span>
+
+<span class="c1"># --- Disco ---</span>
+<span class="c1"># falloc riserva lo spazio all&#39;inizio in modo quasi istantaneo.</span>
+<span class="c1"># Va bene su ext4, btrfs, xfs e NTFS. NON usarlo su FAT32/exFAT: metti none.</span>
+<span class="n">file</span><span class="o">-</span><span class="n">allocation</span><span class="o">=</span><span class="n">falloc</span>
+<span class="n">disk</span><span class="o">-</span><span class="n">cache</span><span class="o">=</span><span class="mi">32</span><span class="n">M</span>
+
+<span class="c1"># --- Banda ---</span>
+<span class="c1"># 0 = nessun limite. Per lasciare banda libera alla rete di casa,</span>
+<span class="c1"># usa circa l&#39;80% della linea in byte al secondo (100 Mbit = 12,5 MB/s -&gt; 10M).</span>
+<span class="nb">max</span><span class="o">-</span><span class="n">overall</span><span class="o">-</span><span class="n">download</span><span class="o">-</span><span class="n">limit</span><span class="o">=</span><span class="mi">0</span>
+
+<span class="c1"># --- Varie ---</span>
+<span class="c1"># Applica al file la data di modifica che ha sul server (se la comunica)</span>
+<span class="k">remote</span><span class="o">-</span><span class="n">time</span><span class="o">=</span><span class="bp">true</span>
+<span class="c1"># Meno rumore nel terminale: mostra solo avvisi ed errori</span>
+<span class="n">console</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">level</span><span class="o">=</span><span class="n">warn</span>
+</code></pre></div>
+
+<blockquote>
+<p><strong>I commenti vanno su righe a parte.</strong> Nel file di configurazione di aria2 un <code>#</code> a fine riga non è un commento: viene considerato parte del valore e l'opzione si rompe. Scrivi sempre <code>chiave=valore</code> da solo sulla riga.</p>
+</blockquote>
+<h3>Cosa fa ogni gruppo</h3>
+<ul>
+<li><code>dir</code>: dove salvare i file se non indichi <code>-d</code>. Se non lo imposti, aria2c scarica nella cartella da cui lo lanci.</li>
+<li><code>continue=true</code>: equivale a <code>-c</code> sempre attivo. Se il file esiste in parte, riprende da lì invece di ricominciare.</li>
+<li><code>max-tries</code> e <code>retry-wait</code>: in caso di errore riprova fino a 10 volte, aspettando 5 secondi tra un tentativo e l'altro. Il default è 5 tentativi senza pausa, troppo poco per un server momentaneamente carico.</li>
+<li><code>connect-timeout</code> e <code>timeout</code>: i default sono 60 secondi per entrambi. Abbassarli a 10 e 30 fa abbandonare prima una connessione bloccata e riprovare, invece di restare fermi un minuto.</li>
+<li><code>file-allocation=falloc</code>: il default è <code>prealloc</code>, che scrive materialmente l'intero file a zeri prima di cominciare e su file di qualche GB può richiedere tempo. <code>falloc</code> è quasi istantaneo. Sulle chiavette USB formattate FAT32 o exFAT metti <code>none</code>. Su Windows con NTFS il manuale lo indica come supportato dalle build MinGW, che sono quelle ufficiali; se dovessi avere errori di allocazione, passa a <code>none</code>.</li>
+<li><code>disk-cache=32M</code>: accumula i dati in memoria e li scrive in blocchi più grandi, riducendo gli accessi al disco. È particolarmente utile su hard disk meccanici. Il default è 16M.</li>
+<li><code>remote-time=true</code>: il file scaricato riporta la data originale del server, comoda per riconoscere le versioni.</li>
+</ul>
+<h3>Opzioni che sconsiglio</h3>
+<ul>
+<li><strong><code>--check-certificate=false</code></strong>: disattiva il controllo del certificato HTTPS. Risolve un errore nascondendolo e ti espone ad attacchi. Se compare un errore di certificato, la causa va cercata (data del PC sbagliata, certificato scaduto sul server).</li>
+<li><strong><code>--optimize-concurrent-downloads</code></strong>: con i valori predefiniti adatta il numero di download paralleli alla banda e su una linea da 100 Mbit arriva a oltre 50 contemporanei. È pensata per altri scenari e su una linea domestica è controproducente.</li>
+<li><strong><code>--lowest-speed-limit</code></strong>: chiude le connessioni sotto una certa velocità. Può servire con mirror instabili, ma se tutte le sorgenti sono lente il download termina con errore. Lasciala disattivata finché non hai un problema concreto.</li>
+</ul>
+<hr />
+<h2>6. Elenchi di URL e ripresa dei download</h2>
+<h3>Scaricare più file da un elenco</h3>
+<p>Crea un file di testo, per esempio <code>lista.txt</code>, con <strong>un indirizzo per riga</strong>:</p>
+<div class="codehilite"><pre><span></span><code>https://example.org/file1.iso
+https://example.org/file2.iso
+https://example.org/file3.iso
+</code></pre></div>
+
+<p>e lancialo con <code>-i</code>:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-i<span class="w"> </span>lista.txt
+</code></pre></div>
+
+<p>I file vengono scaricati <code>max-concurrent-downloads</code> alla volta (3 con la nostra configurazione), ciascuno con le sue connessioni.</p>
+<p>Nello stesso file puoi anche scegliere cartella e nome per ogni URL, indentando le opzioni sotto l'indirizzo con uno o più spazi:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">file1</span><span class="o">.</span><span class="n">iso</span>
+<span class="w">  </span><span class="n">dir</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">NOMEUTENTE</span><span class="o">/</span><span class="n">Downloads</span><span class="o">/</span><span class="n">iso</span>
+<span class="w">  </span><span class="n">out</span><span class="o">=</span><span class="n">distro</span><span class="o">-</span><span class="mf">1.</span><span class="n">iso</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">file2</span><span class="o">.</span><span class="n">iso</span>
+<span class="w">  </span><span class="n">dir</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">NOMEUTENTE</span><span class="o">/</span><span class="n">Downloads</span><span class="o">/</span><span class="n">iso</span>
+</code></pre></div>
+
+<p>Per scaricare <strong>lo stesso file da più mirror insieme</strong>, scrivi le URL sulla stessa riga, separate da una tabulazione (TAB):</p>
+<div class="codehilite"><pre><span></span><code>https://mirror-a.example.org/file.iso&lt;TAB&gt;https://mirror-b.example.org/file.iso
+</code></pre></div>
+
+<p>aria2c usa tutti i mirror contemporaneamente e, se uno cade, continua con gli altri. Verifica comunque che siano davvero lo stesso file (vedi sezione 7).</p>
+<h3>Come funziona la ripresa</h3>
+<p>Mentre scarica, aria2c crea accanto al file un secondo file con lo stesso nome più <code>.aria2</code> (per esempio <code>file.iso.aria2</code>), che contiene la mappa dei segmenti già completati. Se il download si interrompe per un errore, per <code>Ctrl+C</code> o per uno spegnimento, basta rilanciare lo stesso comando: aria2c legge quel file e riparte dai segmenti mancanti.</p>
+<p>Tre cose da ricordare:</p>
+<ol>
+<li><strong>Non cancellare il file <code>.aria2</code></strong> finché il download non è finito. Quando termina, aria2c lo elimina da solo.</li>
+<li>Il server deve supportare le richieste parziali (header <code>Range</code>). Quasi tutti lo fanno; se non lo fa, aria2c lo segnala e scarica con una connessione sola, senza possibilità di ripresa.</li>
+<li>Con un elenco, per riprendere <strong>tutto l'elenco dopo una chiusura</strong> puoi chiedere ad aria2c di salvare i download non finiti:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-i<span class="w"> </span>lista.txt<span class="w"> </span>--save-session<span class="o">=</span>sessione.txt
+</code></pre></div>
+
+<p>Al riavvio si rilancia con <code>aria2c -i sessione.txt</code>, che contiene solo ciò che era rimasto indietro.</p>
+<p>Se il link è scaduto (capita con i link temporanei), puoi riprendere lo stesso file con un nuovo indirizzo che punta allo stesso contenuto: indica lo stesso nome con <code>-o</code> e la stessa cartella, e aria2c dovrebbe ripartire dal <code>.aria2</code> esistente (purché il file abbia la stessa dimensione).</p>
+<hr />
+<h2>7. Verificare che il file sia integro</h2>
+<p>Un download multi-sorgente va sempre verificato quando il file è importante, come un'ISO. aria2c può farlo da solo se conosci l'hash, pubblicato di solito accanto al file sul sito:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>--checksum<span class="o">=</span>sha-256<span class="o">=</span>HASH_COPIATO_DAL_SITO<span class="w"> </span>https://example.org/file.iso
+</code></pre></div>
+
+<p>Se l'hash non coincide, aria2c lo segnala come errore (codice di uscita 32). In alternativa lo si controlla dopo:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+sha256sum<span class="w"> </span>file.iso
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows</span>
+<span class="nb">Get-FileHash</span> <span class="n">file</span><span class="p">.</span><span class="n">iso</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
+</code></pre></div>
+
+<p>Confronta il risultato con quello pubblicato dal sito ufficiale. Se non coincide, il file va riscaricato.</p>
+<hr />
+<h2>8. Problemi comuni</h2>
+<p><strong>Il terminale dice che <code>aria2c</code> non esiste.</strong>
+Su Windows riapri il terminale dopo l'installazione. Su Bazzite controlla che <code>brew</code> sia nel PATH (<code>brew --version</code>) e riapri la sessione se l'hai appena installato.</p>
+<p><strong>Errore con <code>status=403</code> o <code>429</code>, oppure <code>errorCode=22</code>.</strong>
+Il server rifiuta le troppe connessioni o il tuo user agent. Abbassa <code>-x</code> (prova 4 o 2) e riprova. Se il problema resta, prova a presentarti come un browser:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>--user-agent<span class="o">=</span><span class="s2">&quot;Mozilla/5.0&quot;</span><span class="w"> </span>https://example.org/file.iso
+</code></pre></div>
+
+<p><strong><code>errorCode=29</code> o 503.</strong>
+Il server è sovraccarico o ti ha limitato per un po': aspetta e rilancia con <code>-c</code>, oppure usa un altro mirror.</p>
+<p><strong>La velocità non cresce con più connessioni.</strong>
+Il server o la tua linea sono già al massimo. Torna al confronto della sezione 4: in quel caso <code>-x 1</code> è sufficiente.</p>
+<p><strong>Il file scaricato si chiama <code>file.1.iso</code>.</strong>
+Esisteva già un file con quel nome e aria2c lo ha rinominato per non sovrascriverlo. Se vuoi riprendere quello vecchio, aggiungi <code>-c</code>. Se vuoi sostituirlo, aggiungi <code>--allow-overwrite=true</code>.</p>
+<p><strong>Download da Google Drive, Mega, Dropbox o siti con login.</strong>
+aria2c funziona con link <strong>diretti</strong> al file. Le pagine di condivisione di quei servizi non lo sono. Con i siti che richiedono il login puoi passare i cookie del browser con <code>--load-cookies=cookies.txt</code> o un header con <code>--header="Cookie: ..."</code>, ma per quei servizi è spesso più semplice usare il loro strumento ufficiale.</p>
+<p><strong>Spazio su disco insufficiente (<code>errorCode=9</code>).</strong>
+Con <code>falloc</code> lo spazio viene riservato subito, quindi l'errore compare all'inizio e non dopo ore. È un vantaggio: libera spazio e rilancia con <code>-c</code>.</p>
+<h3>Codici di uscita utili</h3>
+<table>
+<thead>
+<tr>
+<th>Codice</th>
+<th>Significato</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Tutti i download completati</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Errore sconosciuto</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Risorsa non trovata (404)</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Il server non supporta la ripresa</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Spazio su disco insufficiente</td>
+</tr>
+<tr>
+<td>19</td>
+<td>Risoluzione del nome (DNS) fallita</td>
+</tr>
+<tr>
+<td>22</td>
+<td>Risposta HTTP non valida, tipica di 403 e 429</td>
+</tr>
+<tr>
+<td>29</td>
+<td>Server non disponibile o sovraccarico</td>
+</tr>
+<tr>
+<td>32</td>
+<td>Verifica dell'hash fallita</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>9. Riepilogo rapido</h2>
+<div class="codehilite"><pre><span></span><code><span class="c1"># installare</span>
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">      </span><span class="c1"># Debian, Ubuntu</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">      </span><span class="c1"># Fedora</span>
+sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>aria2<span class="w">        </span><span class="c1"># Arch, CachyOS</span>
+sudo<span class="w"> </span>zypper<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">   </span><span class="c1"># openSUSE</span>
+brew<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">          </span><span class="c1"># Bazzite</span>
+winget<span class="w"> </span>install<span class="w"> </span>aria2.aria2<span class="w">  </span><span class="c1"># Windows (PowerShell)</span>
+
+<span class="c1"># usare</span>
+aria2c<span class="w"> </span>URL<span class="w">                          </span><span class="c1"># download semplice</span>
+aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>URL<span class="w">          </span><span class="c1"># 8 connessioni</span>
+aria2c<span class="w"> </span>-c<span class="w"> </span>URL<span class="w">                       </span><span class="c1"># riprendere</span>
+aria2c<span class="w"> </span>-i<span class="w"> </span>lista.txt<span class="w">                 </span><span class="c1"># elenco di URL</span>
+aria2c<span class="w"> </span>--checksum<span class="o">=</span>sha-256<span class="o">=</span>HASH<span class="w"> </span>URL<span class="w">  </span><span class="c1"># con verifica</span>
+</code></pre></div>
+
+<p>Con <code>~/.config/aria2/aria2.conf</code> configurato come nella sezione 5 bastano <code>aria2c URL</code> e <code>aria2c -i lista.txt</code>: tutto il resto è già impostato.</p>
+<h3>Cosa non è coperto</h3>
+<p>Per tenere la guida concentrata su ciò che serve ogni giorno, restano fuori l'uso come client BitTorrent (<code>aria2c file.torrent</code> o un magnet link), i file Metalink e la modalità demone con RPC e interfacce web come AriaNg o Motrix. Sono argomenti per un secondo articolo.</p>
+<div id="nextprev"><a href="/bazzite_onexplayer_1s/"><div id="prevart">Precedente:<br>Installare Bazzite sul OneXPlayer 1S: guida passo passo</div></a></div>
+</article>
+</main>
+
+<footer>
+	<a href="/" class="footer-brand">retrothink.click</a>
+	<div class="footer-icons">
+		<a href="/index.xml" title="Iscriviti via RSS">
+			<img src="/rss.svg" alt="RSS Feed">
+		</a>
+		<a href="https://www.youtube.com/@Retro_Think" title="Visita il mio canale YouTube">
+			<img src="/youtube.png" alt="YouTube Channel">
+		</a>
+	</div>
+</footer>
+
+<script src="https://unpkg.com/feather-icons" defer></script>
+<script defer>
+  document.addEventListener("DOMContentLoaded", () => feather.replace());
+</script>
+</body>
+</html>
