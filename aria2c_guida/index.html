@@ -96,7 +96,20 @@ sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> <
 aria2c<span class="w"> </span>--version
 </code></pre></div>
 
-<p>Se invece <code>brew</code> non esiste, installalo seguendo le istruzioni ufficiali su <code>https://brew.sh</code> e riapri il terminale.</p>
+<p>Se invece <code>brew</code> non esiste, installalo con il comando ufficiale (lo stesso mostrato su <code>https://brew.sh</code>; ti chiede la password e di premere Invio per confermare):</p>
+<div class="codehilite"><pre><span></span><code>/bin/bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh<span class="k">)</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+<p>Alla fine dell'installazione rendi <code>brew</code> disponibile nel terminale, adesso e ai prossimi accessi (questi sono i comandi della documentazione ufficiale per bash; con zsh sostituisci <code>~/.bashrc</code> con <code>~/.zshrc</code>):</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;eval &quot;$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)&quot;&#39;</span><span class="w"> </span>&gt;&gt;<span class="w"> </span>~/.bashrc
+<span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>/home/linuxbrew/.linuxbrew/bin/brew<span class="w"> </span>shellenv<span class="k">)</span><span class="s2">&quot;</span>
+</code></pre></div>
+
+<p>Poi installa aria2 e verifica:</p>
+<div class="codehilite"><pre><span></span><code>brew<span class="w"> </span>install<span class="w"> </span>aria2
+aria2c<span class="w"> </span>--version
+</code></pre></div>
+
 <blockquote>
 <p><strong>Alternative, da sapere ma non consigliate:</strong> <code>rpm-ostree install aria2</code> lo integra nel sistema ma obbliga al riavvio; con Distrobox si installa dentro un contenitore Fedora o Arch, ma i download e la configurazione restano legati al contenitore. Per questo uso Homebrew.</p>
 </blockquote>
@@ -106,7 +119,11 @@ aria2c<span class="w"> </span>--version
 <div class="codehilite"><pre><span></span><code><span class="n">winget</span> <span class="n">install</span> <span class="n">aria2</span><span class="p">.</span><span class="n">aria2</span>
 </code></pre></div>
 
-<p>Chiudi e riapri il terminale, poi verifica:</p>
+<p>Il terminale già aperto non conosce ancora il nuovo programma. Puoi chiuderlo e riaprirlo, oppure aggiornare il PATH della sessione corrente con questo comando:</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">$env:Path</span> <span class="p">=</span> <span class="no">[Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s2">&quot;Path&quot;</span><span class="p">,</span><span class="s2">&quot;User&quot;</span><span class="p">)</span> <span class="p">+</span> <span class="s2">&quot;;&quot;</span> <span class="p">+</span> <span class="no">[Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s2">&quot;Path&quot;</span><span class="p">,</span><span class="s2">&quot;Machine&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Poi verifica:</p>
 <div class="codehilite"><pre><span></span><code><span class="n">aria2c</span> <span class="p">-</span><span class="n">-version</span>
 </code></pre></div>
 
@@ -118,28 +135,51 @@ aria2c<span class="w"> </span>--version
 <span class="n">choco</span> <span class="n">install</span> <span class="n">aria2</span>
 </code></pre></div>
 
-<p><strong>Installazione manuale:</strong> scarica lo zip <code>aria2-1.37.0-win-64bit-build1.zip</code> dalla pagina delle release su <code>https://github.com/aria2/aria2/releases</code>, estrailo in una cartella fissa (per esempio <code>C:\Tools\aria2</code>) e aggiungi quella cartella al PATH di Windows. Se <code>aria2c</code> non viene riconosciuto dopo l'installazione, quasi sempre basta riaprire il terminale.</p>
+<p><strong>Installazione manuale (senza gestori pacchetti):</strong> tre comandi PowerShell. Il primo scarica lo zip ufficiale dalla pagina delle release del progetto (<code>https://github.com/aria2/aria2/releases</code>), il secondo lo estrae in <code>%LOCALAPPDATA%\Programs</code> (non servono i permessi di amministratore), il terzo aggiunge la cartella al PATH del tuo utente:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Invoke-WebRequest</span> <span class="n">-Uri</span> <span class="s2">&quot;https://github.com/aria2/aria2/releases/download/release-1.37.0/aria2-1.37.0-win-64bit-build1.zip&quot;</span> <span class="n">-OutFile</span> <span class="s2">&quot;$env:TEMP\aria2.zip&quot;</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="nb">Expand-Archive</span> <span class="n">-Path</span> <span class="s2">&quot;$env:TEMP\aria2.zip&quot;</span> <span class="n">-DestinationPath</span> <span class="s2">&quot;$env:LOCALAPPDATA\Programs&quot;</span> <span class="n">-Force</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="no">[Environment]</span><span class="p">::</span><span class="n">SetEnvironmentVariable</span><span class="p">(</span><span class="s2">&quot;Path&quot;</span><span class="p">,</span> <span class="no">[Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s2">&quot;Path&quot;</span><span class="p">,</span><span class="s2">&quot;User&quot;</span><span class="p">)</span> <span class="p">+</span> <span class="s2">&quot;;$env:LOCALAPPDATA\Programs\aria2-1.37.0-win-64bit-build1&quot;</span><span class="p">,</span> <span class="s2">&quot;User&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Poi aggiorna il PATH della sessione e verifica, con i due comandi mostrati sopra (<code>$env:Path = ...</code> e <code>aria2c --version</code>). Si usa <code>SetEnvironmentVariable</code> e non <code>setx</code>, perché <code>setx</code> taglia il PATH oltre i 1024 caratteri e può rovinarlo.</p>
+<blockquote>
+<p><strong>Aggiornamenti:</strong> con l'installazione manuale non si aggiorna da solo. Quando esce una versione nuova, ripeti i primi due comandi con il nuovo numero di versione e correggi il percorso nel PATH.</p>
+</blockquote>
 <hr />
 <h2>3. I primi comandi</h2>
-<p>Scaricare un file nella cartella corrente:</p>
-<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>https://example.org/file.iso
+<p>Tutti gli esempi di questa guida si possono incollare così come sono: usano i <strong>file di prova pubblici di OVH</strong> (<code>https://proof.ovh.net/files/</code>), che esistono apposta per misurare la velocità. Hanno nome <code>1Mb.dat</code>, <code>10Mb.dat</code>, <code>100Mb.dat</code> e <code>1Gb.dat</code> e, nonostante la sigla, pesano rispettivamente 1, 10, 100 e 1024 MiB. Non contengono nulla di utile: servono solo a provare.</p>
+<blockquote>
+<p><strong>Se il server di prova non risponde:</strong> sono server pubblici e limitano chi scarica troppo spesso. Dopo molte prove di seguito può comparire un timeout o l'errore <code>status=429</code>. Aspetta qualche minuto, oppure sostituisci <code>proof.ovh.net</code> con <code>proof.ovh.ca</code> o <code>proof.ovh.us</code> nello stesso comando: sono lo stesso file su altri server.</p>
+</blockquote>
+<p>Scaricare un file (da 10 MiB) nella cartella corrente:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>https://proof.ovh.net/files/10Mb.dat
 </code></pre></div>
 
-<p>Con connessioni multiple, scelte a mano:</p>
-<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>https://example.org/file.iso
+<p>Con connessioni multiple, scelte a mano (file da 100 MiB):</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>https://proof.ovh.net/files/100Mb.dat
 </code></pre></div>
 
-<p>Scegliere cartella e nome del file:</p>
-<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-d<span class="w"> </span>~/Downloads<span class="w"> </span>-o<span class="w"> </span>ubuntu.iso<span class="w"> </span>https://example.org/file.iso
+<p>Scegliere cartella e nome del file. Il flag <code>-d</code> indica la cartella di destinazione, <code>-o</code> il nome con cui salvare il file.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+aria2c<span class="w"> </span>-d<span class="w"> </span>~/Downloads<span class="w"> </span>-o<span class="w"> </span>prova.dat<span class="w"> </span>https://proof.ovh.net/files/10Mb.dat
 </code></pre></div>
 
-<p>Il flag <code>-d</code> indica la cartella di destinazione, <code>-o</code> il nome con cui salvare il file.</p>
-<p>Riprendere un download interrotto (basta rilanciare lo stesso comando con <code>-c</code>):</p>
-<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-c<span class="w"> </span>https://example.org/file.iso
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="n">aria2c</span> <span class="n">-d</span> <span class="s2">&quot;$env:USERPROFILE\Downloads&quot;</span> <span class="n">-o</span> <span class="n">prova</span><span class="p">.</span><span class="n">dat</span> <span class="n">https</span><span class="p">://</span><span class="n">proof</span><span class="p">.</span><span class="n">ovh</span><span class="p">.</span><span class="n">net</span><span class="p">/</span><span class="n">files</span><span class="p">/</span><span class="n">10Mb</span><span class="p">.</span><span class="n">dat</span>
+</code></pre></div>
+
+<p>Riprendere un download interrotto: lancia il download da 100 MiB, premi <code>Ctrl+C</code> dopo qualche secondo e rilancia lo stesso comando con <code>-c</code>. Riparte da dove si era fermato:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>https://proof.ovh.net/files/100Mb.dat
 </code></pre></div>
 
 <blockquote>
-<p><strong>Virgolette sulle URL:</strong> se l'indirizzo contiene <code>&amp;</code>, <code>?</code> o <code>;</code> mettilo <strong>tra virgolette singole</strong> (<code>'https://...'</code>). Senza, la shell lo interpreta come comando e lo spezza. Vale per bash, zsh e PowerShell. Nel vecchio prompt dei comandi di Windows (<code>cmd</code>) usa le virgolette doppie.</p>
+<p><strong>Virgolette sulle URL:</strong> se l'indirizzo contiene <code>&amp;</code>, <code>?</code> o <code>;</code> mettilo <strong>tra virgolette singole</strong>. Senza, la shell lo interpreta come comando e lo spezza. Vale per bash, zsh e PowerShell. Nel vecchio prompt dei comandi di Windows (<code>cmd</code>) usa le virgolette doppie. Esempio di sintassi (l'indirizzo è inventato, sostituiscilo con il tuo):</p>
+<p><code>bash
+aria2c 'https://example.org/scarica?id=15&amp;formato=iso'</code></p>
 </blockquote>
 <p>Durante il download aria2c mostra una riga di stato con la percentuale, la velocità, il tempo stimato e il numero di connessioni (<code>CN:8</code>). Con <code>Ctrl+C</code> si interrompe in modo pulito: il download resta riprendibile.</p>
 <hr />
@@ -208,74 +248,127 @@ aria2c<span class="w"> </span>--version
 <li><strong>Nessun valore oltre 16</strong> per <code>-x</code>: è il massimo consentito da aria2.</li>
 </ul>
 <h3>Come provare quali valori funzionano meglio con il tuo provider</h3>
-<p>Scegli un file grande (almeno qualche centinaio di MB) da un server che usi spesso e confronta:</p>
-<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">1</span><span class="w"> </span>-s<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span>/tmp<span class="w"> </span>--allow-overwrite<span class="o">=</span><span class="nb">true</span><span class="w"> </span>https://example.org/file.iso
-aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>-d<span class="w"> </span>/tmp<span class="w"> </span>--allow-overwrite<span class="o">=</span><span class="nb">true</span><span class="w"> </span>https://example.org/file.iso
+<p>Scarica lo stesso file da 100 MiB prima con una connessione sola e poi con otto, e confronta il tempo totale. <code>--no-conf</code> serve a ignorare l'eventuale <code>aria2.conf</code> della sezione 5, così le due prove dipendono solo dai flag scritti qui.</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+aria2c<span class="w"> </span>--no-conf<span class="w"> </span>-x<span class="w"> </span><span class="m">1</span><span class="w"> </span>-s<span class="w"> </span><span class="m">1</span><span class="w"> </span>-d<span class="w"> </span>/tmp<span class="w"> </span>-o<span class="w"> </span>prova-x1.dat<span class="w"> </span>https://proof.ovh.net/files/100Mb.dat
+aria2c<span class="w"> </span>--no-conf<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>-d<span class="w"> </span>/tmp<span class="w"> </span>-o<span class="w"> </span>prova-x8.dat<span class="w"> </span>https://proof.ovh.net/files/100Mb.dat
+rm<span class="w"> </span>/tmp/prova-x1.dat<span class="w"> </span>/tmp/prova-x8.dat
 </code></pre></div>
 
-<p>Guarda la velocità media a fine download. Se le due prove sono simili, quel server ti dà già tutta la banda e le connessioni multiple non servono. Se la seconda è nettamente più veloce, il server limita ogni connessione. In quel caso prova anche 12 o 16: se non guadagni altro, resta su 8. Sui due comandi, <code>--allow-overwrite=true</code> evita che il secondo rinomini il file in <code>file.1.iso</code>.</p>
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="n">aria2c</span> <span class="p">-</span><span class="n">-no-conf</span> <span class="n">-x</span> <span class="n">1</span> <span class="n">-s</span> <span class="n">1</span> <span class="n">-d</span> <span class="s2">&quot;$env:TEMP&quot;</span> <span class="n">-o</span> <span class="n">prova-x1</span><span class="p">.</span><span class="n">dat</span> <span class="n">https</span><span class="p">://</span><span class="n">proof</span><span class="p">.</span><span class="n">ovh</span><span class="p">.</span><span class="n">net</span><span class="p">/</span><span class="n">files</span><span class="p">/</span><span class="n">100Mb</span><span class="p">.</span><span class="n">dat</span>
+<span class="n">aria2c</span> <span class="p">-</span><span class="n">-no-conf</span> <span class="n">-x</span> <span class="n">8</span> <span class="n">-s</span> <span class="n">8</span> <span class="n">-k</span> <span class="n">5M</span> <span class="n">-d</span> <span class="s2">&quot;$env:TEMP&quot;</span> <span class="n">-o</span> <span class="n">prova-x8</span><span class="p">.</span><span class="n">dat</span> <span class="n">https</span><span class="p">://</span><span class="n">proof</span><span class="p">.</span><span class="n">ovh</span><span class="p">.</span><span class="n">net</span><span class="p">/</span><span class="n">files</span><span class="p">/</span><span class="n">100Mb</span><span class="p">.</span><span class="n">dat</span>
+<span class="nb">Remove-Item</span> <span class="s2">&quot;$env:TEMP\prova-x1.dat&quot;</span><span class="p">,</span> <span class="s2">&quot;$env:TEMP\prova-x8.dat&quot;</span>
+</code></pre></div>
+
+<p>Guarda la velocità media (<code>avg speed</code>) nella tabella finale. Se le due prove sono simili, quel server ti dà già tutta la banda e le connessioni multiple non servono. Se la seconda è nettamente più veloce, il server limita ogni connessione.</p>
+<p>Come esempio, sul PC con cui ho scritto questa guida (8 novembre 2026, verso il server OVH) lo stesso file da 100 MiB ha impiegato circa <strong>120 secondi con una connessione</strong> e circa <strong>61 secondi con otto</strong>. Il risultato dipende da linea, ora del giorno e server, quindi il tuo sarà diverso. Se otto connessioni migliorano molto, prova anche con 12 o 16 (<code>-x 16 -s 16</code>): se non guadagni altro, resta su 8.</p>
 <hr />
 <h2>5. Il file di configurazione per una linea FTTC/VDSL</h2>
 <p>Invece di scrivere ogni volta tutti i flag, si mettono le impostazioni in un file <code>aria2.conf</code> che aria2c legge da solo a ogni avvio. I flag scritti sulla riga di comando hanno comunque la precedenza.</p>
-<h3>Dove va il file</h3>
-<p>Sulla versione 1.37.0 il percorso di default è questo (verificato con <code>aria2c --help=--conf-path</code>):</p>
+<h3>Creare il file con un solo comando</h3>
+<p>Il file va in questo percorso, che aria2c 1.37.0 legge da solo a ogni avvio (verificato con <code>aria2c --help=--conf-path</code>):</p>
 <ul>
 <li><strong>Linux e Bazzite:</strong> <code>~/.config/aria2/aria2.conf</code></li>
 <li><strong>Windows:</strong> <code>C:\Users\NOMEUTENTE\.config\aria2\aria2.conf</code></li>
 </ul>
-<p>Su Linux e Bazzite crea cartella e file così:</p>
+<p>Non devi modificare nulla a mano: i comandi qui sotto creano la cartella, scrivono il file e inseriscono da soli la tua cartella dei download.</p>
+<p><strong>Linux e Bazzite</strong> (un unico blocco da incollare nel terminale). La cartella dei download viene letta dal sistema con <code>xdg-user-dir</code>, quindi funziona anche se la tua si chiama <code>Scaricati</code> invece di <code>Downloads</code>:</p>
 <div class="codehilite"><pre><span></span><code>mkdir<span class="w"> </span>-p<span class="w"> </span>~/.config/aria2
+<span class="nv">DL</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span>xdg-user-dir<span class="w"> </span>DOWNLOAD<span class="w"> </span><span class="m">2</span>&gt;/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$HOME</span><span class="s2">/Downloads&quot;</span><span class="k">)</span><span class="s2">&quot;</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>~/.config/aria2/aria2.conf<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s"># aria2.conf - FTTC/VDSL (30-200 Mbit)</span>
+
+<span class="s"># Cartella di destinazione</span>
+<span class="s">dir=$DL</span>
+
+<span class="s"># Connessioni</span>
+<span class="s">max-connection-per-server=8</span>
+<span class="s">split=8</span>
+<span class="s">min-split-size=5M</span>
+<span class="s">max-concurrent-downloads=3</span>
+
+<span class="s"># Ripresa e tentativi</span>
+<span class="s">continue=true</span>
+<span class="s">max-tries=10</span>
+<span class="s">retry-wait=5</span>
+<span class="s">connect-timeout=10</span>
+<span class="s">timeout=30</span>
+
+<span class="s"># Disco: falloc riserva lo spazio subito (ext4, btrfs, xfs, NTFS). Su FAT32 o exFAT usa none</span>
+<span class="s">file-allocation=falloc</span>
+<span class="s">disk-cache=32M</span>
+
+<span class="s"># Banda: 0 = nessun limite. 100 Mbit = 12,5 MB/s: per lasciare banda libera usa circa 10M</span>
+<span class="s">max-overall-download-limit=0</span>
+
+<span class="s"># Varie</span>
+<span class="s">remote-time=true</span>
+<span class="s">console-log-level=warn</span>
+<span class="s">EOF</span>
+</code></pre></div>
+
+<p><strong>Windows</strong> (un unico blocco da incollare in PowerShell). Scrive il file in UTF-8 senza BOM, che è il formato che aria2c legge senza errori, e usa le barre normali nel percorso, accettate da aria2c:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="s2">&quot;$env:USERPROFILE\.config\aria2&quot;</span> <span class="p">|</span> <span class="nb">Out-Null</span>
+<span class="nv">$dir</span> <span class="p">=</span> <span class="s2">&quot;$env:USERPROFILE\Downloads&quot;</span> <span class="o">-replace</span> <span class="s1">&#39;\\&#39;</span><span class="p">,</span><span class="s1">&#39;/&#39;</span>
+<span class="nv">$conf</span> <span class="p">=</span> <span class="sh">@&quot;</span>
+<span class="sh"># aria2.conf - FTTC/VDSL (30-200 Mbit)</span>
+
+<span class="sh"># Cartella di destinazione</span>
+<span class="sh">dir=$dir</span>
+
+<span class="sh"># Connessioni</span>
+<span class="sh">max-connection-per-server=8</span>
+<span class="sh">split=8</span>
+<span class="sh">min-split-size=5M</span>
+<span class="sh">max-concurrent-downloads=3</span>
+
+<span class="sh"># Ripresa e tentativi</span>
+<span class="sh">continue=true</span>
+<span class="sh">max-tries=10</span>
+<span class="sh">retry-wait=5</span>
+<span class="sh">connect-timeout=10</span>
+<span class="sh">timeout=30</span>
+
+<span class="sh"># Disco: falloc riserva lo spazio subito (ext4, btrfs, xfs, NTFS). Su FAT32 o exFAT usa none</span>
+<span class="sh">file-allocation=falloc</span>
+<span class="sh">disk-cache=32M</span>
+
+<span class="sh"># Banda: 0 = nessun limite. 100 Mbit = 12,5 MB/s: per lasciare banda libera usa circa 10M</span>
+<span class="sh">max-overall-download-limit=0</span>
+
+<span class="sh"># Varie</span>
+<span class="sh">remote-time=true</span>
+<span class="sh">console-log-level=warn</span>
+<span class="sh">&quot;@</span>
+<span class="no">[System.IO.File]</span><span class="p">::</span><span class="n">WriteAllText</span><span class="p">(</span><span class="s2">&quot;$env:USERPROFILE\.config\aria2\aria2.conf&quot;</span><span class="p">,</span> <span class="nv">$conf</span><span class="p">,</span> <span class="p">(</span><span class="nb">New-Object</span> <span class="n">System</span><span class="p">.</span><span class="n">Text</span><span class="p">.</span><span class="n">UTF8Encoding</span> <span class="nv">$false</span><span class="p">))</span>
+</code></pre></div>
+
+<h3>Controllare che funzioni</h3>
+<p>Mostra il file appena creato e controlla che la riga <code>dir=</code> contenga la tua cartella dei download:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+cat<span class="w"> </span>~/.config/aria2/aria2.conf
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="nb">Get-Content</span> <span class="s2">&quot;$env:USERPROFILE\.config\aria2\aria2.conf&quot;</span>
+</code></pre></div>
+
+<p>Poi scarica un file di prova senza scrivere nessun flag: deve comparire nella cartella indicata in <code>dir=</code>, scaricato con 8 connessioni (<code>CN:8</code> nella riga di stato):</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>https://proof.ovh.net/files/10Mb.dat
+</code></pre></div>
+
+<h3>Modificarlo in seguito</h3>
+<p>Quando vorrai cambiare un valore (per esempio passare a <code>file-allocation=none</code>), apri il file con un editor:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
 nano<span class="w"> </span>~/.config/aria2/aria2.conf
 </code></pre></div>
 
-<p>Su Windows, da PowerShell:</p>
-<div class="codehilite"><pre><span></span><code><span class="nb">New-Item</span> <span class="n">-ItemType</span> <span class="n">Directory</span> <span class="n">-Force</span> <span class="s2">&quot;$env:USERPROFILE\.config\aria2&quot;</span>
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
 <span class="n">notepad</span> <span class="s2">&quot;$env:USERPROFILE\.config\aria2\aria2.conf&quot;</span>
 </code></pre></div>
 
-<p>Notepad chiede se creare il file: conferma. Se preferisci un'altra posizione, aria2c si può far partire con <code>--conf-path="percorso\del\file"</code>.</p>
-<h3>Il file completo</h3>
-<div class="codehilite"><pre><span></span><code><span class="c1"># aria2.conf - configurazione per FTTC/VDSL (30-200 Mbit)</span>
-
-<span class="c1"># --- Cartella di destinazione ---</span>
-<span class="c1"># Metti un percorso assoluto: nel file di configurazione non c&#39;è la shell</span>
-<span class="c1"># a espandere la tilde (~) o le variabili d&#39;ambiente.</span>
-<span class="c1"># Linux/Bazzite:</span>
-<span class="n">dir</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">NOMEUTENTE</span><span class="o">/</span><span class="n">Downloads</span>
-<span class="c1"># Windows (barre normali, non rovesciate):</span>
-<span class="c1"># dir=C:/Users/NOMEUTENTE/Downloads</span>
-
-<span class="c1"># --- Connessioni ---</span>
-<span class="nb">max</span><span class="o">-</span><span class="n">connection</span><span class="o">-</span><span class="n">per</span><span class="o">-</span><span class="n">server</span><span class="o">=</span><span class="mi">8</span>
-<span class="n">split</span><span class="o">=</span><span class="mi">8</span>
-<span class="nb">min</span><span class="o">-</span><span class="n">split</span><span class="o">-</span><span class="n">size</span><span class="o">=</span><span class="mi">5</span><span class="n">M</span>
-<span class="nb">max</span><span class="o">-</span><span class="n">concurrent</span><span class="o">-</span><span class="n">downloads</span><span class="o">=</span><span class="mi">3</span>
-
-<span class="c1"># --- Ripresa e tentativi ---</span>
-<span class="k">continue</span><span class="o">=</span><span class="bp">true</span>
-<span class="nb">max</span><span class="o">-</span><span class="n">tries</span><span class="o">=</span><span class="mi">10</span>
-<span class="n">retry</span><span class="o">-</span><span class="n">wait</span><span class="o">=</span><span class="mi">5</span>
-<span class="n">connect</span><span class="o">-</span><span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>
-<span class="n">timeout</span><span class="o">=</span><span class="mi">30</span>
-
-<span class="c1"># --- Disco ---</span>
-<span class="c1"># falloc riserva lo spazio all&#39;inizio in modo quasi istantaneo.</span>
-<span class="c1"># Va bene su ext4, btrfs, xfs e NTFS. NON usarlo su FAT32/exFAT: metti none.</span>
-<span class="n">file</span><span class="o">-</span><span class="n">allocation</span><span class="o">=</span><span class="n">falloc</span>
-<span class="n">disk</span><span class="o">-</span><span class="n">cache</span><span class="o">=</span><span class="mi">32</span><span class="n">M</span>
-
-<span class="c1"># --- Banda ---</span>
-<span class="c1"># 0 = nessun limite. Per lasciare banda libera alla rete di casa,</span>
-<span class="c1"># usa circa l&#39;80% della linea in byte al secondo (100 Mbit = 12,5 MB/s -&gt; 10M).</span>
-<span class="nb">max</span><span class="o">-</span><span class="n">overall</span><span class="o">-</span><span class="n">download</span><span class="o">-</span><span class="n">limit</span><span class="o">=</span><span class="mi">0</span>
-
-<span class="c1"># --- Varie ---</span>
-<span class="c1"># Applica al file la data di modifica che ha sul server (se la comunica)</span>
-<span class="k">remote</span><span class="o">-</span><span class="n">time</span><span class="o">=</span><span class="bp">true</span>
-<span class="c1"># Meno rumore nel terminale: mostra solo avvisi ed errori</span>
-<span class="n">console</span><span class="o">-</span><span class="nb">log</span><span class="o">-</span><span class="n">level</span><span class="o">=</span><span class="n">warn</span>
-</code></pre></div>
-
+<p>Se vuoi tenere il file altrove, aria2c si avvia con <code>--conf-path</code> seguito dal percorso. Per ignorare del tutto il file in un singolo comando c'è <code>--no-conf</code>.</p>
 <blockquote>
 <p><strong>I commenti vanno su righe a parte.</strong> Nel file di configurazione di aria2 un <code>#</code> a fine riga non è un commento: viene considerato parte del valore e l'opzione si rompe. Scrivi sempre <code>chiave=valore</code> da solo sulla riga.</p>
 </blockquote>
@@ -298,79 +391,192 @@ nano<span class="w"> </span>~/.config/aria2/aria2.conf
 <hr />
 <h2>6. Elenchi di URL e ripresa dei download</h2>
 <h3>Scaricare più file da un elenco</h3>
-<p>Crea un file di testo, per esempio <code>lista.txt</code>, con <strong>un indirizzo per riga</strong>:</p>
-<div class="codehilite"><pre><span></span><code>https://example.org/file1.iso
-https://example.org/file2.iso
-https://example.org/file3.iso
+<p>L'elenco è un file di testo con <strong>un indirizzo per riga</strong>. Questi comandi creano <code>lista.txt</code> con tre file di prova e li scaricano (se hai creato l'<code>aria2.conf</code> della sezione 5, finiscono nella tua cartella dei download; altrimenti nella cartella corrente).</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>lista.txt<span class="w"> </span><span class="s">&lt;&lt;&#39;EOF&#39;</span>
+<span class="s">https://proof.ovh.net/files/1Mb.dat</span>
+<span class="s">https://proof.ovh.net/files/10Mb.dat</span>
+<span class="s">https://proof.ovh.net/files/100Mb.dat</span>
+<span class="s">EOF</span>
+aria2c<span class="w"> </span>-i<span class="w"> </span>lista.txt
 </code></pre></div>
 
-<p>e lancialo con <code>-i</code>:</p>
-<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-i<span class="w"> </span>lista.txt
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="sh">@&quot;</span>
+<span class="sh">https://proof.ovh.net/files/1Mb.dat</span>
+<span class="sh">https://proof.ovh.net/files/10Mb.dat</span>
+<span class="sh">https://proof.ovh.net/files/100Mb.dat</span>
+<span class="sh">&quot;@</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="n">lista</span><span class="p">.</span><span class="n">txt</span> <span class="n">-Encoding</span> <span class="n">ascii</span>
+<span class="n">aria2c</span> <span class="n">-i</span> <span class="n">lista</span><span class="p">.</span><span class="n">txt</span>
 </code></pre></div>
 
 <p>I file vengono scaricati <code>max-concurrent-downloads</code> alla volta (3 con la nostra configurazione), ciascuno con le sue connessioni.</p>
-<p>Nello stesso file puoi anche scegliere cartella e nome per ogni URL, indentando le opzioni sotto l'indirizzo con uno o più spazi:</p>
-<div class="codehilite"><pre><span></span><code><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">file1</span><span class="o">.</span><span class="n">iso</span>
-<span class="w">  </span><span class="n">dir</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">NOMEUTENTE</span><span class="o">/</span><span class="n">Downloads</span><span class="o">/</span><span class="n">iso</span>
-<span class="w">  </span><span class="n">out</span><span class="o">=</span><span class="n">distro</span><span class="o">-</span><span class="mf">1.</span><span class="n">iso</span>
-<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">file2</span><span class="o">.</span><span class="n">iso</span>
-<span class="w">  </span><span class="n">dir</span><span class="o">=/</span><span class="n">home</span><span class="o">/</span><span class="n">NOMEUTENTE</span><span class="o">/</span><span class="n">Downloads</span><span class="o">/</span><span class="n">iso</span>
+<h3>Cartella e nome diversi per ogni file</h3>
+<p>Nello stesso file puoi scegliere cartella e nome per ogni indirizzo, indentando le opzioni sotto l'indirizzo con uno o più spazi. Qui i due file vanno in una sottocartella <code>prove</code> dei download, il primo con un nome scelto da te:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+cat<span class="w"> </span>&gt;<span class="w"> </span>lista2.txt<span class="w"> </span><span class="s">&lt;&lt;EOF</span>
+<span class="s">https://proof.ovh.net/files/10Mb.dat</span>
+<span class="s">  dir=$HOME/Downloads/prove</span>
+<span class="s">  out=prova-10.dat</span>
+<span class="s">https://proof.ovh.net/files/1Mb.dat</span>
+<span class="s">  dir=$HOME/Downloads/prove</span>
+<span class="s">EOF</span>
+aria2c<span class="w"> </span>-i<span class="w"> </span>lista2.txt
 </code></pre></div>
 
-<p>Per scaricare <strong>lo stesso file da più mirror insieme</strong>, scrivi le URL sulla stessa riga, separate da una tabulazione (TAB):</p>
-<div class="codehilite"><pre><span></span><code>https://mirror-a.example.org/file.iso&lt;TAB&gt;https://mirror-b.example.org/file.iso
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="nv">$d</span> <span class="p">=</span> <span class="s2">&quot;$env:USERPROFILE\Downloads\prove&quot;</span> <span class="o">-replace</span> <span class="s1">&#39;\\&#39;</span><span class="p">,</span><span class="s1">&#39;/&#39;</span>
+<span class="sh">@&quot;</span>
+<span class="sh">https://proof.ovh.net/files/10Mb.dat</span>
+<span class="sh">  dir=$d</span>
+<span class="sh">  out=prova-10.dat</span>
+<span class="sh">https://proof.ovh.net/files/1Mb.dat</span>
+<span class="sh">  dir=$d</span>
+<span class="sh">&quot;@</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="n">lista2</span><span class="p">.</span><span class="n">txt</span> <span class="n">-Encoding</span> <span class="n">ascii</span>
+<span class="n">aria2c</span> <span class="n">-i</span> <span class="n">lista2</span><span class="p">.</span><span class="n">txt</span>
 </code></pre></div>
 
-<p>aria2c usa tutti i mirror contemporaneamente e, se uno cade, continua con gli altri. Verifica comunque che siano davvero lo stesso file (vedi sezione 7).</p>
+<h3>Lo stesso file da più mirror insieme</h3>
+<p>Per scaricare <strong>lo stesso file da più server contemporaneamente</strong>, scrivi gli indirizzi sulla stessa riga, separati da una tabulazione. OVH mette a disposizione lo stesso file di prova su tre server (<code>.net</code>, <code>.ca</code>, <code>.us</code>); ho calcolato l'hash dei tre e coincide:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+<span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;https://proof.ovh.net/files/10Mb.dat\thttps://proof.ovh.ca/files/10Mb.dat\thttps://proof.ovh.us/files/10Mb.dat\n&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>mirror.txt
+aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>1M<span class="w"> </span>-i<span class="w"> </span>mirror.txt
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="s2">&quot;https://proof.ovh.net/files/10Mb.dat</span><span class="se">`t</span><span class="s2">https://proof.ovh.ca/files/10Mb.dat</span><span class="se">`t</span><span class="s2">https://proof.ovh.us/files/10Mb.dat&quot;</span> <span class="p">|</span> <span class="nb">Set-Content</span> <span class="n">mirror</span><span class="p">.</span><span class="n">txt</span> <span class="n">-Encoding</span> <span class="n">ascii</span>
+<span class="n">aria2c</span> <span class="n">-x</span> <span class="n">8</span> <span class="n">-s</span> <span class="n">8</span> <span class="n">-k</span> <span class="n">1M</span> <span class="n">-i</span> <span class="n">mirror</span><span class="p">.</span><span class="n">txt</span>
+</code></pre></div>
+
+<p>aria2c usa tutti i mirror contemporaneamente e, se uno cade, continua con gli altri. Verifica sempre che siano davvero lo stesso file (vedi sezione 7).</p>
 <h3>Come funziona la ripresa</h3>
-<p>Mentre scarica, aria2c crea accanto al file un secondo file con lo stesso nome più <code>.aria2</code> (per esempio <code>file.iso.aria2</code>), che contiene la mappa dei segmenti già completati. Se il download si interrompe per un errore, per <code>Ctrl+C</code> o per uno spegnimento, basta rilanciare lo stesso comando: aria2c legge quel file e riparte dai segmenti mancanti.</p>
+<p>Mentre scarica, aria2c crea accanto al file un secondo file con lo stesso nome più <code>.aria2</code> (per esempio <code>100Mb.dat.aria2</code>), che contiene la mappa dei segmenti già completati. Se il download si interrompe per un errore, per <code>Ctrl+C</code> o per uno spegnimento, basta rilanciare lo stesso comando: aria2c legge quel file e riparte dai segmenti mancanti.</p>
+<p>Per vederlo, lancia il download, interrompilo con <code>Ctrl+C</code> dopo qualche secondo ed elenca i file:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+aria2c<span class="w"> </span>--no-conf<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>https://proof.ovh.net/files/100Mb.dat
+ls<span class="w"> </span>-l<span class="w"> </span>100Mb.dat*
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="n">aria2c</span> <span class="p">-</span><span class="n">-no-conf</span> <span class="n">-x</span> <span class="n">8</span> <span class="n">-s</span> <span class="n">8</span> <span class="n">-k</span> <span class="n">5M</span> <span class="n">https</span><span class="p">://</span><span class="n">proof</span><span class="p">.</span><span class="n">ovh</span><span class="p">.</span><span class="n">net</span><span class="p">/</span><span class="n">files</span><span class="p">/</span><span class="n">100Mb</span><span class="p">.</span><span class="n">dat</span>
+<span class="nb">Get-ChildItem</span> <span class="n">100Mb</span><span class="p">.</span><span class="n">dat</span><span class="p">*</span>
+</code></pre></div>
+
+<p>Compaiono <code>100Mb.dat</code> e <code>100Mb.dat.aria2</code>. Per riprendere basta aggiungere <code>-c</code>:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>--no-conf<span class="w"> </span>-c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>https://proof.ovh.net/files/100Mb.dat
+</code></pre></div>
+
+<p>Quando il download finisce, il file <code>.aria2</code> sparisce da solo.</p>
 <p>Tre cose da ricordare:</p>
 <ol>
-<li><strong>Non cancellare il file <code>.aria2</code></strong> finché il download non è finito. Quando termina, aria2c lo elimina da solo.</li>
-<li>Il server deve supportare le richieste parziali (header <code>Range</code>). Quasi tutti lo fanno; se non lo fa, aria2c lo segnala e scarica con una connessione sola, senza possibilità di ripresa.</li>
-<li>Con un elenco, per riprendere <strong>tutto l'elenco dopo una chiusura</strong> puoi chiedere ad aria2c di salvare i download non finiti:</li>
+<li><strong>Non cancellare il file <code>.aria2</code></strong> finché il download non è finito: senza di esso aria2c non sa quali segmenti sono completi.</li>
+<li>Il server deve supportare le richieste parziali (header <code>Range</code>). Quasi tutti lo fanno; se non lo fa, aria2c lo segnala e scarica con una connessione sola, senza possibilità di ripresa. Per controllare un server prima di scaricare: <code>curl -sI https://proof.ovh.net/files/100Mb.dat | grep -i accept-ranges</code> (Linux e Bazzite) oppure <code>(Invoke-WebRequest -Method Head https://proof.ovh.net/files/100Mb.dat).Headers["Accept-Ranges"]</code> (Windows). Se risponde <code>bytes</code>, va bene.</li>
+<li>Con un elenco, per riprendere <strong>tutto l'elenco dopo una chiusura</strong> chiedi ad aria2c di salvare i download non finiti, e al riavvio rilancia il file di sessione (che contiene solo ciò che era rimasto indietro):</li>
 </ol>
 <div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-i<span class="w"> </span>lista.txt<span class="w"> </span>--save-session<span class="o">=</span>sessione.txt
+aria2c<span class="w"> </span>-i<span class="w"> </span>sessione.txt<span class="w"> </span>--save-session<span class="o">=</span>sessione.txt
 </code></pre></div>
 
-<p>Al riavvio si rilancia con <code>aria2c -i sessione.txt</code>, che contiene solo ciò che era rimasto indietro.</p>
-<p>Se il link è scaduto (capita con i link temporanei), puoi riprendere lo stesso file con un nuovo indirizzo che punta allo stesso contenuto: indica lo stesso nome con <code>-o</code> e la stessa cartella, e aria2c dovrebbe ripartire dal <code>.aria2</code> esistente (purché il file abbia la stessa dimensione).</p>
+<p>Il primo comando è quello da usare la prima volta; il secondo, dopo un'interruzione.</p>
+<p>Se il link è scaduto (capita con i link temporanei), puoi riprendere lo stesso file con un nuovo indirizzo che punta allo stesso contenuto, indicando lo stesso nome e la stessa cartella. Sostituisci <code>NUOVO_INDIRIZZO</code> con l'indirizzo che hai ottenuto (non posso scriverlo io: lo conosci solo tu):</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-c<span class="w"> </span>-d<span class="w"> </span>~/Downloads<span class="w"> </span>-o<span class="w"> </span>file.iso<span class="w"> </span><span class="s1">&#39;NUOVO_INDIRIZZO&#39;</span>
+</code></pre></div>
+
+<p>aria2c dovrebbe ripartire dal <code>.aria2</code> esistente, purché il file abbia la stessa dimensione.</p>
 <hr />
 <h2>7. Verificare che il file sia integro</h2>
-<p>Un download multi-sorgente va sempre verificato quando il file è importante, come un'ISO. aria2c può farlo da solo se conosci l'hash, pubblicato di solito accanto al file sul sito:</p>
-<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>--checksum<span class="o">=</span>sha-256<span class="o">=</span>HASH_COPIATO_DAL_SITO<span class="w"> </span>https://example.org/file.iso
+<p>Un download multi-sorgente va sempre verificato quando il file è importante, come un'ISO. aria2c lo fa da solo se gli dai l'hash, che di solito è pubblicato accanto al file sul sito ufficiale. Nell'esempio uso il file di prova da 10 MiB; l'hash SHA-256 l'ho calcolato io l'8 novembre 2026 e coincide sui tre server OVH. Per i tuoi file copia sempre l'hash dal sito ufficiale.</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>--checksum<span class="o">=</span>sha-256<span class="o">=</span>e5b844cc57f57094ea4585e235f36c78c1cd222262bb89d53c94dcb4d6b3e55d<span class="w"> </span>https://proof.ovh.net/files/10Mb.dat
 </code></pre></div>
 
-<p>Se l'hash non coincide, aria2c lo segnala come errore (codice di uscita 32). In alternativa lo si controlla dopo:</p>
+<p>Con l'hash giusto il download termina con <code>(OK):download completed</code>. Per vedere cosa succede con un hash sbagliato, prova questo (sono 64 zeri) e leggi il codice di uscita:</p>
 <div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
-sha256sum<span class="w"> </span>file.iso
+aria2c<span class="w"> </span>-d<span class="w"> </span>/tmp<span class="w"> </span>--checksum<span class="o">=</span>sha-256<span class="o">=</span><span class="m">0000000000000000000000000000000000000000000000000000000000000000</span><span class="w"> </span>https://proof.ovh.net/files/1Mb.dat<span class="p">;</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="nv">$?</span>
 </code></pre></div>
 
-<div class="codehilite"><pre><span></span><code><span class="c"># Windows</span>
-<span class="nb">Get-FileHash</span> <span class="n">file</span><span class="p">.</span><span class="n">iso</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="n">aria2c</span> <span class="n">-d</span> <span class="s2">&quot;$env:TEMP&quot;</span> <span class="p">-</span><span class="n">-checksum</span><span class="p">=</span><span class="n">sha</span><span class="p">-</span><span class="n">256</span><span class="p">=</span><span class="n">0000000000000000000000000000000000000000000000000000000000000000</span> <span class="n">https</span><span class="p">://</span><span class="n">proof</span><span class="p">.</span><span class="n">ovh</span><span class="p">.</span><span class="n">net</span><span class="p">/</span><span class="n">files</span><span class="p">/</span><span class="n">1Mb</span><span class="p">.</span><span class="n">dat</span><span class="p">;</span> <span class="nv">$LASTEXITCODE</span>
 </code></pre></div>
 
-<p>Confronta il risultato con quello pubblicato dal sito ufficiale. Se non coincide, il file va riscaricato.</p>
+<p>aria2c segnala <code>Checksum error detected</code>, mostra <code>(ERR):error occurred</code> e restituisce il codice <strong>32</strong>. Se hai già il file, puoi controllarlo anche dopo:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite (nella cartella del file)</span>
+sha256sum<span class="w"> </span>10Mb.dat
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell, nella cartella del file)</span>
+<span class="nb">Get-FileHash</span> <span class="n">10Mb</span><span class="p">.</span><span class="n">dat</span> <span class="n">-Algorithm</span> <span class="n">SHA256</span>
+</code></pre></div>
+
+<p>Confronta il risultato con quello pubblicato (PowerShell lo scrive in maiuscolo, ma le lettere maiuscole e minuscole non cambiano il valore). Se non coincide, il file va riscaricato.</p>
 <hr />
 <h2>8. Problemi comuni</h2>
 <p><strong>Il terminale dice che <code>aria2c</code> non esiste.</strong>
-Su Windows riapri il terminale dopo l'installazione. Su Bazzite controlla che <code>brew</code> sia nel PATH (<code>brew --version</code>) e riapri la sessione se l'hai appena installato.</p>
+Prima controlla dove lo cerca il sistema:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+<span class="nb">command</span><span class="w"> </span>-v<span class="w"> </span>aria2c
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="nb">Get-Command</span> <span class="n">aria2c</span>
+</code></pre></div>
+
+<p>Se non risponde nulla, su Windows aggiorna il PATH della sessione (oppure riapri il terminale):</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">$env:Path</span> <span class="p">=</span> <span class="no">[Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s2">&quot;Path&quot;</span><span class="p">,</span><span class="s2">&quot;User&quot;</span><span class="p">)</span> <span class="p">+</span> <span class="s2">&quot;;&quot;</span> <span class="p">+</span> <span class="no">[Environment]</span><span class="p">::</span><span class="n">GetEnvironmentVariable</span><span class="p">(</span><span class="s2">&quot;Path&quot;</span><span class="p">,</span><span class="s2">&quot;Machine&quot;</span><span class="p">)</span>
+</code></pre></div>
+
+<p>Su Bazzite rendi <code>brew</code> disponibile nella sessione e riprova:</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>/home/linuxbrew/.linuxbrew/bin/brew<span class="w"> </span>shellenv<span class="k">)</span><span class="s2">&quot;</span>
+</code></pre></div>
+
 <p><strong>Errore con <code>status=403</code> o <code>429</code>, oppure <code>errorCode=22</code>.</strong>
-Il server rifiuta le troppe connessioni o il tuo user agent. Abbassa <code>-x</code> (prova 4 o 2) e riprova. Se il problema resta, prova a presentarti come un browser:</p>
-<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>--user-agent<span class="o">=</span><span class="s2">&quot;Mozilla/5.0&quot;</span><span class="w"> </span>https://example.org/file.iso
+Il server rifiuta le troppe connessioni o il tuo user agent. Abbassa il numero di connessioni a 2 e riprova:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">2</span><span class="w"> </span>-s<span class="w"> </span><span class="m">2</span><span class="w"> </span>https://proof.ovh.net/files/10Mb.dat
+</code></pre></div>
+
+<p>Se il problema resta, prova a presentarti come un browser:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>--user-agent<span class="o">=</span><span class="s2">&quot;Mozilla/5.0&quot;</span><span class="w"> </span>https://proof.ovh.net/files/10Mb.dat
 </code></pre></div>
 
 <p><strong><code>errorCode=29</code> o 503.</strong>
-Il server è sovraccarico o ti ha limitato per un po': aspetta e rilancia con <code>-c</code>, oppure usa un altro mirror.</p>
+Il server è sovraccarico o ti ha limitato per un po'. Aspetta qualche minuto e rilancia lo stesso comando con <code>-c</code> (nell'esempio, il download da 100 MiB):</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-c<span class="w"> </span>https://proof.ovh.net/files/100Mb.dat
+</code></pre></div>
+
+<p>oppure usa un altro mirror.</p>
 <p><strong>La velocità non cresce con più connessioni.</strong>
-Il server o la tua linea sono già al massimo. Torna al confronto della sezione 4: in quel caso <code>-x 1</code> è sufficiente.</p>
-<p><strong>Il file scaricato si chiama <code>file.1.iso</code>.</strong>
-Esisteva già un file con quel nome e aria2c lo ha rinominato per non sovrascriverlo. Se vuoi riprendere quello vecchio, aggiungi <code>-c</code>. Se vuoi sostituirlo, aggiungi <code>--allow-overwrite=true</code>.</p>
+Il server o la tua linea sono già al massimo. Rifai il confronto della sezione 4: in quel caso <code>-x 1</code> è sufficiente.</p>
+<p><strong>Il file scaricato si chiama <code>10Mb.1.dat</code>.</strong>
+Esisteva già un file con quel nome e aria2c lo ha rinominato per non sovrascriverlo. Per riprendere quello vecchio aggiungi <code>-c</code>, per sostituirlo aggiungi <code>--allow-overwrite=true</code>:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>-c<span class="w"> </span>https://proof.ovh.net/files/10Mb.dat
+aria2c<span class="w"> </span>--allow-overwrite<span class="o">=</span><span class="nb">true</span><span class="w"> </span>https://proof.ovh.net/files/10Mb.dat
+</code></pre></div>
+
 <p><strong>Download da Google Drive, Mega, Dropbox o siti con login.</strong>
-aria2c funziona con link <strong>diretti</strong> al file. Le pagine di condivisione di quei servizi non lo sono. Con i siti che richiedono il login puoi passare i cookie del browser con <code>--load-cookies=cookies.txt</code> o un header con <code>--header="Cookie: ..."</code>, ma per quei servizi è spesso più semplice usare il loro strumento ufficiale.</p>
+aria2c funziona con link <strong>diretti</strong> al file. Le pagine di condivisione di quei servizi non lo sono. Per i siti che richiedono il login puoi passare i cookie esportati dal browser in un file <code>cookies.txt</code> (formato Netscape). L'indirizzo qui sotto è inventato, sostituiscilo con il tuo:</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>--load-cookies<span class="o">=</span>cookies.txt<span class="w"> </span><span class="s1">&#39;https://example.org/area-riservata/file.zip&#39;</span>
+</code></pre></div>
+
+<p>Per quei servizi è spesso più semplice usare il loro strumento ufficiale.</p>
 <p><strong>Spazio su disco insufficiente (<code>errorCode=9</code>).</strong>
-Con <code>falloc</code> lo spazio viene riservato subito, quindi l'errore compare all'inizio e non dopo ore. È un vantaggio: libera spazio e rilancia con <code>-c</code>.</p>
-<h3>Codici di uscita utili</h3>
+Con <code>falloc</code> lo spazio viene riservato subito, quindi l'errore compare all'inizio e non dopo ore. Controlla lo spazio libero, liberane e rilancia con <code>-c</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+df<span class="w"> </span>-h<span class="w"> </span>.
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="nb">Get-PSDrive</span> <span class="n">-PSProvider</span> <span class="n">FileSystem</span>
+</code></pre></div>
+
+<h3>Leggere il codice di uscita</h3>
+<p>Dopo ogni comando aria2c lascia un codice di uscita. Subito dopo il comando, in bash <code>echo $?</code>; in PowerShell <code>$LASTEXITCODE</code>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Linux e Bazzite</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$?</span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="c"># Windows (PowerShell)</span>
+<span class="nv">$LASTEXITCODE</span>
+</code></pre></div>
+
 <table>
 <thead>
 <tr>
@@ -419,23 +625,27 @@ Con <code>falloc</code> lo spazio viene riservato subito, quindi l'errore compar
 </table>
 <hr />
 <h2>9. Riepilogo rapido</h2>
-<div class="codehilite"><pre><span></span><code><span class="c1"># installare</span>
-sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">      </span><span class="c1"># Debian, Ubuntu</span>
-sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">      </span><span class="c1"># Fedora</span>
-sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>aria2<span class="w">        </span><span class="c1"># Arch, CachyOS</span>
-sudo<span class="w"> </span>zypper<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">   </span><span class="c1"># openSUSE</span>
-brew<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">          </span><span class="c1"># Bazzite</span>
-winget<span class="w"> </span>install<span class="w"> </span>aria2.aria2<span class="w">  </span><span class="c1"># Windows (PowerShell)</span>
-
-<span class="c1"># usare</span>
-aria2c<span class="w"> </span>URL<span class="w">                          </span><span class="c1"># download semplice</span>
-aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>URL<span class="w">          </span><span class="c1"># 8 connessioni</span>
-aria2c<span class="w"> </span>-c<span class="w"> </span>URL<span class="w">                       </span><span class="c1"># riprendere</span>
-aria2c<span class="w"> </span>-i<span class="w"> </span>lista.txt<span class="w">                 </span><span class="c1"># elenco di URL</span>
-aria2c<span class="w"> </span>--checksum<span class="o">=</span>sha-256<span class="o">=</span>HASH<span class="w"> </span>URL<span class="w">  </span><span class="c1"># con verifica</span>
+<p>Installazione (un comando per sistema):</p>
+<div class="codehilite"><pre><span></span><code>sudo<span class="w"> </span>apt<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">          </span><span class="c1"># Debian, Ubuntu, Mint</span>
+sudo<span class="w"> </span>dnf<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">                             </span><span class="c1"># Fedora</span>
+sudo<span class="w"> </span>pacman<span class="w"> </span>-S<span class="w"> </span>aria2<span class="w">                               </span><span class="c1"># Arch, CachyOS, EndeavourOS, Manjaro</span>
+sudo<span class="w"> </span>zypper<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">                          </span><span class="c1"># openSUSE</span>
+brew<span class="w"> </span>install<span class="w"> </span>aria2<span class="w">                                 </span><span class="c1"># Bazzite</span>
 </code></pre></div>
 
-<p>Con <code>~/.config/aria2/aria2.conf</code> configurato come nella sezione 5 bastano <code>aria2c URL</code> e <code>aria2c -i lista.txt</code>: tutto il resto è già impostato.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">winget</span> <span class="n">install</span> <span class="n">aria2</span><span class="p">.</span><span class="n">aria2</span>                         <span class="c"># Windows</span>
+</code></pre></div>
+
+<p>Uso (gli stessi comandi valgono su tutti i sistemi):</p>
+<div class="codehilite"><pre><span></span><code>aria2c<span class="w"> </span>URL<span class="w">                                         </span><span class="c1"># download semplice</span>
+aria2c<span class="w"> </span>-x<span class="w"> </span><span class="m">8</span><span class="w"> </span>-s<span class="w"> </span><span class="m">8</span><span class="w"> </span>-k<span class="w"> </span>5M<span class="w"> </span>URL<span class="w">                         </span><span class="c1"># 8 connessioni</span>
+aria2c<span class="w"> </span>-c<span class="w"> </span>URL<span class="w">                                      </span><span class="c1"># riprendere un download interrotto</span>
+aria2c<span class="w"> </span>-i<span class="w"> </span>lista.txt<span class="w">                                </span><span class="c1"># elenco di URL</span>
+aria2c<span class="w"> </span>--checksum<span class="o">=</span>sha-256<span class="o">=</span>HASH<span class="w"> </span>URL<span class="w">                 </span><span class="c1"># con verifica dell&#39;hash</span>
+aria2c<span class="w"> </span>--no-conf<span class="w"> </span>URL<span class="w">                               </span><span class="c1"># ignora aria2.conf</span>
+</code></pre></div>
+
+<p>Con l'<code>aria2.conf</code> della sezione 5 bastano <code>aria2c URL</code> e <code>aria2c -i lista.txt</code>: tutto il resto è già impostato. Qui <code>URL</code> e <code>HASH</code> sono gli unici segnaposto: li conosci solo tu.</p>
 <h3>Cosa non è coperto</h3>
 <p>Per tenere la guida concentrata su ciò che serve ogni giorno, restano fuori l'uso come client BitTorrent (<code>aria2c file.torrent</code> o un magnet link), i file Metalink e la modalità demone con RPC e interfacce web come AriaNg o Motrix. Sono argomenti per un secondo articolo.</p>
 <div id="nextprev"><a href="/bazzite_onexplayer_1s/"><div id="prevart">Precedente:<br>Installare Bazzite sul OneXPlayer 1S: guida passo passo</div></a></div>
