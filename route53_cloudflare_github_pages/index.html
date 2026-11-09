@@ -3,17 +3,17 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Dominio Route 53 + Cloudflare + GitHub Pages: guida completa con privacy avanzata | Retro Think</title>
-	<meta name="description" content="Dalla registrazione di un dominio su AWS Route 53 alla gestione DNS gratuita su Cloudflare e al collegamento a GitHub Pages, con sezioni facoltative di hardening e privacy (proxy, ECH, header HTTP, email anti-spoofing, DNSSEC, CAA, zero tracking).">
-	<meta name="keywords" content="dns, cloudflare, aws, github, privacy, guida">
+	<title>Dominio .xyz (gen.xyz, Spaceship, Porkbun, Dynadot) + Cloudflare + GitHub Pages: guida completa con privacy avanzata | Retro Think</title>
+	<meta name="description" content="Dalla registrazione di un dominio su gen.xyz, Spaceship, Porkbun o Dynadot alla gestione DNS gratuita su Cloudflare e al collegamento a GitHub Pages, con sezioni facoltative di hardening e privacy (proxy, ECH, header HTTP, email anti-spoofing, DNSSEC, CAA, zero tracking).">
+	<meta name="keywords" content="dns, cloudflare, registrar, github, privacy, guida">
 	<meta name="robots" content="index, follow">
 	<link rel="canonical" href="https://retrothink.click/route53_cloudflare_github_pages/">
 	<link rel='alternate' type='application/rss+xml' title="Retro Think RSS" href='/index.xml'>
 	<link rel="icon" href="/favicon.ico">
 	<meta property="og:type" content="article">
 	<meta property="og:url" content="https://retrothink.click/route53_cloudflare_github_pages/">
-	<meta property="og:title" content="Dominio Route 53 + Cloudflare + GitHub Pages: guida completa con privacy avanzata">
-	<meta property="og:description" content="Dalla registrazione di un dominio su AWS Route 53 alla gestione DNS gratuita su Cloudflare e al collegamento a GitHub Pages, con sezioni facoltative di hardening e privacy (proxy, ECH, header HTTP, email anti-spoofing, DNSSEC, CAA, zero tracking).">
+	<meta property="og:title" content="Dominio .xyz (gen.xyz, Spaceship, Porkbun, Dynadot) + Cloudflare + GitHub Pages: guida completa con privacy avanzata">
+	<meta property="og:description" content="Dalla registrazione di un dominio su gen.xyz, Spaceship, Porkbun o Dynadot alla gestione DNS gratuita su Cloudflare e al collegamento a GitHub Pages, con sezioni facoltative di hardening e privacy (proxy, ECH, header HTTP, email anti-spoofing, DNSSEC, CAA, zero tracking).">
 	<link rel='stylesheet' type='text/css' href='/style.css'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,26 +34,27 @@
 <main>
 <a href="/" class="back-link">&#8592; tutti gli articoli</a>
 
-<h1>Dominio Route 53 + Cloudflare + GitHub Pages: guida completa con privacy avanzata</h1>
+<h1>Dominio .xyz (gen.xyz, Spaceship, Porkbun, Dynadot) + Cloudflare + GitHub Pages: guida completa con privacy avanzata</h1>
 <div class="article-meta">
-  <span>2026-11-07</span> &middot; <a id="tag_dns" href="https://retrothink.click/tags/dns">Dns</a> <a id="tag_cloudflare" href="https://retrothink.click/tags/cloudflare">Cloudflare</a> <a id="tag_aws" href="https://retrothink.click/tags/aws">Aws</a> <a id="tag_github" href="https://retrothink.click/tags/github">Github</a> <a id="tag_privacy" href="https://retrothink.click/tags/privacy">Privacy</a> <a id="tag_guida" href="https://retrothink.click/tags/guida">Guida</a>
+  <span>2026-11-07</span> &middot; <a id="tag_dns" href="https://retrothink.click/tags/dns">Dns</a> <a id="tag_cloudflare" href="https://retrothink.click/tags/cloudflare">Cloudflare</a> <a id="tag_registrar" href="https://retrothink.click/tags/registrar">Registrar</a> <a id="tag_github" href="https://retrothink.click/tags/github">Github</a> <a id="tag_privacy" href="https://retrothink.click/tags/privacy">Privacy</a> <a id="tag_guida" href="https://retrothink.click/tags/guida">Guida</a>
 </div>
 
 <article>
-<p>Procedura passo passo per registrare un dominio su <strong>AWS Route 53</strong>, gestire i DNS gratis su <strong>Cloudflare</strong> (piano Free, 0 €/mese) e collegarlo a una pagina su <strong>GitHub Pages</strong> (hosting e SSL gratuiti), con sezioni facoltative di hardening e privacy avanzata.</p>
-<p>Negli esempi uso <strong><code>tuodominio.click</code></strong> come nome del dominio e <strong><code>tuonome.github.io</code></strong> come indirizzo della pagina GitHub Pages, dove <code>tuonome</code> è il tuo nome utente GitHub. Sostituiscili con i tuoi in ogni comando, record e link.</p>
+<p>Procedura passo passo per registrare un dominio su uno di questi quattro registrar (<strong>gen.xyz</strong>, <strong>Spaceship</strong>, <strong>Porkbun</strong>, <strong>Dynadot</strong>), gestire i DNS gratis su <strong>Cloudflare</strong> (piano Free, 0 €/mese) e collegarlo a una pagina su <strong>GitHub Pages</strong> (hosting e SSL gratuiti), con sezioni facoltative di hardening e privacy avanzata.</p>
+<p>Il registrar ti serve solo per <strong>comprare e rinnovare</strong> il nome. I DNS li gestisce Cloudflare: al registrar si cambiano soltanto i Name Server (Fase 6). Scegli un registrar e segui solo la sua sottosezione nelle Fasi 1, 6 e nell'Opzionale E.</p>
+<p>Negli esempi uso <strong><code>tuodominio.xyz</code></strong> come nome del dominio e <strong><code>tuonome.github.io</code></strong> come indirizzo della pagina GitHub Pages, dove <code>tuonome</code> è il tuo nome utente GitHub. Sostituiscili con i tuoi in ogni comando, record e link.</p>
 <p><strong>In questa guida</strong></p>
 <p><em>Percorso base (configurazione e zero costi)</em></p>
 <ul>
 <li>Fase 0: <a href="#fase-0">Prerequisito: creare il sito su GitHub Pages</a></li>
-<li>Fase 1: <a href="#fase-1">Registrazione del dominio su AWS Route 53</a></li>
+<li>Fase 1: <a href="#fase-1">Registrazione del dominio (gen.xyz, Spaceship, Porkbun o Dynadot)</a></li>
 <li>Fase 2: <a href="#fase-2">Aggiunta del dominio su Cloudflare (piano Free)</a></li>
 <li>Fase 3: <a href="#fase-3">Configurazione privacy e blocco dei bot AI</a></li>
 <li>Fase 4: <a href="#fase-4">Inserimento dei record DNS per GitHub Pages</a></li>
-<li>Fase 5: <a href="#fase-5">Verifica DNSSEC e recupero dei Name Server</a></li>
-<li>Fase 6: <a href="#fase-6">Cambio dei Name Server su AWS Route 53</a></li>
+<li>Fase 5: <a href="#fase-5">Controllo DNSSEC e recupero dei Name Server</a></li>
+<li>Fase 6: <a href="#fase-6">Cambio dei Name Server dal registrar</a></li>
 <li>Fase 7: <a href="#fase-7">Collegamento del Custom Domain su GitHub Pages</a></li>
-<li>Fase 8: <a href="#fase-8">Eliminazione della Hosted Zone AWS (zero costi)</a></li>
+<li>Fase 8: <a href="#fase-8">Verifica finale e pulizia</a></li>
 </ul>
 <p><em>Sezioni facoltative (privacy avanzata)</em></p>
 <ul>
@@ -64,6 +65,7 @@
 <li><a href="#opzionale-e">E. DNSSEC completo e record CAA</a></li>
 <li><a href="#opzionale-f">F. Zero tracking e isolamento delle risorse esterne</a></li>
 </ul>
+<p><strong>Prima di iniziare: i comandi di verifica.</strong> In tutta la guida controllo i DNS con questi comandi. Su Linux/Bazzite/macOS usa <code>dig</code> (se manca: <code>sudo apt install dnsutils</code> su Debian/Ubuntu, <code>sudo dnf install bind-utils</code> su Fedora/Bazzite, già presente su macOS). Su Windows usa PowerShell, dove <code>Resolve-DnsName</code> è già installato. Non serve installare nulla.</p>
 <hr />
 <h2 id="fase-0">Fase 0. Prerequisito: creare e pubblicare il sito su GitHub Pages</h2>
 
@@ -84,27 +86,71 @@
 <p><strong>Verifica:</strong> in <em>Settings &gt; Pages</em> compare la scritta <em>"Your site is live at https://tuonome.github.io/"</em> e la pagina si apre correttamente nel browser.</p>
 </blockquote>
 <hr />
-<h2 id="fase-1">Fase 1. Registrazione del dominio su AWS Route 53</h2>
+<h2 id="fase-1">Fase 1. Registrazione del dominio</h2>
 
-<p>Quando acquisti un dominio su AWS Route 53, paghi solo il costo annuale del nome a dominio (TLD, per esempio <code>.click</code>). Tuttavia, AWS crea in automatico anche una <strong>Hosted Zone</strong> che costa <strong>0,50 $/mese</strong>. L'obiettivo della guida è mantenere la registrazione su AWS ma spostare i DNS gratis su Cloudflare.</p>
+<p>Registra <code>tuodominio.xyz</code> su <strong>uno solo</strong> dei quattro registrar qui sotto. Paghi il nome a dominio (primo anno e rinnovi: controlla il prezzo del <strong>rinnovo</strong>, non solo quello della promozione del primo anno). Ogni registrar mette di default i propri DNS e spesso crea record "di parcheggio": li sostituiremo con Cloudflare nella Fase 6.</p>
+<p>Prima di pagare, in tutti e quattro i casi verifica queste due cose nel carrello:</p>
+<ul>
+<li><strong>Privacy WHOIS</strong> attiva, per oscurare nome, indirizzo, email e telefono nei database pubblici.</li>
+<li><strong>Rinnovo automatico</strong> attivo (o un promemoria ben visibile): se il dominio scade, il sito sparisce e qualcun altro può registrarlo.</li>
+</ul>
+<h3 id="fase-1-genxyz">1A. gen.xyz</h3>
+
+<p><a href="https://gen.xyz/">gen.xyz</a> è il registrar ufficiale del registro del <code>.xyz</code>: vende solo domini <code>.xyz</code> e, per i <code>.xyz</code> a 4 o più cifre, sfrutta le promozioni del registro.</p>
 <ol>
-<li>Accedi alla <a href="https://console.aws.amazon.com/">AWS Management Console</a> e apri il servizio <a href="https://console.aws.amazon.com/route53/home">Route 53</a>.</li>
-<li>Nel menu laterale sinistro, sotto la voce <strong>Domains</strong>, clicca su <a href="https://console.aws.amazon.com/route53/domains/home">Registered domains</a> e premi il pulsante <strong>Register domains</strong>.</li>
-<li>Cerca il dominio desiderato (per esempio <code>tuodominio.click</code>), verifica la disponibilità e procedi al checkout.</li>
-<li>Nella schermata dei dati di contatto del registrante, assicurati di <strong>attivare la Privacy Protection</strong> (<em>Enable privacy protection</em>) per oscurare gratuitamente i tuoi dati personali (nome, indirizzo, email, telefono) nei database pubblici WHOIS.</li>
-<li>Completa l'ordine e attendi l'email di verifica ICANN per confermare l'indirizzo email del proprietario.</li>
+<li>Apri <a href="https://gen.xyz/">gen.xyz</a>, scrivi <code>tuodominio</code> nella casella di ricerca e premi <strong>Search</strong>.</li>
+<li>Accanto a <code>tuodominio.xyz</code> clicca su <strong>Add to cart</strong> e poi su <strong>Checkout</strong>.</li>
+<li>Scegli il periodo di registrazione (1 anno) e, nella sezione dei componenti aggiuntivi, <strong>aggiungi la protezione WHOIS</strong> (<em>WHOIS Privacy Protection</em>): su gen.xyz è un'opzione a pagamento, non è inclusa di default.</li>
+<li>Crea l'account (email e password) o accedi, completa i dati di contatto del registrante e paga.</li>
+<li>Conferma l'email di verifica ICANN che arriva all'indirizzo del registrante: senza conferma, il dominio viene sospeso dopo qualche giorno.</li>
 </ol>
 <blockquote>
-<p><strong>Verifica:</strong> il dominio <code>tuodominio.click</code> compare nell'elenco <a href="https://console.aws.amazon.com/route53/domains/home">Route 53 &gt; Registered domains</a> con <em>Privacy protection: Enabled</em>.</p>
+<p><strong>Verifica:</strong> accedi a <a href="https://gen.xyz/account/clientarea.php">gen.xyz/account/clientarea.php</a> &gt; <strong>Domains</strong> &gt; <strong>My Domains</strong>: <code>tuodominio.xyz</code> compare con stato <em>Active</em>.</p>
+</blockquote>
+<h3 id="fase-1-spaceship">1B. Spaceship</h3>
+
+<ol>
+<li>Apri <a href="https://www.spaceship.com/">spaceship.com</a>, scrivi <code>tuodominio.xyz</code> nella ricerca e clicca su <strong>Search</strong>.</li>
+<li>Clicca su <strong>Add to cart</strong> accanto al dominio e poi su <strong>Checkout</strong>.</li>
+<li>Registra l'account (o accedi). Nel riepilogo ordine verifica che <strong>Domain Privacy</strong> (<em>Spaceship Privacy</em>) sia incluso a 0 €: su Spaceship la protezione WHOIS è gratuita.</li>
+<li>Disattiva (se presenti) i componenti aggiuntivi non richiesti, come hosting, email e <em>Spaceship Domain Protection</em>, e paga.</li>
+<li>Conferma l'email di verifica ICANN che arriva all'indirizzo del registrante.</li>
+</ol>
+<blockquote>
+<p><strong>Verifica:</strong> nel pannello <a href="https://www.spaceship.com/application/domain-list-application/">Domain List</a> il dominio <code>tuodominio.xyz</code> compare con stato attivo.</p>
+</blockquote>
+<h3 id="fase-1-porkbun">1C. Porkbun</h3>
+
+<ol>
+<li>Apri <a href="https://porkbun.com/">porkbun.com</a>, scrivi <code>tuodominio.xyz</code> nella casella di ricerca e premi invio.</li>
+<li>Clicca sul pulsante <strong>+</strong> (aggiungi al carrello) accanto a <code>tuodominio.xyz</code> e poi su <strong>Go to Cart</strong>.</li>
+<li>Nel carrello controlla che <strong>WHOIS Privacy</strong> sia incluso e gratuito (lo è di default per i domini che lo supportano). Se Porkbun ti propone un bundle di hosting o email, togli la spunta.</li>
+<li>Crea l'account (o accedi), imposta i dati di contatto del registrante e paga.</li>
+<li>Conferma l'email di verifica ICANN che arriva all'indirizzo del registrante.</li>
+</ol>
+<blockquote>
+<p><strong>Verifica:</strong> da <strong>ACCOUNT</strong> &gt; <strong>Domain Management</strong> il dominio <code>tuodominio.xyz</code> compare nell'elenco con la scritta <em>WHOIS Privacy</em> attiva.</p>
+</blockquote>
+<h3 id="fase-1-dynadot">1D. Dynadot</h3>
+
+<ol>
+<li>Apri <a href="https://www.dynadot.com/">dynadot.com</a>, scrivi <code>tuodominio.xyz</code> nella casella di ricerca e clicca su <strong>Search</strong>.</li>
+<li>Clicca su <strong>Add to Cart</strong> accanto al dominio e poi sull'icona del carrello &gt; <strong>Checkout</strong>.</li>
+<li>Nel carrello verifica che <strong>Whois Privacy</strong> sia impostato su <strong>Free</strong> (Dynadot lo include senza costi). Se compaiono proposte di hosting, sito web o email, togli la spunta.</li>
+<li>Crea l'account (o accedi), controlla i dati del registrante e paga.</li>
+<li>Conferma l'email di verifica ICANN che arriva all'indirizzo del registrante.</li>
+</ol>
+<blockquote>
+<p><strong>Verifica:</strong> da <strong>My Domains</strong> &gt; <strong>Manage Domains</strong> il dominio <code>tuodominio.xyz</code> compare con <em>Whois Privacy</em> attiva.</p>
 </blockquote>
 <hr />
 <h2 id="fase-2">Fase 2. Aggiunta del dominio su Cloudflare (piano Free)</h2>
 
-<p>Ora configuriamo Cloudflare per gestire gratuitamente i record DNS senza trasferire la proprietà del dominio.</p>
+<p>Ora configuriamo Cloudflare per gestire gratuitamente i record DNS senza trasferire la proprietà del dominio: il registrar resta quello che hai scelto nella Fase 1.</p>
 <ol>
 <li>Accedi alla <a href="https://dash.cloudflare.com/">dashboard di Cloudflare</a> e clicca su <strong>Aggiungi un sito</strong> (<em>Add a site</em>).</li>
 <li>Tra le tre opzioni proposte (<em>Connetti un dominio</em>, <em>Trasferisci un dominio</em>, <em>Acquista un dominio</em>), scegli <strong>Connetti un dominio</strong>.</li>
-<li>Nel campo <strong>Nome dominio</strong>, inserisci esattamente <code>tuodominio.click</code> (senza <code>www</code> né <code>https://</code>).</li>
+<li>Nel campo <strong>Nome dominio</strong>, inserisci esattamente <code>tuodominio.xyz</code> (senza <code>www</code> né <code>https://</code>).</li>
 <li>Sotto la sezione <strong>Importa record DNS</strong>, lascia selezionata l'opzione <strong>Automatico</strong> (<em>Importa i record DNS automaticamente</em>).</li>
 </ol>
 <hr />
@@ -126,7 +172,9 @@
 <hr />
 <h2 id="fase-4">Fase 4. Inserimento dei record DNS per GitHub Pages</h2>
 
-<p>Nella schermata <strong>Rivedi i record DNS</strong> (dove la scansione iniziale mostra <code>Record trovati: 0</code>), clicca sul pulsante <strong>+ Aggiungi record</strong> per inserire i 4 indirizzi IP ufficiali di GitHub Pages e il sottodominio <code>www</code>.</p>
+<p>Nella schermata <strong>Rivedi i record DNS</strong> clicca sul pulsante <strong>+ Aggiungi record</strong> per inserire i 4 indirizzi IP ufficiali di GitHub Pages e il sottodominio <code>www</code>.</p>
+<p><strong>Prima controlla cosa ha importato Cloudflare.</strong> Se il registrar ha già messo record di parcheggio sul dominio (succede spesso su Porkbun, Spaceship e Dynadot: un <code>A</code>, un <code>ALIAS</code>/<code>CNAME</code> o un <code>URL forwarding</code> verso la loro pagina "domain parked"), la scansione li mostra tra i record trovati. <strong>Eliminali tutti</strong> con l'icona del cestino: se restano, si mescolano ai record di GitHub Pages e il sito risponde a volte con la pagina del registrar. Se la scansione dice <code>Record trovati: 0</code>, non c'è niente da togliere.</p>
+<p>Poi inserisci questi 5 record:</p>
 <table>
 <thead>
 <tr>
@@ -140,28 +188,28 @@
 <tbody>
 <tr>
 <td><code>A</code></td>
-<td><code>@</code> (tuodominio.click)</td>
+<td><code>@</code> (tuodominio.xyz)</td>
 <td><code>185.199.108.153</code></td>
 <td>Solo DNS (grigio)</td>
 <td><code>1</code> (Auto)</td>
 </tr>
 <tr>
 <td><code>A</code></td>
-<td><code>@</code> (tuodominio.click)</td>
+<td><code>@</code> (tuodominio.xyz)</td>
 <td><code>185.199.109.153</code></td>
 <td>Solo DNS (grigio)</td>
 <td><code>1</code> (Auto)</td>
 </tr>
 <tr>
 <td><code>A</code></td>
-<td><code>@</code> (tuodominio.click)</td>
+<td><code>@</code> (tuodominio.xyz)</td>
 <td><code>185.199.110.153</code></td>
 <td>Solo DNS (grigio)</td>
 <td><code>1</code> (Auto)</td>
 </tr>
 <tr>
 <td><code>A</code></td>
-<td><code>@</code> (tuodominio.click)</td>
+<td><code>@</code> (tuodominio.xyz)</td>
 <td><code>185.199.111.153</code></td>
 <td>Solo DNS (grigio)</td>
 <td><code>1</code> (Auto)</td>
@@ -177,47 +225,131 @@
 </table>
 <ol>
 <li>Una volta inseriti i 5 record nella tabella, clicca sul pulsante blu <strong>Continua</strong> in fondo alla pagina.</li>
-<li>Compare il popup di avviso <em>"tuodominio.click non è completamente protetto (Tutti i record DNS sono impostati sullo stato proxy Solo DNS)"</em>: clicca su <strong>Lo farò più tardi</strong>.</li>
+<li>Compare il popup di avviso <em>"tuodominio.xyz non è completamente protetto (Tutti i record DNS sono impostati sullo stato proxy Solo DNS)"</em>: clicca su <strong>Lo farò più tardi</strong>.</li>
 </ol>
 <hr />
-<h2 id="fase-5">Fase 5. Verifica DNSSEC e recupero dei Name Server Cloudflare</h2>
+<h2 id="fase-5">Fase 5. Controllo DNSSEC e recupero dei Name Server Cloudflare</h2>
 
-<ol>
-<li><strong>Avviso DNSSEC:</strong> su AWS Route 53 il DNSSEC per i nuovi domini è <strong>disattivato di default</strong>.</li>
-<li>Nella stessa pagina di Cloudflare, individua i <strong>2 Name Server</strong> assegnati al tuo account (per esempio <code>xxx.ns.cloudflare.com</code> e <code>yyy.ns.cloudflare.com</code>) e copiali.</li>
-</ol>
+<p><strong>1. Controlla se sul dominio c'è già un record DS.</strong> Il DS è l'"impronta" DNSSEC che il registrar pubblica nel registro del <code>.xyz</code>. Se resta lì mentre cambi i Name Server, i resolver che validano DNSSEC (Google 8.8.8.8, Cloudflare 1.1.1.1, la maggior parte degli ISP) non risolvono più il dominio e il sito risulta irraggiungibile (errore <code>SERVFAIL</code>). Alcuni registrar lo attivano da soli quando usi i loro DNS (Spaceship per esempio assegna DNSSEC di default), altri no.</p>
+<p>Linux/Bazzite/macOS:</p>
+<div class="codehilite"><pre><span></span><code>dig<span class="w"> </span>DS<span class="w"> </span>tuodominio.xyz<span class="w"> </span>+short
+</code></pre></div>
+
+<p>Windows (PowerShell):</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Resolve-DnsName</span> <span class="n">tuodominio</span><span class="p">.</span><span class="n">xyz</span> <span class="n">-Type</span> <span class="n">DS</span> <span class="n">-Server</span> <span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span>
+</code></pre></div>
+
+<ul>
+<li><strong>Nessun risultato</strong> (su <code>dig</code> risposta vuota; su PowerShell l'errore <em>DNS name does not exist</em> oppure nessuna riga di tipo <code>DS</code>): non c'è DNSSEC, vai avanti.</li>
+<li><strong>Compare una riga</strong> del tipo <code>12345 13 2 ABCD...</code>: c'è un DS attivo. Prima di cambiare i Name Server <strong>cancellalo dal pannello del registrar</strong> (nella Fase 6, passo 0, trovi dove) e aspetta che il TTL scada (di solito da 1 a 24 ore). Controlla di nuovo con il comando qui sopra finché non risulta vuoto.</li>
+</ul>
+<p><strong>2. Recupera i Name Server di Cloudflare.</strong> Nella stessa pagina di Cloudflare, individua i <strong>2 Name Server</strong> assegnati al tuo account (per esempio <code>xxx.ns.cloudflare.com</code> e <code>yyy.ns.cloudflare.com</code>) e copiali: ti servono nella Fase 6.</p>
 <hr />
-<h2 id="fase-6">Fase 6. Aggiornamento dei Name Server su AWS Route 53</h2>
+<h2 id="fase-6">Fase 6. Cambio dei Name Server dal registrar</h2>
+
+<p>Qui dici al registro del <code>.xyz</code> di usare i DNS di Cloudflare al posto di quelli del registrar. Segui la sottosezione del tuo registrar. In ognuna, al <strong>passo 0</strong> rimuovi eventuali DS trovati nella Fase 5.</p>
+<h3 id="fase-6-genxyz">6A. gen.xyz</h3>
 
 <ol>
-<li>Nella console di <a href="https://console.aws.amazon.com/route53/home">AWS Route 53</a>, vai su <a href="https://console.aws.amazon.com/route53/domains/home">Registered domains</a> &gt; <code>tuodominio.click</code>.</li>
-<li>Clicca su <strong>Actions</strong> &gt; <strong>Edit name servers</strong>.</li>
-<li>Cancella i 4 server di AWS e incolla i <strong>2 Name Server di Cloudflare</strong>.</li>
-<li>Clicca su <strong>Save</strong> e poi su Cloudflare premi <strong>Fine, controlla i server dei nomi</strong>.</li>
+<li><strong>Se la Fase 5 ha trovato un DS:</strong> su gen.xyz i record DNSSEC si gestiscono <strong>solo tramite il supporto</strong>. Apri un ticket su <a href="https://gen.xyz/account/submitticket.php">gen.xyz/account/submitticket.php</a> chiedendo di <strong>rimuovere il record DS</strong> da <code>tuodominio.xyz</code>, e aspetta la conferma prima di continuare.</li>
+<li>Accedi a <a href="https://gen.xyz/account/clientarea.php">gen.xyz/account/clientarea.php</a> &gt; <strong>Domains</strong> &gt; <strong>My Domains</strong>.</li>
+<li>Sulla riga di <code>tuodominio.xyz</code> clicca su <strong>Manage Domain</strong> (icona a ingranaggio) e poi su <strong>Nameservers</strong> nel menu a sinistra.</li>
+<li>Seleziona <strong>Use custom nameservers</strong> (<em>Usa nameserver personalizzati</em>).</li>
+<li>Nei campi <strong>Nameserver 1</strong> e <strong>Nameserver 2</strong> incolla i due Name Server di Cloudflare. Lascia vuoti i campi 3, 4 e 5.</li>
+<li>Clicca su <strong>Change Nameservers</strong> e conferma.</li>
 </ol>
+<blockquote>
+<p>I nomi esatti dei pulsanti di gen.xyz (area clienti basata su WHMCS) possono differire leggermente da quelli scritti qui. Se non trovi una voce, cerca nel menu del dominio quella che parla di <em>Nameservers</em> o <em>Name Servers</em> e, in caso di dubbio, consulta l'articolo <a href="https://gen.xyz/account/knowledgebase/14/How-do-I-set-custom-nameservers-for-a-domain-name.html">How do I set custom nameservers for a domain name?</a> della loro guida.</p>
+<p>Se il pulsante <strong>Manage DNS</strong> del dominio è grigio, è normale: è attivo solo con i nameserver di default di gen.xyz. Da ora i record si gestiscono su Cloudflare.</p>
+</blockquote>
+<h3 id="fase-6-spaceship">6B. Spaceship</h3>
+
+<ol>
+<li><strong>Se la Fase 5 ha trovato un DS:</strong> su Spaceship il DNSSEC si attiva e si disattiva da <strong>Advanced DNS</strong> del dominio. Apri <a href="https://www.spaceship.com/">spaceship.com</a> &gt; <strong>Domain List</strong> &gt; <strong>Manage</strong> accanto a <code>tuodominio.xyz</code> &gt; <strong>Advanced DNS</strong> e disattiva <strong>DNSSEC</strong>. Se non trovi l'interruttore, apri un ticket dal <a href="https://www.spaceship.com/support/">Support Center</a> chiedendo di rimuovere il DS. Aspetta che il TTL scada.</li>
+<li>Accedi a Spaceship e vai su <strong>Domain List</strong>; clicca su <strong>Manage</strong> accanto a <code>tuodominio.xyz</code>.</li>
+<li>Apri la scheda <strong>Advanced DNS</strong> (o <em>DNS</em>) del dominio.</li>
+<li>Nella sezione <strong>Nameservers</strong> clicca su <strong>Change</strong>.</li>
+<li>Nella finestra che si apre scegli <strong>Custom nameservers</strong>.</li>
+<li>Incolla i due Name Server di Cloudflare (uno per riga o uno per campo), poi clicca su <strong>Save</strong>. Spaceship avvisa che hosting ed email collegati a Spaceship smetteranno di funzionare: conferma (non ne hai).</li>
+</ol>
+<h3 id="fase-6-porkbun">6C. Porkbun</h3>
+
+<ol>
+<li><strong>Se la Fase 5 ha trovato un DS:</strong> accedi a Porkbun &gt; <strong>ACCOUNT</strong> &gt; <strong>Domain Management</strong>, clicca su <strong>Details</strong> a destra di <code>tuodominio.xyz</code> e, accanto a <strong>Registry DNSSEC</strong>, clicca sull'icona di modifica; elimina il record (voce di cancellazione/<em>Delete</em> accanto alla riga) e salva. Aspetta che il TTL scada.</li>
+<li>Accedi a <a href="https://porkbun.com/">porkbun.com</a> e clicca su <strong>ACCOUNT</strong> &gt; <strong>Domain Management</strong>.</li>
+<li>Sulla riga di <code>tuodominio.xyz</code> clicca su <strong>Details</strong> (freccia a destra).</li>
+<li>Nella sezione <strong>Authoritative Nameservers</strong> clicca sull'icona <strong>Edit</strong> (matita).</li>
+<li>Cancella tutti i nameserver di Porkbun (<code>curitiba.ns.porkbun.com</code>, <code>fortaleza.ns.porkbun.com</code>, <code>maceio.ns.porkbun.com</code>, <code>salvador.ns.porkbun.com</code>) e inserisci i due di Cloudflare, uno per riga.</li>
+<li>Clicca su <strong>Submit</strong>. Se compare un messaggio che chiede di confermare il cambio, clicca su <strong>Submit</strong> una seconda volta: senza la seconda conferma la modifica non viene salvata.</li>
+</ol>
+<blockquote>
+<p>Non aggiungere i Name Server come record <code>NS</code> nella sezione <em>DNS Records</em> di Porkbun: quei record non cambiano i nameserver autoritativi del dominio.</p>
+</blockquote>
+<h3 id="fase-6-dynadot">6D. Dynadot</h3>
+
+<ol>
+<li><strong>Se la Fase 5 ha trovato un DS:</strong> accedi a Dynadot &gt; <strong>My Domains</strong> &gt; <strong>Manage Domains</strong>, clicca sul nome <code>tuodominio.xyz</code>, scorri fino alla sezione <strong>DNSSEC</strong> e clicca su <strong>Clear DNSSEC</strong>. Ha effetto subito sul registro, ma aspetta comunque che il TTL scada.</li>
+<li>Accedi a <a href="https://www.dynadot.com/">dynadot.com</a> &gt; <strong>My Domains</strong> &gt; <strong>Manage Domains</strong>.</li>
+<li>Spunta la casella accanto a <code>tuodominio.xyz</code>, clicca sul pulsante <strong>Action</strong> e scegli <strong>DNS Settings</strong>.</li>
+<li>Nel menu a tendina in alto della pagina DNS scegli <strong>Name Servers</strong>.</li>
+<li>Seleziona l'opzione dei nameserver personalizzati (<em>Use Custom Name Servers</em>) e incolla i due Name Server di Cloudflare nei campi <strong>Name Server 1</strong> e <strong>Name Server 2</strong>.</li>
+<li>Clicca su <strong>Save Name Servers</strong>.</li>
+</ol>
+<p><strong>Verifica comune a tutti i registrar</strong> (dopo qualche minuto; la propagazione completa può richiedere fino a 24-48 ore):</p>
+<p>Linux/Bazzite/macOS:</p>
+<div class="codehilite"><pre><span></span><code>dig<span class="w"> </span>NS<span class="w"> </span>tuodominio.xyz<span class="w"> </span>+short
+</code></pre></div>
+
+<p>Windows (PowerShell):</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Resolve-DnsName</span> <span class="n">tuodominio</span><span class="p">.</span><span class="n">xyz</span> <span class="n">-Type</span> <span class="n">NS</span> <span class="n">-Server</span> <span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span>
+</code></pre></div>
+
+<p>Devi vedere i due Name Server di Cloudflare (<code>xxx.ns.cloudflare.com</code> e <code>yyy.ns.cloudflare.com</code>). Poi torna su Cloudflare e premi <strong>Fine, controlla i server dei nomi</strong> (<em>Done, check nameservers</em>): quando lo stato del dominio diventa <strong>Attivo</strong> (<em>Active</em>), Cloudflare ti manda una email di conferma.</p>
 <hr />
 <h2 id="fase-7">Fase 7. Collegamento del Custom Domain su GitHub Pages</h2>
 
 <ol>
 <li>Su GitHub entra nel repository <code>tuonome.github.io</code> &gt; <strong>Settings</strong> &gt; <strong>Pages</strong>.</li>
-<li>Sotto <strong>Custom domain</strong>, inserisci <code>tuodominio.click</code> (senza <code>www</code>) e clicca su <strong>Save</strong>.</li>
+<li>Sotto <strong>Custom domain</strong>, inserisci <code>tuodominio.xyz</code> (senza <code>www</code>) e clicca su <strong>Save</strong>.</li>
 <li>GitHub aggiunge da solo al repository un file chiamato <code>CNAME</code> con il tuo dominio: <strong>non eliminarlo</strong>. Se lavori con Git in locale, esegui <code>git pull</code> prima del prossimo <code>git push</code>.</li>
 <li>Attendi la scritta verde <em>DNS check successful</em>. Può richiedere da pochi minuti a qualche ora, finché i Name Server della Fase 6 non si sono propagati.</li>
 <li>Spunta la casella <strong>Enforce HTTPS</strong>. Se è grigia e non selezionabile, GitHub sta ancora emettendo il certificato: riprova dopo 15-60 minuti.</li>
-<li>Apri <code>https://tuodominio.click</code> e <code>https://www.tuodominio.click</code>: entrambi devono mostrare il tuo sito (<code>www</code> viene reindirizzato in automatico al dominio principale).</li>
+<li>Apri <code>https://tuodominio.xyz</code> e <code>https://www.tuodominio.xyz</code>: entrambi devono mostrare il tuo sito (<code>www</code> viene reindirizzato in automatico al dominio principale).</li>
 </ol>
 <blockquote>
 <p><strong>Importante: tieni la nuvola grigia fino alla fine.</strong> Finché il <em>DNS check</em> non è riuscito e <em>Enforce HTTPS</em> non è attivo, lascia i record su Cloudflare in modalità <strong>Solo DNS</strong> (nuvola grigia). Il proxy arancione (Opzionale A) va attivato solo dopo, altrimenti GitHub non riesce a verificare il dominio.</p>
-<p><strong>Consigliato: verifica il dominio su GitHub.</strong> Da <a href="https://github.com/settings/pages_verified_domains">Settings &gt; Pages &gt; Add a domain</a> del tuo profilo puoi verificare <code>tuodominio.click</code> con un record <code>TXT</code> su Cloudflare. Impedisce ad altri utenti GitHub di rivendicare il tuo dominio (domain takeover) se un giorno i record DNS restassero orfani.</p>
-<p><strong>Verifica:</strong> <code>https://tuodominio.click</code> si apre con il lucchetto e <em>Settings &gt; Pages</em> mostra <em>"Your site is published at https://tuodominio.click/"</em>.</p>
+<p><strong>Consigliato: verifica il dominio su GitHub.</strong> Da <a href="https://github.com/settings/pages_verified_domains">Settings &gt; Pages &gt; Add a domain</a> del tuo profilo puoi verificare <code>tuodominio.xyz</code> con un record <code>TXT</code> su Cloudflare. Impedisce ad altri utenti GitHub di rivendicare il tuo dominio (domain takeover) se un giorno i record DNS restassero orfani.</p>
+<p><strong>Verifica:</strong> <code>https://tuodominio.xyz</code> si apre con il lucchetto e <em>Settings &gt; Pages</em> mostra <em>"Your site is published at https://tuodominio.xyz/"</em>.</p>
 </blockquote>
 <hr />
-<h2 id="fase-8">Fase 8. Eliminazione della Hosted Zone su AWS (azzeramento costi)</h2>
+<h2 id="fase-8">Fase 8. Verifica finale e pulizia</h2>
 
+<p>Con il registrar non c'è nessuna "zona" da eliminare e non ci sono costi mensili: pagherai solo il rinnovo annuale del nome. Resta da controllare che i vecchi DNS del registrar non vengano più usati e che tutto risolva come previsto.</p>
 <ol>
-<li>Solo dopo che il sito è attivo su Cloudflare, apri <a href="https://console.aws.amazon.com/route53/home">AWS Route 53</a> &gt; <a href="https://console.aws.amazon.com/route53/v2/hostedzones">Hosted zones</a>.</li>
-<li>Elimina eventuali record personalizzati interni a <code>tuodominio.click</code> (eccetto NS e SOA).</li>
-<li>Seleziona la zona <code>tuodominio.click</code>, clicca su <strong>Delete zone</strong> e conferma digitando <code>delete</code>.</li>
+<li>
+<p><strong>Controlla gli indirizzi del sito.</strong></p>
+<p>Linux/Bazzite/macOS:</p>
+<p><code>bash
+dig A tuodominio.xyz +short
+dig CNAME www.tuodominio.xyz +short</code></p>
+<p>Windows (PowerShell):</p>
+<p><code>powershell
+Resolve-DnsName tuodominio.xyz -Type A -Server 8.8.8.8
+Resolve-DnsName www.tuodominio.xyz -Type CNAME -Server 8.8.8.8</code></p>
+<p>Devono comparire i quattro IP <code>185.199.108.153</code>, <code>185.199.109.153</code>, <code>185.199.110.153</code>, <code>185.199.111.153</code> e <code>tuonome.github.io</code>. Se vedi altri indirizzi, sono record di parcheggio del registrar rimasti su Cloudflare (torna alla Fase 4).</p>
+</li>
+<li>
+<p><strong>Controlla il certificato e la risposta HTTP.</strong></p>
+<p>Linux/Bazzite/macOS e Windows 10/11 (PowerShell, usa <code>curl.exe</code>):</p>
+<p><code>bash
+curl -I https://tuodominio.xyz</code></p>
+<p>La prima riga deve essere <code>HTTP/2 200</code> (o <code>301</code> se stai chiedendo <code>http://</code>).</p>
+</li>
+<li>
+<p><strong>Spegni ogni servizio di parcheggio, inoltro o email del registrar</strong> nel pannello del dominio (<em>URL forwarding</em>, <em>Domain Parking</em>, <em>Email forwarding</em>): con i Name Server di Cloudflare non hanno più effetto, ma meglio non lasciarli configurati. Gli inoltri email si rifanno con Cloudflare Email Routing (Opzionale C).</p>
+</li>
+<li><strong>Attiva il rinnovo automatico</strong> (<em>Auto-Renew</em>) nel pannello del registrar, se non l'hai già fatto, e usa un metodo di pagamento che non scade a breve.</li>
+<li><strong>Attiva il blocco di trasferimento</strong> (<em>Registrar Lock</em>, <em>Transfer Lock</em>): di solito è già attivo di default. Impedisce che il dominio venga trasferito a un altro registrar senza il tuo consenso.</li>
 </ol>
 <hr />
 <h2>Sezioni facoltative: hardening e privacy avanzata</h2>
@@ -275,10 +407,20 @@
 </tr>
 </tbody>
 </table>
+<ol>
+<li>
+<p>Verifica gli header dal terminale:</p>
+<p><code>bash
+curl -sI https://tuodominio.xyz | grep -iE "referrer-policy|permissions-policy|x-content-type-options|x-frame-options"</code></p>
+<p>Su Windows (PowerShell):</p>
+<p><code>powershell
+curl.exe -sI https://tuodominio.xyz | Select-String -Pattern "referrer-policy|permissions-policy|x-content-type-options|x-frame-options"</code></p>
+</li>
+</ol>
 <h3 id="opzionale-c">Opzionale C. Blindatura email del dominio (anti-spoofing o Email Routing anonimo)</h3>
 
-<p>Un dominio senza record di posta permette a chiunque di inviare email di phishing fingendo di scrivere da <code>@tuodominio.click</code>. Hai due scenari possibili.</p>
-<p><strong>Scenario 1: non usi l'email sul dominio (blocco totale anti-spoofing).</strong> Aggiungi questi 3 record su Cloudflare &gt; DNS &gt; Record, per dichiarare a tutti i server del mondo che nessuna email legittima parte o arriva su <code>tuodominio.click</code>:</p>
+<p>Un dominio senza record di posta permette a chiunque di inviare email di phishing fingendo di scrivere da <code>@tuodominio.xyz</code>. Hai due scenari possibili.</p>
+<p><strong>Scenario 1: non usi l'email sul dominio (blocco totale anti-spoofing).</strong> Aggiungi questi 3 record su Cloudflare &gt; DNS &gt; Record, per dichiarare a tutti i server del mondo che nessuna email legittima parte o arriva su <code>tuodominio.xyz</code>:</p>
 <table>
 <thead>
 <tr>
@@ -309,7 +451,20 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Scenario 2: vuoi ricevere email senza esporre il tuo indirizzo personale.</strong> Se vuoi pubblicare un contatto sul sito (per esempio <code>info@tuodominio.click</code>) senza rivelare la tua casella personale, vai su Cloudflare in <strong>Email</strong> &gt; <strong>Email Routing</strong>: Cloudflare inoltra gratuitamente i messaggi ricevuti su <code>info@tuodominio.click</code> alla tua casella privata, mantenendola nascosta.</p>
+<p>Se il registrar aveva attivato l'inoltro email o un <code>MX</code> suo (per esempio quelli di Spaceship, Porkbun o Dynadot), controlla che su Cloudflare non sia stato importato nessun altro record <code>MX</code> o <code>TXT</code> di tipo SPF, altrimenti i record qui sopra si sommano a quelli vecchi.</p>
+<p>Verifica dal terminale:</p>
+<div class="codehilite"><pre><span></span><code>dig<span class="w"> </span>TXT<span class="w"> </span>tuodominio.xyz<span class="w"> </span>+short
+dig<span class="w"> </span>TXT<span class="w"> </span>_dmarc.tuodominio.xyz<span class="w"> </span>+short
+dig<span class="w"> </span>MX<span class="w"> </span>tuodominio.xyz<span class="w"> </span>+short
+</code></pre></div>
+
+<p>Su Windows (PowerShell):</p>
+<div class="codehilite"><pre><span></span><code><span class="nb">Resolve-DnsName</span> <span class="n">tuodominio</span><span class="p">.</span><span class="n">xyz</span> <span class="n">-Type</span> <span class="n">TXT</span> <span class="n">-Server</span> <span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span>
+<span class="nb">Resolve-DnsName</span> <span class="n">_dmarc</span><span class="p">.</span><span class="n">tuodominio</span><span class="p">.</span><span class="n">xyz</span> <span class="n">-Type</span> <span class="n">TXT</span> <span class="n">-Server</span> <span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span>
+<span class="nb">Resolve-DnsName</span> <span class="n">tuodominio</span><span class="p">.</span><span class="n">xyz</span> <span class="n">-Type</span> <span class="n">MX</span> <span class="n">-Server</span> <span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span><span class="p">.</span><span class="n">8</span>
+</code></pre></div>
+
+<p><strong>Scenario 2: vuoi ricevere email senza esporre il tuo indirizzo personale.</strong> Se vuoi pubblicare un contatto sul sito (per esempio <code>info@tuodominio.xyz</code>) senza rivelare la tua casella personale, vai su Cloudflare in <strong>Email</strong> &gt; <strong>Email Routing</strong>: Cloudflare inoltra gratuitamente i messaggi ricevuti su <code>info@tuodominio.xyz</code> alla tua casella privata, mantenendola nascosta. In questo scenario <strong>non</strong> aggiungere i tre record dello Scenario 1: Email Routing crea da sé i record <code>MX</code> e <code>TXT</code> necessari.</p>
 <h3 id="opzionale-d">Opzionale D. Privacy del proprietario su GitHub (email nei commit e metadati EXIF)</h3>
 
 <blockquote>
@@ -325,24 +480,74 @@
 <p><strong>Rimozione dei metadati EXIF dalle immagini.</strong> Prima di caricare foto JPG/PNG nel repository del sito, rimuovi sempre i metadati EXIF (che possono contenere le coordinate GPS esatte di casa o ufficio e il modello del telefono) usando strumenti come <a href="https://exiftool.org/">exiftool</a>: <code>exiftool -all= immagine.jpg</code>.</p>
 </li>
 </ol>
-<h3 id="opzionale-e">Opzionale E. Riattivazione DNSSEC (Cloudflare + Route 53) e record CAA</h3>
+<h3 id="opzionale-e">Opzionale E. DNSSEC completo (Cloudflare + registrar) e record CAA</h3>
 
-<p>Per impedire attacchi di <em>DNS Spoofing / Cache Poisoning</em> e limitare chi può generare certificati SSL per il tuo dominio:</p>
+<p>Per impedire attacchi di <em>DNS Spoofing / Cache Poisoning</em> e limitare chi può generare certificati SSL per il tuo dominio. Ordine obbligato: prima si firma la zona su Cloudflare, poi si pubblica il DS dal registrar. Se fai il contrario, il dominio diventa irraggiungibile per i resolver che validano DNSSEC.</p>
 <ol>
-<li><strong>Attiva DNSSEC su Cloudflare.</strong> Vai su <strong>DNS</strong> &gt; <strong>Impostazioni (Settings)</strong> e clicca su <strong>Abilita DNSSEC (Enable DNSSEC)</strong>. Cloudflare ti mostra i parametri del record <code>DS</code> (Key Tag, Algorithm, Digest Type, Digest).</li>
-<li><strong>Registra la chiave DS su AWS Route 53.</strong> Vai su <a href="https://console.aws.amazon.com/route53/home">Route 53</a> &gt; <a href="https://console.aws.amazon.com/route53/domains/home">Registered domains</a> &gt; <code>tuodominio.click</code> &gt; sezione <strong>DNSSEC status</strong> &gt; <strong>Manage keys</strong> e inserisci i dati mostrati da Cloudflare.</li>
-<li><strong>Aggiungi i record CAA su Cloudflare.</strong> In <strong>DNS &gt; Record</strong>, aggiungi due record di tipo <code>CAA</code> su <code>@</code> con flag <code>0</code> e tag <code>issue</code>: uno per <a href="https://letsencrypt.org/"><code>letsencrypt.org</code></a> (usato da GitHub Pages) e uno per <code>pki.goog</code> / <code>ssl.com</code> (usati da Cloudflare Universal SSL). In questo modo nessun'altra Certification Authority al mondo potrà emettere certificati per <code>tuodominio.click</code>.</li>
+<li><strong>Attiva DNSSEC su Cloudflare.</strong> Vai su <strong>DNS</strong> &gt; <strong>Impostazioni (Settings)</strong> e clicca su <strong>Abilita DNSSEC (Enable DNSSEC)</strong>. Cloudflare ti mostra i parametri del record <code>DS</code>: <strong>Key Tag</strong>, <strong>Algorithm</strong> (di solito <code>13</code>, <em>ECDSA Curve P-256 with SHA-256</em>), <strong>Digest Type</strong> (di solito <code>2</code>, <em>SHA-256</em>) e <strong>Digest</strong>. Cloudflare mostra anche il record DS già composto in una riga, pronto da copiare: tienilo aperto.</li>
+<li>
+<p><strong>Registra il DS dal registrar.</strong> Segui la sottosezione del tuo registrar.</p>
+<p><h4 id="opzionale-e-genxyz">E-1. gen.xyz</h4></p>
+<p>Su gen.xyz il DS non si inserisce da pannello: va chiesto al supporto. Apri un ticket su <a href="https://gen.xyz/account/submitticket.php">gen.xyz/account/submitticket.php</a> e scrivi il DS in questo formato, con tutti i campi presi dalla schermata di Cloudflare (esempio con valori finti: sostituiscili con i tuoi):</p>
+<p><code>text
+tuodominio.xyz. 86400 IN DS 2371 13 2 ( A1B2C3D4E5F60718293A4B5C6D7E8F90A1B2C3D4E5F60718293A4B5C6D7E8F90 )</code></p>
+<p>I campi sono, nell'ordine: nome del dominio, TTL (<code>86400</code>), classe <code>IN</code>, tipo <code>DS</code>, <strong>Key Tag</strong>, <strong>Algorithm</strong>, <strong>Digest Type</strong>, <strong>Digest</strong>. gen.xyz non accetta i record <code>DNSKEY</code>: solo il DS.</p>
+<p><h4 id="opzionale-e-spaceship">E-2. Spaceship</h4></p>
+<ol>
+<li>Accedi a Spaceship &gt; <strong>Domain List</strong> &gt; <strong>Manage</strong> accanto a <code>tuodominio.xyz</code>.</li>
+<li>Cerca la sezione <strong>DNSSEC</strong> della pagina del dominio (se è su una scheda separata, di solito è dentro <strong>Advanced DNS</strong>).</li>
+<li>Aggiungi un nuovo record DS e inserisci <strong>Key Tag</strong>, <strong>Algorithm</strong>, <strong>Digest Type</strong> e <strong>Digest</strong> copiati da Cloudflare. Salva.</li>
+<li>Se la sezione DNSSEC non permette di inserire un DS con Name Server esterni, apri un ticket dal <a href="https://www.spaceship.com/support/">Support Center</a> con gli stessi quattro valori.</li>
 </ol>
+<p><h4 id="opzionale-e-porkbun">E-3. Porkbun</h4></p>
+<ol>
+<li>Accedi a Porkbun &gt; <strong>ACCOUNT</strong> &gt; <strong>Domain Management</strong>.</li>
+<li>Sulla riga di <code>tuodominio.xyz</code> clicca su <strong>Details</strong> e poi sull'icona di modifica accanto a <strong>Registry DNSSEC</strong>.</li>
+<li>Nella schermata <strong>Create DNSSEC Record</strong> compila <strong>Key Tag</strong>, <strong>Algorithm</strong> (<code>13</code>), <strong>Digest Type</strong> (<code>2</code>) e <strong>Digest</strong> con i valori di Cloudflare. Lascia vuoti i campi del tipo <code>keyData</code> (il <code>.xyz</code> accetta solo <code>dsData</code>).</li>
+<li>Clicca su <strong>Create</strong> in basso a sinistra.</li>
+</ol>
+<p><h4 id="opzionale-e-dynadot">E-4. Dynadot</h4></p>
+<ol>
+<li>Accedi a Dynadot &gt; <strong>My Domains</strong> &gt; <strong>Manage Domains</strong> e clicca sul nome <code>tuodominio.xyz</code>.</li>
+<li>Scorri fino alla sezione <strong>DNSSEC</strong> (mostra <em>Not Set</em>) e clicca su <strong>Change</strong>.</li>
+<li>Scegli <strong>Set a DNSSEC Record</strong> e compila <strong>Key Tag</strong>, <strong>Algorithm</strong> (<code>13</code>, se la lista non lo mostra così cerca <em>ECDSA Curve P-256 with SHA-256</em>), <strong>Digest Type</strong> (<code>2</code>, <em>SHA-256</em>) e <strong>Digest</strong>.</li>
+<li>Clicca su <strong>Set DNSSEC Record</strong>.</li>
+</ol>
+</li>
+<li>
+<p><strong>Verifica.</strong> Dopo qualche minuto (fino a qualche ora per il DS) controlla che il DS sia pubblicato nel registro e che la catena di fiducia sia valida:</p>
+<p><code>bash
+dig DS tuodominio.xyz +short
+dig A tuodominio.xyz +dnssec @8.8.8.8</code></p>
+<p>Su Windows (PowerShell):</p>
+<p><code>powershell
+Resolve-DnsName tuodominio.xyz -Type DS -Server 8.8.8.8
+Resolve-DnsName tuodominio.xyz -Type A -DnssecOk -Server 8.8.8.8</code></p>
+<p>Nel risultato di <code>dig</code> cerca il flag <code>ad</code> (<em>Authenticated Data</em>) nella riga <code>flags:</code>. In più puoi usare il <a href="https://dnssec-analyzer.verisignlabs.com/">DNSSEC Analyzer di Verisign</a> inserendo <code>tuodominio.xyz</code>. Su Cloudflare lo stato diventa <strong>Attivo</strong> (<em>DNSSEC is active</em>).</p>
+</li>
+<li>
+<p><strong>Aggiungi i record CAA su Cloudflare.</strong> In <strong>DNS &gt; Record</strong>, aggiungi due record di tipo <code>CAA</code> su <code>@</code> con flag <code>0</code> e tag <code>issue</code>: uno per <a href="https://letsencrypt.org/"><code>letsencrypt.org</code></a> (usato da GitHub Pages) e uno per <code>pki.goog</code> / <code>ssl.com</code> (usati da Cloudflare Universal SSL). In questo modo nessun'altra Certification Authority al mondo potrà emettere certificati per <code>tuodominio.xyz</code>.</p>
+<p>Verifica:</p>
+<p><code>bash
+dig CAA tuodominio.xyz +short</code></p>
+<p>Su Windows (PowerShell):</p>
+<p><code>powershell
+Resolve-DnsName tuodominio.xyz -Type CAA -Server 8.8.8.8</code></p>
+</li>
+</ol>
+<blockquote>
+<p><strong>Se in futuro cambi Name Server o lasci Cloudflare:</strong> prima <strong>togli il DS dal registrar</strong>, aspetta che il TTL scada, e solo dopo cambia i Name Server. Altrimenti il dominio sparisce per i resolver che validano DNSSEC.</p>
+</blockquote>
 <h3 id="opzionale-f">Opzionale F. Zero tracking sul sito e isolamento delle risorse di terze parti (niente cookie banner)</h3>
 
-<p>Per rendere <code>tuodominio.click</code> conforme al GDPR senza banner dei cookie e senza cedere a terzi i dati dei visitatori:</p>
+<p>Per rendere <code>tuodominio.xyz</code> conforme al GDPR senza banner dei cookie e senza cedere a terzi i dati dei visitatori:</p>
 <ul>
 <li><strong>Niente Google Fonts da CDN esterno.</strong> Non caricare mai font da <code>fonts.googleapis.com</code> o <code>fonts.gstatic.com</code> (trasmettono l'indirizzo IP di ogni visitatore a Google). Scarica i file <code>.woff2</code> e ospitali direttamente in una cartella <code>/fonts</code> dentro il tuo repository GitHub.</li>
 <li><strong>Niente librerie JS da CDN esterni.</strong> Evita link a <code>cdnjs</code>, <code>unpkg</code> o <code>jsdelivr</code>; salva gli script localmente nel repository.</li>
 <li><strong>Statistiche senza tracciamento.</strong> Se vuoi sapere quante visite riceve il sito senza usare Google Analytics, ti basta consultare le statistiche aggregate lato rete già incluse gratuitamente nella dashboard di Cloudflare (sezione <strong>Analytics &amp; Logs &gt; Traffic</strong>), che non installano alcun cookie né script nel browser dell'utente.</li>
 </ul>
 <hr />
-<p><em>Guida tecnica (edizione privacy avanzata): AWS Route 53 + Cloudflare + GitHub Pages.</em></p>
+<p><em>Guida tecnica (edizione privacy avanzata): gen.xyz / Spaceship / Porkbun / Dynadot + Cloudflare + GitHub Pages.</em></p>
 <div id="nextprev"><a href="/bazzite_onexplayer_1s/"><div id="nextart">Prossimo:<br>Installare Bazzite sul OneXPlayer 1S: guida passo passo</div></a><a href="/cachy_os_t450_guida/"><div id="prevart">Precedente:<br>CachyOS su ThinkPad T450: guida completa all'installazione e configurazione</div></a></div>
 </article>
 </main>
